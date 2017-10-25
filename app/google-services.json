@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "711713948309-ml9ng65sjmu52dse3je7ub7o8n8h3e8q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.r3dcraft.matbit",
+            "certificate_hash": "f932081ef51eb5fc42e044b1cc2500f606cdfbe4"
+          }
+        },
+        {
+          "client_id": "711713948309-70k3q1v89m78aijug4hnhd5broohn7rf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.r3dcraft.matbit",
+            "certificate_hash": "0de5945cc0ad3abf214600035a71c8034ad87ff2"
+          }
+        },
+        {
           "client_id": "711713948309-lc63eoi3j85jk2csloqb1qh4hejnj5c8.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +45,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "711713948309-lc63eoi3j85jk2csloqb1qh4hejnj5c8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
