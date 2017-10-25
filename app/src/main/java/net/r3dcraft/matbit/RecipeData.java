@@ -1,5 +1,7 @@
 package net.r3dcraft.matbit;
 
+import android.util.Log;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -9,10 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by unibl on 21.10.2017.
+ * Created by Thomas Angeland on 21.10.2017.
  */
 
 public class RecipeData {
+    @Exclude private final static String TAG = "RecipeData";
+
     private String title;
     private String user;
     private String datetime_created;
@@ -21,7 +25,8 @@ public class RecipeData {
     private int portions;
     private int views;
     private String category;
-
+    private int thumbs_up;
+    private int thumbs_down;
     @Exclude private Map<String, Rating> ratings = new HashMap<String, Rating>();
     @Exclude private Map<String, Comment> comments = new HashMap<String, Comment>();
     @Exclude private Map<String, Step> steps = new HashMap<String, Step>();
@@ -151,5 +156,111 @@ public class RecipeData {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    @Exclude
+    public boolean hasTitle() {
+        if (title != null) {
+            return true;
+        }
+        Log.i(TAG, "hasTitle(): Title not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasUser() {
+        if (user != null) {
+            return true;
+        }
+        Log.i(TAG, "hasUser(): User not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasDatetimeCreated() {
+        if (datetime_created != null) {
+            return true;
+        }
+        Log.i(TAG, "hasDatetimeCreated(): Datetime_created not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasDatetimeUpdated() {
+        if (datetime_updated != null) {
+            return true;
+        }
+        Log.i(TAG, "hasDatetimeUpdated(): Datetime_updated not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasTime() {
+        if (time < 0) {
+            return true;
+        }
+        Log.i(TAG, "hasTime(): Time not initialized.");
+        return false;
+    }
+    @Exclude
+    public boolean hasPortions() {
+        if (portions < 0) {
+            return true;
+        }
+        Log.i(TAG, "hasPortions(): Portions not initialized.");
+        return false;
+    }
+    @Exclude
+    public boolean hasViews() {
+        if (views < 0) {
+            return true;
+        }
+        Log.i(TAG, "hasViews(): Views not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasCategory() {
+        if (category != null) {
+            return true;
+        }
+        Log.i(TAG, "hasCategory(): Category not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasRatings() {
+        if (ratings != null) {
+            return true;
+        }
+        Log.i(TAG, "hasRatings(): Ratings not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasComments() {
+        if (comments != null) {
+            return true;
+        }
+        Log.i(TAG, "hasComments(): Comments not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasSteps() {
+        if (steps != null) {
+            return true;
+        }
+        Log.i(TAG, "hasSteps(): Steps not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasIngredients() {
+        if (ingredients != null) {
+            return true;
+        }
+        Log.i(TAG, "hasIngredients(): Ingredients not initialized.");
+        return false;
     }
 }

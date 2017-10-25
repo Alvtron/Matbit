@@ -1,9 +1,8 @@
 package net.r3dcraft.matbit;
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,6 +15,9 @@ import java.util.Map;
  */
 
 public class Recipe {
+    private static final String TAG = "Recipe";
+    private static final boolean THUMBS_UP = true;
+    private static final boolean THUMBS_DOWN = false;
     private String id;
     private RecipeData data;
     private boolean synced = false;
@@ -69,89 +71,68 @@ public class Recipe {
         return data;
     }
 
-    public void addView() {
-        if (data.getViews() != -1 && synced) {
+    public int getRatingAverage() {
+        double total = 0;
+        for (Rating rating : data.getRatings().values())
+            if (rating.getThumbsUp()) total++;
+        BigDecimal average = new BigDecimal(100 * (total / (double)data.getRatings().size()));
+        average = average.setScale(0, RoundingMode.HALF_UP);
+        return average.intValue();
+    }
+
+    public boolean hasData() {
+        if (data != null) {
+            return true;
+        }
+        Log.i(TAG, "hasData(): Data not initialized.");
+        return false;
+    }
+
+    public boolean addView() {
+        if (data.hasViews() && synced) {
             data.setViews(data.getViews() + 1);
-            MatbitDatabase.recipeViews(id).setValue(data.getViews());
+            uploadViews();
+            return true;
+        }
+        else {
+            Log.e(TAG, "addView(): Can't add views to uninitialized views");
+            return false;
         }
     }
 
-    public double getRatingAverage() {
-        double total = 0;
-        for (Rating rating : data.getRatings().values())
-            total += rating.getRating();
-        BigDecimal average = new BigDecimal(total / (double)data.getRatings().size());
-        average = average.setScale(2, RoundingMode.HALF_UP);
-        return average.doubleValue();
+    public void addRating(final boolean VALUE) {
+        data.addRating(new Rating(MatbitDatabase.getCurrentUser(), VALUE, DateTime.nowString()));
+        uploadRatings();
     }
 
-    public double getRatingAveragePercentage() {
-        double total = 0;
-        for (Rating rating : data.getRatings().values())
-            total += rating.getRating();
-        BigDecimal average = new BigDecimal(((total / (double)data.getRatings().size()) / 5.00) * 100.00);
-        average = average.setScale(2, RoundingMode.HALF_UP);
-        return average.doubleValue();
-    }
-
-    public void uploadTitle() {
-        MatbitDatabase.recipeTitle(id).setValue(getData().getTitle());
-    }
+    // DOWNLOAD ------------------------------------------------------------------------------------
 
     public void downloadTitle(DataSnapshot DATA_SNAPSHOT) {
         data.setTitle(DATA_SNAPSHOT.child("title").getValue(String.class));
-    }
-
-    public void uploadUser () {
-        MatbitDatabase.recipeUser(id).setValue(getData().getUser());
     }
 
     public void downloadUser (DataSnapshot DATA_SNAPSHOT) {
         data.setUser(DATA_SNAPSHOT.child("user").getValue(String.class));
     }
 
-    public void uploadDatetimeCreated () {
-        MatbitDatabase.recipeDatetimeCreated(id).setValue(getData().getDatetime_created());
-    }
-
     public void downloadDatetimeCreated (DataSnapshot DATA_SNAPSHOT) {
         data.setDatetime_created(DATA_SNAPSHOT.child("datetime_created").getValue(String.class));
-    }
-
-    public void uploadDatetimeUpdated () {
-        MatbitDatabase.recipeDatetimeUpdated(id).setValue(getData().getDatetime_updated());
     }
 
     public void downloadDatetimeUpdated (DataSnapshot DATA_SNAPSHOT) {
         data.setDatetime_updated(DATA_SNAPSHOT.child("datetime_updated").getValue(String.class));
     }
 
-    public void uploadTime () {
-        MatbitDatabase.recipeTime(id).setValue(getData().getTime());
-    }
-
     public void downloadTime (DataSnapshot DATA_SNAPSHOT) {
         data.setTime(DATA_SNAPSHOT.child("time").getValue(Integer.class));
-    }
-
-    public void uploadPortions () {
-        MatbitDatabase.recipePortions(id).setValue(getData().getPortions());
     }
 
     public void downloadPortions (DataSnapshot DATA_SNAPSHOT) {
         data.setPortions(DATA_SNAPSHOT.child("portions").getValue(Integer.class));
     }
 
-    public void uploadViews () {
-        MatbitDatabase.recipeViews(id).setValue(getData().getViews());;
-    }
-
     public void downloadViews (DataSnapshot DATA_SNAPSHOT) {
         data.setViews(DATA_SNAPSHOT.child("views").getValue(Integer.class));
-    }
-
-    public void uploadRatings () {
-        MatbitDatabase.recipeRatings(id).setValue(getData().getRatings());
     }
 
     public void downloadRatings (DataSnapshot DATA_SNAPSHOT) {
@@ -159,15 +140,11 @@ public class Recipe {
         for (DataSnapshot ratingsSnapshot : DATA_SNAPSHOT.child("ratings").getChildren()) {
             ratings.put(ratingsSnapshot.getKey(), new Rating(
                     ratingsSnapshot.child("user").getValue(String.class),
-                    ratingsSnapshot.child("rating").getValue(Integer.class),
+                    ratingsSnapshot.child("rating").getValue(Boolean.class),
                     ratingsSnapshot.child("datetime").getValue(String.class))
             );
         }
         data.setRatings(ratings);
-    }
-
-    public void uploadComments () {
-        MatbitDatabase.recipeComments(id).setValue(getData().getComments());
     }
 
     public void downloadComments (DataSnapshot DATA_SNAPSHOT) {
@@ -181,21 +158,12 @@ public class Recipe {
         }
         data.setComments(comments);
     }
-
-    public void uploadSteps () {
-        MatbitDatabase.recipeSteps(id).setValue(getData().getSteps());
-    }
-
     public void downloadSteps (DataSnapshot DATA_SNAPSHOT) {
         Map<String, Step> steps = new HashMap<String, Step>();
         for (DataSnapshot stepsSnapshot : DATA_SNAPSHOT.child("steps").getChildren()) {
             steps.put(stepsSnapshot.getKey(), new Step(stepsSnapshot.child("string").getValue(String.class)));
         }
         data.setSteps(steps);
-    }
-
-    public void uploadIngredients () {
-        MatbitDatabase.recipeIngredients(id).setValue(data.getIngredients());
     }
 
     public void downloadIngredients (DataSnapshot DATA_SNAPSHOT) {
@@ -211,11 +179,141 @@ public class Recipe {
         data.setIngredients(ingredients);
     }
 
-    public void uploadAll() {
-        MatbitDatabase.RECIPES.child(id).setValue(data);
-        MatbitDatabase.recipeRatings(id).setValue(data.getRatings());
-        MatbitDatabase.recipeComments(id).setValue(data.getComments());
-        MatbitDatabase.recipeSteps(id).setValue(data.getSteps());
-        MatbitDatabase.recipeIngredients(id).setValue(data.getIngredients());
+    // UPLOAD --------------------------------------------------------------------------------------
+
+    public boolean uploadTitle() {
+        if (hasData() && data.hasTitle()) {
+            MatbitDatabase.recipeTitle(id).setValue(getData().getTitle());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadTitle(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadUser () {
+        if (hasData() && data.hasUser()) {
+            MatbitDatabase.recipeUser(id).setValue(getData().getUser());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadUser(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadDatetimeCreated () {
+        if (hasData() && data.hasDatetimeCreated()) {
+            MatbitDatabase.recipeDatetimeUpdated(id).setValue(getData().getDatetime_created());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadDatetimeCreated(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadDatetimeUpdated () {
+        if (hasData() && data.hasDatetimeUpdated()) {
+            MatbitDatabase.recipeDatetimeUpdated(id).setValue(getData().getDatetime_updated());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadDatetimeUpdated(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadTime () {
+        if (hasData() && data.hasTime()) {
+            MatbitDatabase.recipeTime(id).setValue(getData().getTime());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadTime(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadPortions () {
+        if (hasData() && data.hasPortions()) {
+            MatbitDatabase.recipePortions(id).setValue(getData().getPortions());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadPortions(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadViews () {
+        if (hasData() && data.hasViews()) {
+            MatbitDatabase.recipeViews(id).setValue(getData().getViews());;
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadViews(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadRatings () {
+        if (hasData() && data.hasRatings()) {
+            MatbitDatabase.recipeRatings(id).setValue(getData().getRatings());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadRatings(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadComments () {
+        if (hasData() && data.hasComments()) {
+            MatbitDatabase.recipeComments(id).setValue(getData().getComments());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadComments(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadSteps () {
+        if (hasData() && data.hasSteps()) {
+            MatbitDatabase.recipeSteps(id).setValue(getData().getSteps());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadSteps(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadIngredients () {
+        if (hasData() && data.hasIngredients()) {
+            MatbitDatabase.recipeIngredients(id).setValue(data.getIngredients());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadIngredients(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadAll() {
+        if (hasData()) {
+            MatbitDatabase.RECIPES.child(id).setValue(data);
+            MatbitDatabase.recipeRatings(id).setValue(data.getRatings());
+            MatbitDatabase.recipeComments(id).setValue(data.getComments());
+            MatbitDatabase.recipeSteps(id).setValue(data.getSteps());
+            MatbitDatabase.recipeIngredients(id).setValue(data.getIngredients());
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadAll(): Can't upload empty data");
+            return false;
+        }
     }
 }

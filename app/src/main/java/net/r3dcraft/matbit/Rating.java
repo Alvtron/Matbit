@@ -6,18 +6,18 @@ package net.r3dcraft.matbit;
 
 public class Rating {
     private String user;
-    private int rating;
+    private boolean thumbsUp;
     private String datetime;
 
     public Rating() {
         this.user = new String();
-        this.rating = -1;
+        this.thumbsUp = false;
         this.datetime = DateTime.nowString();
     }
 
-    public Rating(String user, int rating, String datetime) {
+    public Rating(String user, boolean rating, String datetime) {
         this.user = user;
-        this.rating = rating;
+        this.thumbsUp = rating;
         this.datetime = datetime;
     }
 
@@ -29,12 +29,12 @@ public class Rating {
         this.user = user;
     }
 
-    public int getRating() {
-        return rating;
+    public boolean getThumbsUp() {
+        return thumbsUp;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setThumbsUp(boolean thumbsUp) {
+        this.thumbsUp = thumbsUp;
     }
 
     public String getDatetime() {

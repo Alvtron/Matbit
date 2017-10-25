@@ -23,12 +23,16 @@ import java.io.ByteArrayOutputStream;
  */
 
 public final class MatbitDatabase {
-    public static final FirebaseUser USER = FirebaseAuth.getInstance().getCurrentUser();;
+    public static final FirebaseUser USER = FirebaseAuth.getInstance().getCurrentUser();
     public static final FirebaseStorage STORAGE = FirebaseStorage.getInstance();
     public static final StorageReference RECIPE_PHOTOS = STORAGE.getReference("recipe_photos");
     public static final StorageReference USER_PHOTOS = STORAGE.getReference("user_photos");
     public static final DatabaseReference RECIPES = FirebaseDatabase.getInstance().getReference().child("recipes");
     public static final DatabaseReference USERS = FirebaseDatabase.getInstance().getReference().child("users");
+
+    public static String getCurrentUser() {
+        return USER.toString();
+    }
 
     public static DatabaseReference recipeTitle (final String ID) {
         return RECIPES.child(ID).child("title");

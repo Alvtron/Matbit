@@ -73,7 +73,7 @@ public class FragmentRecipeInfo extends Fragment {
                 MatbitDatabase.USERS.child(recipe.getData().getUser()).addListenerForSingleValueEvent(new ValueEventListener()  {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        txt_rating.setText(Double.toString(recipe.getRatingAveragePercentage()) + "%");
+                        txt_rating.setText(Double.toString(recipe.getRatingAverage()) + "%");
                         txt_time.setText(Integer.toString(recipe.getData().getTime()));
                         txt_views.setText(Integer.toString(recipe.getData().getViews()));
                         txt_username.setText(dataSnapshot.child("nickname").getValue(String.class));
