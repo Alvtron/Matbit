@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="net.r3dcraft.matbit.AddRecipeActivity">
+
+    <Button
+        android:id="@+id/activity_add_recipe_image_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Select Photo"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/activity_add_recipe_image"
+        android:layout_width="0dp"
+        android:layout_height="175dp"
+        android:src="@drawable/ic_launcher"
+        android:scaleType="fitCenter"
+        android:background="@color/grey_300"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_add_recipe_image_btn"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_add_recipe_image">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/activity_add_recipe_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="Tittel"
+            android:maxLength="100"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_input_layout_title">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/activity_add_recipe_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tid (00:00)"
+            android:inputType="time"
+            android:maxLength="7"/>
+
+
+
+        
+    </android.support.design.widget.TextInputLayout>
+
+</android.support.constraint.ConstraintLayout>

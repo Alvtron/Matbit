@@ -1,0 +1,55 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'MatbitKey'
+            keyPassword '#Alvtron1'
+            storeFile file('G:/Google Drive//Hogskolen i Ostfold/Android Workspace/Matbit/matbit.jks')
+            //storeFile file('C:/Users/thoma/Google Drive/Hogskolen i Ostfold/Android Workspace/Matbit/matbit.jks')
+            storePassword '#Alvtron1'
+        }
+    }
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+    defaultConfig {
+        applicationId "net.r3dcraft.matbit"
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    // https://github.com/hdodenhof/CircleImageView
+    compile 'com.android.support:appcompat-v7:26.0.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:support-v4:26.0.1'
+    compile 'com.android.support:design:26.0.1'
+    compile 'com.android.support:recyclerview-v7:26.0.1'
+    compile 'com.android.support:cardview-v7:26.0.1'
+    compile 'com.android.support:support-vector-drawable:26.0.1'
+    compile 'com.google.firebase:firebase-auth:11.4.2'
+    compile 'com.google.firebase:firebase-core:11.4.2'
+    compile 'com.google.firebase:firebase-database:11.4.2'
+    compile 'com.google.firebase:firebase-storage:11.4.2'
+    compile 'com.google.android.gms:play-services-auth:11.4.2'
+    compile 'com.google.firebase:firebase-messaging:11.4.2'
+    compile 'de.hdodenhof:circleimageview:1.3.0'
+}
+
+// Add Google Firebase to Matbit
+apply plugin: 'com.google.gms.google-services'

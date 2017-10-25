@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "711713948309",
+    "firebase_url": "https://matbit-no.firebaseio.com",
+    "project_id": "matbit-no",
+    "storage_bucket": "matbit-no.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:711713948309:android:661b0a2fd1358f88",
+        "android_client_info": {
+          "package_name": "net.r3dcraft.matbit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "711713948309-lc63eoi3j85jk2csloqb1qh4hejnj5c8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxlcaTqHS_O-kH-NE1YP63ySnU-JN99TA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
