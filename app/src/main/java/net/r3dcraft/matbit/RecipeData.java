@@ -27,6 +27,7 @@ public class RecipeData {
     private String category;
     private int thumbs_up;
     private int thumbs_down;
+    private String info;
     @Exclude private Map<String, Rating> ratings = new HashMap<String, Rating>();
     @Exclude private Map<String, Comment> comments = new HashMap<String, Comment>();
     @Exclude private Map<String, Step> steps = new HashMap<String, Step>();
@@ -72,6 +73,30 @@ public class RecipeData {
 
     public void setTime(int time) {
         this.time = time;
+    }
+
+    public int getThumbs_up() {
+        return thumbs_up;
+    }
+
+    public void setThumbs_up(int thumbs_up) {
+        this.thumbs_up = thumbs_up;
+    }
+
+    public int getThumbs_down() {
+        return thumbs_down;
+    }
+
+    public void setThumbs_down(int thumbs_down) {
+        this.thumbs_down = thumbs_down;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public int getPortions() {
@@ -163,7 +188,7 @@ public class RecipeData {
         if (title != null) {
             return true;
         }
-        Log.i(TAG, "hasTitle(): Title not initialized.");
+        Log.i(TAG, "hasTitle(): title not initialized.");
         return false;
     }
 
@@ -172,7 +197,7 @@ public class RecipeData {
         if (user != null) {
             return true;
         }
-        Log.i(TAG, "hasUser(): User not initialized.");
+        Log.i(TAG, "hasUser(): user not initialized.");
         return false;
     }
 
@@ -181,7 +206,7 @@ public class RecipeData {
         if (datetime_created != null) {
             return true;
         }
-        Log.i(TAG, "hasDatetimeCreated(): Datetime_created not initialized.");
+        Log.i(TAG, "hasDatetimeCreated(): datetime_created not initialized.");
         return false;
     }
 
@@ -190,32 +215,32 @@ public class RecipeData {
         if (datetime_updated != null) {
             return true;
         }
-        Log.i(TAG, "hasDatetimeUpdated(): Datetime_updated not initialized.");
+        Log.i(TAG, "hasDatetimeUpdated(): datetime_updated not initialized.");
         return false;
     }
 
     @Exclude
     public boolean hasTime() {
-        if (time < 0) {
+        if (time >= 0) {
             return true;
         }
-        Log.i(TAG, "hasTime(): Time not initialized.");
+        Log.i(TAG, "hasTime(): time not initialized.");
         return false;
     }
     @Exclude
     public boolean hasPortions() {
-        if (portions < 0) {
+        if (portions >= 0) {
             return true;
         }
-        Log.i(TAG, "hasPortions(): Portions not initialized.");
+        Log.i(TAG, "hasPortions(): portions not initialized.");
         return false;
     }
     @Exclude
     public boolean hasViews() {
-        if (views < 0) {
+        if (views >= 0) {
             return true;
         }
-        Log.i(TAG, "hasViews(): Views not initialized.");
+        Log.i(TAG, "hasViews(): views not initialized.");
         return false;
     }
 
@@ -224,7 +249,7 @@ public class RecipeData {
         if (category != null) {
             return true;
         }
-        Log.i(TAG, "hasCategory(): Category not initialized.");
+        Log.i(TAG, "hasCategory(): category not initialized.");
         return false;
     }
 
@@ -233,7 +258,7 @@ public class RecipeData {
         if (ratings != null) {
             return true;
         }
-        Log.i(TAG, "hasRatings(): Ratings not initialized.");
+        Log.i(TAG, "hasRatings(): ratings not initialized.");
         return false;
     }
 
@@ -242,7 +267,7 @@ public class RecipeData {
         if (comments != null) {
             return true;
         }
-        Log.i(TAG, "hasComments(): Comments not initialized.");
+        Log.i(TAG, "hasComments(): comments not initialized.");
         return false;
     }
 
@@ -251,7 +276,7 @@ public class RecipeData {
         if (steps != null) {
             return true;
         }
-        Log.i(TAG, "hasSteps(): Steps not initialized.");
+        Log.i(TAG, "hasSteps(): steps not initialized.");
         return false;
     }
 
@@ -260,7 +285,34 @@ public class RecipeData {
         if (ingredients != null) {
             return true;
         }
-        Log.i(TAG, "hasIngredients(): Ingredients not initialized.");
+        Log.i(TAG, "hasIngredients(): ingredients not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasInfo() {
+        if (info != null) {
+            return true;
+        }
+        Log.i(TAG, "hasInfo(): info not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasThumbsUp() {
+        if (thumbs_up >= 0) {
+            return true;
+        }
+        Log.i(TAG, "hasThumbsUp(): thumbs_up not initialized.");
+        return false;
+    }
+
+    @Exclude
+    public boolean hasThumbsDown() {
+        if (thumbs_down >= 0) {
+            return true;
+        }
+        Log.i(TAG, "hasThumbsDown(): thumbs_down not initialized.");
         return false;
     }
 }

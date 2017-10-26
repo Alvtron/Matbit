@@ -1,11 +1,14 @@
 package net.r3dcraft.matbit;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +26,7 @@ import java.io.ByteArrayOutputStream;
  */
 
 public final class MatbitDatabase {
+    private static final String TAG = "MatbitDatabase";
     public static final FirebaseUser USER = FirebaseAuth.getInstance().getCurrentUser();
     public static final FirebaseStorage STORAGE = FirebaseStorage.getInstance();
     public static final StorageReference RECIPE_PHOTOS = STORAGE.getReference("recipe_photos");
@@ -78,6 +82,18 @@ public final class MatbitDatabase {
         return RECIPES.child(ID).child("ingredients");
     }
 
+    public static DatabaseReference recipeThumbsUp (final String ID) {
+        return RECIPES.child(ID).child("thumbs_up");
+    }
+
+    public static DatabaseReference recipeThumbsDown (final String ID) {
+        return RECIPES.child(ID).child("thumbs_down");
+    }
+
+    public static DatabaseReference recipeInfo (final String ID) {
+        return RECIPES.child(ID).child("info");
+    }
+
     public static void uploadNewRecipe(final RecipeData recipeData) {
         String uid = MatbitDatabase.RECIPES.push().getKey();
         RECIPES.child(uid).setValue(recipeData);
@@ -89,5 +105,21 @@ public final class MatbitDatabase {
 
     public static void uploadNewUser(final UserData userData) {
         USERS.child(USER.getUid()).setValue(userData);
+    }
+
+    public static void databaseImageToImageView (final String USER_UID, final Context CONTEXT, final ImageView IMAGE_VIEW) {
+        MatbitDatabase.USER_PHOTOS.child(USER_UID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(CONTEXT)
+                        .load(uri)
+                        .into(IMAGE_VIEW);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d(TAG, "Could not load recipe photo");
+            }
+        });
     }
 }

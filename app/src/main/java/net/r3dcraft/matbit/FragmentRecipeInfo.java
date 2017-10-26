@@ -69,6 +69,7 @@ public class FragmentRecipeInfo extends Fragment {
                 textview_title.setText(recipe.getData().getTitle());
                 //created = recipe.getData().getDatetime_created();
                 //updated = recipe.getData().getDatetime_updated();
+                txt_info.setText(dataSnapshot.child("info").getValue(String.class));
 
                 MatbitDatabase.USERS.child(recipe.getData().getUser()).addListenerForSingleValueEvent(new ValueEventListener()  {
                     @Override
@@ -77,7 +78,6 @@ public class FragmentRecipeInfo extends Fragment {
                         txt_time.setText(Integer.toString(recipe.getData().getTime()));
                         txt_views.setText(Integer.toString(recipe.getData().getViews()));
                         txt_username.setText(dataSnapshot.child("nickname").getValue(String.class));
-                        txt_info.setText("");
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {

@@ -4,10 +4,12 @@
     <color name="colorPrimaryDark">#8e0000</color>
     <color name="colorAccent">#ff5f52</color>
 
+    <color name="transparent">@null</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="grey_100">#F5F5F5</color>
     <color name="grey_300">#E0E0E0</color>
+    <color name="default_grey">#37000000</color>
 
-    <color name="gold_star">#FED700</color>
+    <color name="gold">#FED700</color>
 </resources>

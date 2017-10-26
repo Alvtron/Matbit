@@ -65,7 +65,7 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
             }
         });
 
-        Collections.sort(recipes, new RecipeDateComparator());
+        Collections.sort(recipes, new Recipe.RecipeDateComparator());
         recipeAdapter = new RecipeAdapter(recipes, SearchActivity.this);
         recyclerView.setAdapter(recipeAdapter);
 
@@ -89,15 +89,15 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                 filter = parent.getItemAtPosition(pos).toString();
                 switch (filter) {
                     case "Nyeste":
-                        Collections.sort(recipes, new RecipeDateComparator());
+                        Collections.sort(recipes, new Recipe.RecipeDateComparator());
                     case "Mest sett":
-                        Collections.sort(recipes, new RecipeViewsComparator());
+                        Collections.sort(recipes, new Recipe.RecipeViewsComparator());
                     case "Mest likt":
-                        Collections.sort(recipes, new RecipeRatingComparator());
+                        Collections.sort(recipes, new Recipe.RecipeRatingComparator());
                     case "Tid":
-                        Collections.sort(recipes, new RecipeTimeComparator());
+                        Collections.sort(recipes, new Recipe.RecipeTimeComparator());
                     case "Alfabetisk":
-                        Collections.sort(recipes, new RecipeAlphabeticalComparator());
+                        Collections.sort(recipes, new Recipe.RecipeAlphabeticalComparator());
                 }
 
             case R.id.activity_search_category_spinner:
@@ -127,45 +127,4 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
     }
-
-    public class RecipeDateComparator implements Comparator<Recipe> {
-        @Override
-        public int compare(Recipe o1, Recipe o2) {
-            return DateTime.stringToDate(o2.getData().getDatetime_created()).compareTo(
-                    DateTime.stringToDate(o1.getData().getDatetime_created()));
-        }
-    }
-
-    public class RecipeViewsComparator implements Comparator<Recipe> {
-        @Override
-        public int compare(Recipe o1, Recipe o2) {
-            return o2.getData().getViews() - (o1.getData().getViews());
-        }
-    }
-
-    public class RecipeRatingComparator implements Comparator<Recipe> {
-        @Override
-        public int compare(Recipe o1, Recipe o2) {
-            return o2.getData().getRatings().size() - (o1.getData().getRatings().size());
-        }
-    }
-
-    public class RecipeTimeComparator implements Comparator<Recipe> {
-        @Override
-        public int compare(Recipe o1, Recipe o2) {
-            return o2.getData().getTime() - (o1.getData().getTime());
-        }
-    }
-
-    public class RecipeAlphabeticalComparator implements Comparator<Recipe> {
-        @Override
-        public int compare(Recipe o1, Recipe o2) {
-            Locale noLocale = new Locale("no", "NO");
-            Collator noCollator = Collator.getInstance(noLocale);
-            noCollator.setStrength(Collator.PRIMARY);
-            return noCollator.compare(o2.getData().getTitle(), o1.getData().getTitle());
-        }
-    }
-
-
 }

@@ -6,8 +6,11 @@ import com.google.firebase.database.DataSnapshot;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -135,6 +138,18 @@ public class Recipe {
         data.setViews(DATA_SNAPSHOT.child("views").getValue(Integer.class));
     }
 
+    public void downloadThumbsUp (DataSnapshot DATA_SNAPSHOT) {
+        data.setThumbs_up(DATA_SNAPSHOT.child("thumbs_up").getValue(Integer.class));
+    }
+
+    public void downloadThumbsDown (DataSnapshot DATA_SNAPSHOT) {
+        data.setThumbs_down(DATA_SNAPSHOT.child("thumbs_down").getValue(Integer.class));
+    }
+
+    public void downloadInfo (DataSnapshot DATA_SNAPSHOT) {
+        data.setInfo(DATA_SNAPSHOT.child("info").getValue(String.class));
+    }
+
     public void downloadRatings (DataSnapshot DATA_SNAPSHOT) {
         Map<String, Rating> ratings = new HashMap<String, Rating>();
         for (DataSnapshot ratingsSnapshot : DATA_SNAPSHOT.child("ratings").getChildren()) {
@@ -258,6 +273,39 @@ public class Recipe {
         }
     }
 
+    public boolean uploadInfo () {
+        if (hasData() && data.hasInfo()) {
+            MatbitDatabase.recipeInfo(id).setValue(getData().getInfo());;
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadInfo(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadThumbsUp () {
+        if (hasData() && data.hasThumbsUp()) {
+            MatbitDatabase.recipeThumbsUp(id).setValue(getData().getThumbs_up());;
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadThumbsUp(): Can't upload empty values");
+            return false;
+        }
+    }
+
+    public boolean uploadThumbsDown () {
+        if (hasData() && data.hasThumbsDown()) {
+            MatbitDatabase.recipeThumbsDown(id).setValue(getData().getThumbs_down());;
+            return true;
+        }
+        else {
+            Log.e(TAG, "uploadThumbsDown(): Can't upload empty values");
+            return false;
+        }
+    }
+
     public boolean uploadRatings () {
         if (hasData() && data.hasRatings()) {
             MatbitDatabase.recipeRatings(id).setValue(getData().getRatings());
@@ -314,6 +362,47 @@ public class Recipe {
         else {
             Log.e(TAG, "uploadAll(): Can't upload empty data");
             return false;
+        }
+    }
+
+    // STATIC METHODS ------------------------------------------------------------------------------
+
+    public static class RecipeDateComparator implements Comparator<Recipe> {
+        @Override
+        public int compare(Recipe o1, Recipe o2) {
+            return DateTime.stringToDate(o2.getData().getDatetime_created()).compareTo(
+                    DateTime.stringToDate(o1.getData().getDatetime_created()));
+        }
+    }
+
+    public static class RecipeViewsComparator implements Comparator<Recipe> {
+        @Override
+        public int compare(Recipe o1, Recipe o2) {
+            return o2.getData().getViews() - (o1.getData().getViews());
+        }
+    }
+
+    public static class RecipeRatingComparator implements Comparator<Recipe> {
+        @Override
+        public int compare(Recipe o1, Recipe o2) {
+            return o2.getData().getRatings().size() - (o1.getData().getRatings().size());
+        }
+    }
+
+    public static class RecipeTimeComparator implements Comparator<Recipe> {
+        @Override
+        public int compare(Recipe o1, Recipe o2) {
+            return o2.getData().getTime() - (o1.getData().getTime());
+        }
+    }
+
+    public static class RecipeAlphabeticalComparator implements Comparator<Recipe> {
+        @Override
+        public int compare(Recipe o1, Recipe o2) {
+            Locale noLocale = new Locale("no", "NO");
+            Collator noCollator = Collator.getInstance(noLocale);
+            noCollator.setStrength(Collator.PRIMARY);
+            return noCollator.compare(o2.getData().getTitle(), o1.getData().getTitle());
         }
     }
 }
