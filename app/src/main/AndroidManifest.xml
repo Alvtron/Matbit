@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
+        android:name=".MatbitApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_matbit"
         android:label="@string/app_name"
@@ -14,7 +15,7 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".BaseActivity" />
-        <activity android:name=".GoogleSignInActivity">
+        <activity android:name=".SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

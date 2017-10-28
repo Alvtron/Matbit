@@ -7,6 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+/**
+ * Created by Thomas Angeland, student at Ostfold University College, on 16.10.2017
+ */
+
 public class ProfileActivity extends AppCompatActivity {
 
     @Override

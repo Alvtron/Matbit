@@ -22,17 +22,26 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 /**
- * Created by unibl on 16.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 16.10.2017.
  */
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
     private static final String TAG = "RecipeAdapter";
+
     private ArrayList<Recipe> recipeList;
-    static private Context context;
+    private static Context context;
 
     public RecipeAdapter(ArrayList<Recipe> recipeList, Context context) {
         this.recipeList = recipeList;
         this.context = context;
+    }
+
+    public ArrayList<Recipe> getRecipeList() {
+        return recipeList;
+    }
+
+    public void setRecipeList(ArrayList<Recipe> recipeList) {
+        this.recipeList = recipeList;
     }
 
     @Override
@@ -119,35 +128,23 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
             vRecipePhoto.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    recipe.addView();
-                    gotToRecipe(recipe.getId());
+                    MatbitDatabase.gotToRecipe(context, recipe);
                 }
             });
 
             vUserPhoto.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    goToUser(recipe.getData().getUser());
+                    MatbitDatabase.goToUser(context, recipe.getData().getUser());
                 }
             });
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    gotToRecipe(recipe.getId());
+                    MatbitDatabase.gotToRecipe(context, recipe);
                 }
             });
         }
     }
 
-    private static void gotToRecipe(final String UID) {
 
-        Intent intent = new Intent(context, RecipeActivity.class);
-        intent.putExtra("recipeID", UID);
-        context.startActivity(intent);
-    }
-
-    private static void goToUser(final String UID) {
-        Intent intent = new Intent(context, ProfileActivity.class);
-        intent.putExtra("userID", UID);
-        context.startActivity(intent);
-    }
 }

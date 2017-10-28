@@ -27,7 +27,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Created by unibl on 22.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 22.10.2017.
  */
 
 class UploadUserPhoto extends AsyncTask<String, Void, Void> {

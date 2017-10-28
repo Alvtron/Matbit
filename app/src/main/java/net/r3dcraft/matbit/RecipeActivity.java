@@ -10,10 +10,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017.
+ */
+
 public class RecipeActivity extends AppCompatActivity {
 
     private static String TAG = "RecipeActivity";
-    public static Context context;
+    private static Context context;
+    private Toolbar toolbar;
     private RecipeTabAdapter recipeTabAdapter;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -29,7 +34,7 @@ public class RecipeActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         recipeID = bundle.getString("recipeID");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         recipeTabAdapter = new RecipeTabAdapter(getSupportFragmentManager(), bundle);

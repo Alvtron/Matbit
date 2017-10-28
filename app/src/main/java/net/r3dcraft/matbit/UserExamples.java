@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by unibl on 22.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 22.10.2017.
  */
 
 public final class UserExamples {

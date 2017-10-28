@@ -26,8 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
 
-public class SearchActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
+public class SearchActivity extends AppCompatActivity {
     private final String TAG = "SearchActivity";
     private ArrayList<Recipe> recipes = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -42,14 +41,70 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_search);
 
         recyclerView = (RecyclerView)findViewById(R.id.activity_search_recyclerview);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
+        recipeAdapter = new RecipeAdapter(recipes, SearchActivity.this);
+        recyclerView.setAdapter(recipeAdapter);
 
-        // Read from Firebase database only once (one snapshot)
+        spinner_filter = (Spinner) findViewById(R.id.activity_search_filter_spinner);
+        adapter_filter = ArrayAdapter.createFromResource(this, R.array.filters, android.R.layout.simple_spinner_item);
+        adapter_filter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_filter.setAdapter(adapter_filter);
+
+        spinner_category = (Spinner) findViewById(R.id.activity_search_category_spinner);
+        adpater_category = ArrayAdapter.createFromResource(this, R.array.categories, android.R.layout.simple_spinner_item);
+        adpater_category.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_category.setAdapter(adpater_category);
+
+        spinner_filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filter = parent.getItemAtPosition(position).toString();
+
+                switch (filter) {
+                    case "Nyeste":
+                        Collections.sort(recipeAdapter.getRecipeList(), new Recipe.RecipeDateComparator());
+                    case "Mest sett":
+                        Collections.sort(recipeAdapter.getRecipeList(), new Recipe.RecipeViewsComparator());
+                    case "Mest likt":
+                        Collections.sort(recipeAdapter.getRecipeList(), new Recipe.RecipeRatingComparator());
+                    case "Tid":
+                        Collections.sort(recipeAdapter.getRecipeList(), new Recipe.RecipeTimeComparator());
+                    case "Alfabetisk":
+                        Collections.sort(recipeAdapter.getRecipeList(), new Recipe.RecipeAlphabeticalComparator());
+                }
+                recipeAdapter.notifyDataSetChanged();
+            }
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        spinner_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                category = parent.getItemAtPosition(position).toString();
+                recipeAdapter.setRecipeList(recipes);
+
+                if (category.equals("Alle")) {
+                    ArrayList<Recipe> removeObjects = new ArrayList<Recipe>();
+                    for (Recipe recipe : recipeAdapter.getRecipeList())
+                        if (recipe.getData().getCategory().equals(category))
+                            removeObjects.add(recipe);
+                    recipeAdapter.getRecipeList().removeAll(removeObjects);
+                }
+                recipeAdapter.notifyDataSetChanged();
+            }
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+
         MatbitDatabase.RECIPES.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -57,6 +112,8 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                     Recipe recipe = new Recipe(recipesSnapshot);
                     recipes.add(recipe);
                 }
+                Collections.sort(recipes, new Recipe.RecipeDateComparator());
+                recipeAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -64,58 +121,25 @@ public class SearchActivity extends AppCompatActivity implements AdapterView.OnI
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
-
-        Collections.sort(recipes, new Recipe.RecipeDateComparator());
-        recipeAdapter = new RecipeAdapter(recipes, SearchActivity.this);
-        recyclerView.setAdapter(recipeAdapter);
-
-        spinner_filter = (Spinner) findViewById(R.id.activity_search_filter_spinner);
-        spinner_filter.setOnItemSelectedListener(this);
-        adapter_filter = ArrayAdapter.createFromResource(this, R.array.filters, android.R.layout.simple_spinner_item);
-        adapter_filter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_filter.setAdapter(adapter_filter);
-
-        spinner_category = (Spinner) findViewById(R.id.activity_search_category_spinner);
-        spinner_category.setOnItemSelectedListener(this);
-        adpater_category = ArrayAdapter.createFromResource(this, R.array.categories, android.R.layout.simple_spinner_item);
-        adpater_category.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_category.setAdapter(adpater_category);
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        switch (parent.getId()) {
-            case R.id.activity_search_filter_spinner:
-                filter = parent.getItemAtPosition(pos).toString();
-                switch (filter) {
-                    case "Nyeste":
-                        Collections.sort(recipes, new Recipe.RecipeDateComparator());
-                    case "Mest sett":
-                        Collections.sort(recipes, new Recipe.RecipeViewsComparator());
-                    case "Mest likt":
-                        Collections.sort(recipes, new Recipe.RecipeRatingComparator());
-                    case "Tid":
-                        Collections.sort(recipes, new Recipe.RecipeTimeComparator());
-                    case "Alfabetisk":
-                        Collections.sort(recipes, new Recipe.RecipeAlphabeticalComparator());
-                }
-
-            case R.id.activity_search_category_spinner:
-                category = parent.getItemAtPosition(pos).toString();
-                if (category != "Alle") {
-                    ArrayList<Recipe> tmp = recipes;
-                    for (Recipe recipe : recipes)
-                        if (recipe.getData().getCategory() == category)
-                            tmp.add(recipe);
-                    recipeAdapter = new RecipeAdapter(tmp, SearchActivity.this);
-                    recyclerView.setAdapter(recipeAdapter);
-                }
-        }
-        recipeAdapter.notifyDataSetChanged();
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: ");
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: ");
+        recipes.clear();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: ");
     }
 
     @Override

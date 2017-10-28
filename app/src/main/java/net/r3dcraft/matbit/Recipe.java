@@ -3,18 +3,20 @@ package net.r3dcraft.matbit;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.Exclude;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 /**
- * Created by unibl on 09.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017.
  */
 
 public class Recipe {
@@ -26,7 +28,7 @@ public class Recipe {
     private boolean synced = false;
 
     public Recipe() {
-        // Default constructor
+        data = new RecipeData();
     }
 
     @Override
@@ -58,6 +60,26 @@ public class Recipe {
         return synced = true;
     }
 
+    public void createNewRecipe(String title, int time, int portions, String category, String info, ArrayList<Step> steps, ArrayList<Ingredient> ingredients) {
+        data.setTitle(title);
+        data.setUser(MatbitDatabase.getCurrentUser());
+        data.setDatetime_created(DateTime.nowString());
+        data.setDatetime_updated(DateTime.nowString());
+        data.setTime(time);
+        data.setPortions(portions);
+        data.setViews(0);
+        data.setCategory(category);
+        data.setThumbs_up(0);
+        data.setThumbs_down(0);
+        data.setInfo(info);
+        data.setRatings(new HashMap<String, Rating>());
+        data.setComments(new HashMap<String, Comment>());
+        for (Step step : steps)
+            data.addStep(step);
+        for (Ingredient ingredient : ingredients)
+            data.addIngredient(ingredient);
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -75,12 +97,16 @@ public class Recipe {
     }
 
     public int getRatingAverage() {
-        double total = 0;
-        for (Rating rating : data.getRatings().values())
-            if (rating.getThumbsUp()) total++;
-        BigDecimal average = new BigDecimal(100 * (total / (double)data.getRatings().size()));
-        average = average.setScale(0, RoundingMode.HALF_UP);
-        return average.intValue();
+        if (data.hasRatings()) {
+            double total = 0;
+            for (Rating rating : data.getRatings().values())
+                if (rating.getThumbsUp()) total++;
+            BigDecimal average = new BigDecimal(100 * (total / (double) data.getRatings().size()));
+            average = average.setScale(0, RoundingMode.HALF_UP);
+            return average.intValue();
+        }
+        else
+            return 0;
     }
 
     public boolean hasData() {

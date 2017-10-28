@@ -1,7 +1,6 @@
 package net.r3dcraft.matbit;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -19,31 +18,35 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
-public class MainActivity
-        extends AppCompatActivity
+/**
+ * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017
+ */
+
+public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static String TAG = "WallActivity";
 
-    // Firebase user & database
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();;
-    private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-
-    // Reference to an image file in Firebase Storage
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference("recipe_photos");
+    private Toolbar toolbar;
+    private ImageView featured_recipe_photo;
+    private NewsFeedAdapter newsFeedAdapter;
+    private LinearLayoutManager llm;
+    private ArrayList<NewsFeed> newsFeedList;
+    private DrawerLayout drawer;
+    private ActionBarDrawerToggle toggle;
+    private NavigationView navigationView;
+    private View header;
+    private ImageView user_photo;
+    private TextView user_name;
+    private TextView user_email;
+    private BottomNavigationView bottomNavigationView;
 
     private RecyclerView mRecyclerView;
 
@@ -52,61 +55,42 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Featured recipe
-        final ImageView featured_recipe_photo = (ImageView) findViewById(R.id.content_main_featured_recipe_photo);
-        storageRef.child("KT4NTZTzFduj3DNLQgg.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Glide.with(MainActivity.this).load(uri).into(featured_recipe_photo);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
+        featured_recipe_photo = (ImageView) findViewById(R.id.content_main_featured_recipe_photo);
 
         // Feed
         mRecyclerView = (RecyclerView)findViewById(R.id.content_main_recyclerview_feed);
-
         mRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        ArrayList<NewsFeed> newsFeedList = new ArrayList<NewsFeed>();
-
+        newsFeedList = new ArrayList<NewsFeed>();
         newsFeedList.add(new NewsFeed());
         newsFeedList.add(new NewsFeed());
         newsFeedList.add(new NewsFeed());
 
-        NewsFeedAdapter ca = new NewsFeedAdapter(newsFeedList, MainActivity.this);
-        mRecyclerView.setAdapter(ca);
+        newsFeedAdapter = new NewsFeedAdapter(newsFeedList, MainActivity.this);
+        mRecyclerView.setAdapter(newsFeedAdapter);
 
         // Navigation bar
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        // User profiling
-        View header = navigationView.getHeaderView(0);
-        ImageView user_photo = (ImageView) header.findViewById(R.id.activity_main_user_photo);
-        Glide.with(MainActivity.this).load(user.getPhotoUrl()).into(user_photo);
-        TextView user_name = (TextView) header.findViewById(R.id.activity_main_user_name);
-        user_name.setText(user.getDisplayName());
-        TextView user_email = (TextView) header.findViewById(R.id.activity_main_user_email);
-        user_email.setText(user.getEmail());
+        header = navigationView.getHeaderView(0);
+        user_photo = (ImageView) header.findViewById(R.id.activity_main_user_photo);
+        user_name = (TextView) header.findViewById(R.id.activity_main_user_name);
+        user_email = (TextView) header.findViewById(R.id.activity_main_user_email);
 
         // Bottom navigation
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+        bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.navigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
@@ -129,8 +113,18 @@ public class MainActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        user_name.setText(MatbitDatabase.USER.getDisplayName());
+        user_email.setText(MatbitDatabase.USER.getEmail());
+
+        MatbitDatabase.recipePictureToImageView("KT4NTZTzFduj3DNLQgg", MainActivity.this, featured_recipe_photo);
+        MatbitDatabase.currentUserPictureToImageView(MainActivity.this, user_photo);
+    }
+
+    @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -160,7 +154,6 @@ public class MainActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -178,7 +171,6 @@ public class MainActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

@@ -44,6 +44,41 @@
         <item>Snacks</item>
     </string-array>
 
+    <string-array name="measurements">
+        <item>kg</item>
+        <item>g</item>
+        <item>mg</item>
+        <item>liter</item>
+        <item>l</item>
+        <item>dl</item>
+        <item>ml</item>
+        <item>ts</item>
+        <item>ss</item>
+        <item>kopp</item>
+        <item>tekopp</item>
+        <item>kaffekopp</item>
+        <item>dusin</item>
+        <item>snes</item>
+        <item>boks</item>
+        <item>stk</item>
+        <item>pk</item>
+        <item>pose</item>
+        <item>eske</item>
+        <item>sekk</item>
+        <item>bag</item>
+        <item>bunt</item>
+        <item>klype</item>
+        <item>knipe</item>
+        <item>kryddermål</item>
+        <item>lår</item>
+        <item>bryst</item>
+        <item>m</item>
+        <item>cm</item>
+        <item>skiver</item>
+        <item>stilk</item>
+    </string-array>
+
+
     <string name="action_settings">Settings</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

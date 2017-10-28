@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Thomas Angeland on 21.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 21.10.2017.
  */
 
 public class RecipeData {
@@ -255,7 +255,7 @@ public class RecipeData {
 
     @Exclude
     public boolean hasRatings() {
-        if (ratings != null) {
+        if (ratings.size() != 0) {
             return true;
         }
         Log.i(TAG, "hasRatings(): ratings not initialized.");
@@ -264,7 +264,7 @@ public class RecipeData {
 
     @Exclude
     public boolean hasComments() {
-        if (comments != null) {
+        if (comments.size() != 0) {
             return true;
         }
         Log.i(TAG, "hasComments(): comments not initialized.");
@@ -273,7 +273,7 @@ public class RecipeData {
 
     @Exclude
     public boolean hasSteps() {
-        if (steps != null) {
+        if (steps.size() != 0) {
             return true;
         }
         Log.i(TAG, "hasSteps(): steps not initialized.");
@@ -282,7 +282,7 @@ public class RecipeData {
 
     @Exclude
     public boolean hasIngredients() {
-        if (ingredients != null) {
+        if (ingredients.size() != 0) {
             return true;
         }
         Log.i(TAG, "hasIngredients(): ingredients not initialized.");

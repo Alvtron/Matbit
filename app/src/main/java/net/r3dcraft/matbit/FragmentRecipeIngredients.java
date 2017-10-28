@@ -1,5 +1,6 @@
 package net.r3dcraft.matbit;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -19,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by unibl on 24.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
  */
 
 public class FragmentRecipeIngredients extends Fragment {
@@ -27,32 +29,43 @@ public class FragmentRecipeIngredients extends Fragment {
     private String recipeID;
     private Recipe recipe;
     private List<Ingredient> ingredients;
-    private ListView listview;
+    private TextView txt_portions;
     private SeekBar seekBar;
+    private ListView listview;
     private int portions;
     private IngredientAdapter ingredientAdapter;
+    private Context context;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootViewInfo = inflater.inflate(R.layout.fragment_recipe_ingredients, container, false);
         ingredients = new ArrayList<Ingredient>();
+        context = getActivity();
         recipeID = getArguments().getString("recipeID");
-        listview = (ListView) rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_listview);
+        txt_portions = (TextView) rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_portions);
         seekBar = (SeekBar) rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_seekBar);
-        seekBar.setMax(12);
+        seekBar.setMax(11);
+        listview = (ListView) rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_listview);
+
+        return rootViewInfo;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         // Get recipe information
         MatbitDatabase.RECIPES.child(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipe = new Recipe(dataSnapshot);
-
                 for (Ingredient ingredient : recipe.getData().getIngredients().values()) {
                     ingredients.add(ingredient);
                 }
                 portions = recipe.getData().getPortions();
+                txt_portions.setText(Integer.toString(portions) + " porsjoner");
                 seekBar.setProgress(portions - 1);
-                ingredientAdapter = new IngredientAdapter(RecipeActivity.context, ingredients);
+                ingredientAdapter = new IngredientAdapter(context, ingredients);
                 listview.setAdapter(ingredientAdapter);
             }
             @Override
@@ -62,24 +75,20 @@ public class FragmentRecipeIngredients extends Fragment {
         });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 if (ingredientAdapter != null) {
                     for (Ingredient ingredient : ingredientAdapter.getData())
                         ingredient.setAmount((ingredient.getAmount() / portions) * (progresValue + 1));
                     portions = progresValue + 1;
+                    txt_portions.setText(Integer.toString(portions) + " porsjoner");
                     ingredientAdapter.notifyDataSetChanged();
                 }
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-
-        return rootViewInfo;
     }
 }

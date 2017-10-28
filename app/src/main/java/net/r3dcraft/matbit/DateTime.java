@@ -1,7 +1,7 @@
 package net.r3dcraft.matbit;
 
 /**
- * Created by unibl on 19.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 19.10.2017.
  */
 
 import java.text.DateFormat;

@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 /**
- * Created by unibl on 24.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
  */
 
 public class RecipeTabAdapter extends FragmentPagerAdapter {

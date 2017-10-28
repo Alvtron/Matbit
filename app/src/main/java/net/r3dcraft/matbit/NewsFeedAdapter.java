@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 /**
- * Created by unibl on 16.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 16.10.2017.
  */
 
 public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.NewsFeedViewHolder> {

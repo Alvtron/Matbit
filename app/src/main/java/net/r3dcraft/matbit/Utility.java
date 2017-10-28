@@ -12,7 +12,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 /**
- * Created by Shreya Kotak on 12/05/16.
+ * Created by Shreya Kotak on 12.05.16.
+ * Modified by Thomas Angeland, student at Ostfold University College, on 25.10.2017.
  */
 public class Utility {
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;

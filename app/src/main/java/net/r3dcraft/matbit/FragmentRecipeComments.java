@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by unibl on 24.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
  */
 
 public class FragmentRecipeComments extends Fragment {
@@ -35,12 +35,17 @@ public class FragmentRecipeComments extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootViewInfo = inflater.inflate(R.layout.fragment_recipe_comments, container, false);
-        context = RecipeActivity.context;
+        context = getActivity();
         comments = new ArrayList<Comment>();
-
         recipeID = getArguments().getString("recipeID");
         listview = (ListView) rootViewInfo.findViewById(R.id.fragment_recipe_comments_listview);
 
+        return rootViewInfo;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         // Get recipe information
         MatbitDatabase.RECIPES.child(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -59,7 +64,5 @@ public class FragmentRecipeComments extends Fragment {
                 Log.w(TAG, "createRecipeFromDatabase: Cancelled", databaseError.toException());
             }
         });
-
-        return rootViewInfo;
     }
 }

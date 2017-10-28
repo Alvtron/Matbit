@@ -1,7 +1,7 @@
 package net.r3dcraft.matbit;
 
 /**
- * Created by thomas on 17.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 17.10.2017.
  */
 
 public class NewsFeed {

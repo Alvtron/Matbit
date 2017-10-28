@@ -1,7 +1,7 @@
 package net.r3dcraft.matbit;
 
 /**
- * Created by unibl on 20.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 20.10.2017.
  */
 
 public class Step {

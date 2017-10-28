@@ -1,12 +1,6 @@
 package net.r3dcraft.matbit;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,9 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -81,7 +72,7 @@ class CommentAdapter extends BaseAdapter {
 
                 txt_info.setText(data.get(position).getDatetime());
 
-                MatbitDatabase.databaseImageToImageView(data.get(position).getUser(), context, img_user);
+                MatbitDatabase.userPictureToImageView(data.get(position).getUser(), context, img_user);
 
                 if (MatbitDatabase.USER.getUid().equals(data.get(position).getUser())) {
                     img_edit.setVisibility(View.VISIBLE);
