@@ -393,42 +393,81 @@ public class Recipe {
 
     // STATIC METHODS ------------------------------------------------------------------------------
 
-    public static class RecipeDateComparator implements Comparator<Recipe> {
+    public static final Comparator<Recipe> ALPHABETICAL_COMPARATOR_ASC = new Comparator<Recipe>() {
         @Override
-        public int compare(Recipe o1, Recipe o2) {
-            return DateTime.stringToDate(o2.getData().getDatetime_created()).compareTo(
-                    DateTime.stringToDate(o1.getData().getDatetime_created()));
-        }
-    }
-
-    public static class RecipeViewsComparator implements Comparator<Recipe> {
-        @Override
-        public int compare(Recipe o1, Recipe o2) {
-            return o2.getData().getViews() - (o1.getData().getViews());
-        }
-    }
-
-    public static class RecipeRatingComparator implements Comparator<Recipe> {
-        @Override
-        public int compare(Recipe o1, Recipe o2) {
-            return o2.getData().getRatings().size() - (o1.getData().getRatings().size());
-        }
-    }
-
-    public static class RecipeTimeComparator implements Comparator<Recipe> {
-        @Override
-        public int compare(Recipe o1, Recipe o2) {
-            return o2.getData().getTime() - (o1.getData().getTime());
-        }
-    }
-
-    public static class RecipeAlphabeticalComparator implements Comparator<Recipe> {
-        @Override
-        public int compare(Recipe o1, Recipe o2) {
+        public int compare(Recipe a, Recipe b) {
             Locale noLocale = new Locale("no", "NO");
             Collator noCollator = Collator.getInstance(noLocale);
             noCollator.setStrength(Collator.PRIMARY);
-            return noCollator.compare(o2.getData().getTitle(), o1.getData().getTitle());
+            return noCollator.compare(a.getData().getTitle(), b.getData().getTitle());
         }
-    }
+    };
+
+    public static final Comparator<Recipe> ALPHABETICAL_COMPARATOR_DESC = new Comparator<Recipe>() {
+        @Override
+        public int compare(Recipe a, Recipe b) {
+            Locale noLocale = new Locale("no", "NO");
+            Collator noCollator = Collator.getInstance(noLocale);
+            noCollator.setStrength(Collator.PRIMARY);
+            return noCollator.compare(b.getData().getTitle(), a.getData().getTitle());
+        }
+    };
+
+    public static final Comparator<Recipe> VIEWS_COMPARATOR_ASC = new Comparator<Recipe>() {
+        @Override
+        public int compare(Recipe a, Recipe b) {
+            return Integer.compare(a.getData().getViews(), b.getData().getViews());
+        }
+    };
+
+    public static final Comparator<Recipe> VIEWS_COMPARATOR_DESC = new Comparator<Recipe>() {
+        @Override
+        public int compare(Recipe a, Recipe b) {
+            return Integer.compare(b.getData().getViews(), a.getData().getViews());
+        }
+    };
+
+    public static final Comparator<Recipe> RATING_COMPARATOR_ASC = new Comparator<Recipe>() {
+        @Override
+        public int compare(Recipe a, Recipe b) {
+            return Integer.compare(a.getData().getRatings().size(), b.getData().getRatings().size());
+        }
+    };
+
+    public static final Comparator<Recipe> RATING_COMPARATOR_DESC = new Comparator<Recipe>() {
+        @Override
+        public int compare(Recipe a, Recipe b) {
+            return Integer.compare(b.getData().getRatings().size(), a.getData().getRatings().size());
+        }
+    };
+
+    public static final Comparator<Recipe> DATE_COMPARATOR_ASC = new Comparator<Recipe>() {
+        @Override
+        public int compare(Recipe a, Recipe b) {
+            return DateTime.stringToDate(a.getData().getDatetime_created())
+                    .compareTo(DateTime.stringToDate(b.getData().getDatetime_created()));
+        }
+    };
+
+    public static final Comparator<Recipe> DATE_COMPARATOR_DESC = new Comparator<Recipe>() {
+        @Override
+        public int compare(Recipe a, Recipe b) {
+            return Integer.compare(b.getData().getTime(), a.getData().getTime());
+        }
+    };
+
+    public static final Comparator<Recipe> TIME_COMPARATOR_ASC = new Comparator<Recipe>() {
+        @Override
+        public int compare(Recipe a, Recipe b) {
+            return Integer.compare(a.getData().getTime(), b.getData().getTime());
+        }
+    };
+
+    public static final Comparator<Recipe> TIME_COMPARATOR_DESC = new Comparator<Recipe>() {
+        @Override
+        public int compare(Recipe a, Recipe b) {
+            return Integer.compare(b.getData().getTime(), a.getData().getTime());
+        }
+    };
+
 }

@@ -24,6 +24,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 
 public class SearchActivity extends AppCompatActivity {
@@ -48,7 +49,7 @@ public class SearchActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        recipeAdapter = new RecipeAdapter(recipes, SearchActivity.this);
+        recipeAdapter = new RecipeAdapter(this, Recipe.ALPHABETICAL_COMPARATOR_ASC);
         recyclerView.setAdapter(recipeAdapter);
 
         spinner_filter = (Spinner) findViewById(R.id.activity_search_filter_spinner);
@@ -67,17 +68,18 @@ public class SearchActivity extends AppCompatActivity {
 
                 switch (filter) {
                     case "Nyeste":
-                        Collections.sort(recipeAdapter.getRecipeList(), new Recipe.RecipeDateComparator());
+                        recipeAdapter = new RecipeAdapter(SearchActivity.this, Recipe.DATE_COMPARATOR_DESC);
                     case "Mest sett":
-                        Collections.sort(recipeAdapter.getRecipeList(), new Recipe.RecipeViewsComparator());
+                        recipeAdapter = new RecipeAdapter(SearchActivity.this, Recipe.VIEWS_COMPARATOR_DESC);
                     case "Mest likt":
-                        Collections.sort(recipeAdapter.getRecipeList(), new Recipe.RecipeRatingComparator());
+                        recipeAdapter = new RecipeAdapter(SearchActivity.this, Recipe.RATING_COMPARATOR_DESC);
                     case "Tid":
-                        Collections.sort(recipeAdapter.getRecipeList(), new Recipe.RecipeTimeComparator());
+                        recipeAdapter = new RecipeAdapter(SearchActivity.this, Recipe.TIME_COMPARATOR_ASC);
                     case "Alfabetisk":
-                        Collections.sort(recipeAdapter.getRecipeList(), new Recipe.RecipeAlphabeticalComparator());
+                        recipeAdapter = new RecipeAdapter(SearchActivity.this, Recipe.ALPHABETICAL_COMPARATOR_ASC);
                 }
-                recipeAdapter.notifyDataSetChanged();
+                recipeAdapter.add(recipes);
+                recyclerView.setAdapter(recipeAdapter);
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
@@ -85,16 +87,16 @@ public class SearchActivity extends AppCompatActivity {
         spinner_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category = parent.getItemAtPosition(position).toString();
-                recipeAdapter.setRecipeList(recipes);
 
-                if (category.equals("Alle")) {
-                    ArrayList<Recipe> removeObjects = new ArrayList<Recipe>();
-                    for (Recipe recipe : recipeAdapter.getRecipeList())
+                if (!category.equals("Alle")) {
+                    List<Recipe> removeObjects = new ArrayList<Recipe>();
+                    List<Recipe> addObjects = new ArrayList<Recipe>();
+                    for (Recipe recipe : recipes)
                         if (recipe.getData().getCategory().equals(category))
-                            removeObjects.add(recipe);
-                    recipeAdapter.getRecipeList().removeAll(removeObjects);
+                            recipeAdapter.add(removeObjects);
+                        else
+                            recipeAdapter.remove(recipe);
                 }
-                recipeAdapter.notifyDataSetChanged();
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
@@ -112,8 +114,7 @@ public class SearchActivity extends AppCompatActivity {
                     Recipe recipe = new Recipe(recipesSnapshot);
                     recipes.add(recipe);
                 }
-                Collections.sort(recipes, new Recipe.RecipeDateComparator());
-                recipeAdapter.notifyDataSetChanged();
+                recipeAdapter.add(recipes);
             }
 
             @Override
