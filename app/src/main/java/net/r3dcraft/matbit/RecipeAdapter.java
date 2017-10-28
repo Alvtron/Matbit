@@ -33,7 +33,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         @Override
         public int compare(Recipe a, Recipe b) {
             return comparator.compare(a, b);
-
         }
 
         @Override

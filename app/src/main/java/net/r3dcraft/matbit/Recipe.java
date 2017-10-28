@@ -21,8 +21,6 @@ import java.util.Map;
 
 public class Recipe {
     private static final String TAG = "Recipe";
-    private static final boolean THUMBS_UP = true;
-    private static final boolean THUMBS_DOWN = false;
     private String id;
     private RecipeData data;
     private boolean synced = false;

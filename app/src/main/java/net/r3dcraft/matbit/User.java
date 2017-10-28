@@ -13,8 +13,19 @@ import java.util.Map;
 public class User {
     private String id;
     private UserData data;
+    private boolean synced = false;
 
     public User() {
+    }
+
+    public User(final DataSnapshot DATA_SNAPSHOT) {
+        downloadData(DATA_SNAPSHOT);
+    }
+
+    public boolean downloadData(final DataSnapshot DATA_SNAPSHOT) {;
+        this.id = DATA_SNAPSHOT.getKey();
+        this.data = DATA_SNAPSHOT.getValue(UserData.class);
+        return synced = true;
     }
 
     public String getId() {

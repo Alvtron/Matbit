@@ -18,11 +18,6 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.ArrayList;
 
 /**
@@ -160,7 +155,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+            startActivity(new Intent(MainActivity.this, UserActivity.class));
         } else if (id == R.id.nav_feed) {
             startActivity(new Intent(MainActivity.this, FeedActivity.class));
         } else if (id == R.id.nav_find_user) {

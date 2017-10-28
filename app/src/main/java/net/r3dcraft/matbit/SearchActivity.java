@@ -68,18 +68,11 @@ public class SearchActivity extends AppCompatActivity {
 
                 switch (filter) {
                     case "Nyeste":
-                        recipeAdapter = new RecipeAdapter(SearchActivity.this, Recipe.DATE_COMPARATOR_DESC);
                     case "Mest sett":
-                        recipeAdapter = new RecipeAdapter(SearchActivity.this, Recipe.VIEWS_COMPARATOR_DESC);
                     case "Mest likt":
-                        recipeAdapter = new RecipeAdapter(SearchActivity.this, Recipe.RATING_COMPARATOR_DESC);
                     case "Tid":
-                        recipeAdapter = new RecipeAdapter(SearchActivity.this, Recipe.TIME_COMPARATOR_ASC);
                     case "Alfabetisk":
-                        recipeAdapter = new RecipeAdapter(SearchActivity.this, Recipe.ALPHABETICAL_COMPARATOR_ASC);
                 }
-                recipeAdapter.add(recipes);
-                recyclerView.setAdapter(recipeAdapter);
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
@@ -87,16 +80,16 @@ public class SearchActivity extends AppCompatActivity {
         spinner_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category = parent.getItemAtPosition(position).toString();
-
+                Log.d(TAG, category);
                 if (!category.equals("Alle")) {
-                    List<Recipe> removeObjects = new ArrayList<Recipe>();
-                    List<Recipe> addObjects = new ArrayList<Recipe>();
-                    for (Recipe recipe : recipes)
+                    for (Recipe recipe : recipes) {
                         if (recipe.getData().getCategory().equals(category))
-                            recipeAdapter.add(removeObjects);
+                            recipeAdapter.add(recipe);
                         else
                             recipeAdapter.remove(recipe);
+                    }
                 }
+                else recipeAdapter.add(recipes);
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
@@ -106,15 +99,14 @@ public class SearchActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: ");
-
-        MatbitDatabase.RECIPES.addListenerForSingleValueEvent(new ValueEventListener()  {
+        MatbitDatabase.RECIPES.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot recipesSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot recipesSnapshot : dataSnapshot.getChildren()) {
                     Recipe recipe = new Recipe(recipesSnapshot);
                     recipes.add(recipe);
                 }
-                recipeAdapter.add(recipes);
+                recipeAdapter.replaceAll(recipes);
             }
 
             @Override

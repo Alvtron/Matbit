@@ -24,6 +24,7 @@ public class RecipeActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private Recipe recipe;
     private String recipeID;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class RecipeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recipe);
         context = RecipeActivity.this;
         
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         recipeID = bundle.getString("recipeID");
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -67,21 +68,5 @@ public class RecipeActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public Recipe getRecipe() {
-        return recipe;
-    }
-
-    public void setRecipe(Recipe recipe) {
-        this.recipe = recipe;
-    }
-
-    public String getRecipeID() {
-        return recipeID;
-    }
-
-    public void setRecipeID(String recipeID) {
-        this.recipeID = recipeID;
     }
 }

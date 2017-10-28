@@ -2,8 +2,6 @@ package net.r3dcraft.matbit;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,9 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -97,8 +92,16 @@ public class FragmentRecipeInfo extends Fragment {
 
         btn_follow.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(context, ProfileActivity.class);
-                intent.putExtra("userUID", recipe.getData().getUser());
+                Intent intent = new Intent(context, UserActivity.class);
+                intent.putExtra("userID", recipe.getData().getUser());
+                startActivity(intent);
+            }
+        });
+
+        user_photo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(context, UserActivity.class);
+                intent.putExtra("userID", recipe.getData().getUser());
                 startActivity(intent);
             }
         });

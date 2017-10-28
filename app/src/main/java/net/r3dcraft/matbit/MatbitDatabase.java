@@ -167,7 +167,7 @@ public final class MatbitDatabase {
     }
 
     public static void goToUser(final Context CONTEXT, final String UID) {
-        Intent intent = new Intent(CONTEXT, ProfileActivity.class);
+        Intent intent = new Intent(CONTEXT, UserActivity.class);
         intent.putExtra("userID", UID);
         CONTEXT.startActivity(intent);
     }

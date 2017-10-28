@@ -3,7 +3,7 @@
     package="net.r3dcraft.matbit">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".MatbitApplication"
@@ -13,7 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_matbit"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".BaseActivity" />
         <activity android:name=".SignInActivity">
             <intent-filter>
@@ -33,13 +32,13 @@
         <activity android:name=".FeedActivity" />
         <activity android:name=".FindUserActivity" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".UserActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RecipeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".AddRecipeActivity"></activity>
+        <activity android:name=".AddRecipeActivity" />
     </application>
 
 </manifest>
