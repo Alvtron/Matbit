@@ -19,21 +19,28 @@ public class RecipeData {
 
     private String title;
     private String user;
+    private String user_nickname;
     private String datetime_created;
     private String datetime_updated;
     private int time;
     private int portions;
     private int views;
+    private String info;
     private String category;
     private int thumbs_up;
     private int thumbs_down;
-    private String info;
     @Exclude private Map<String, Rating> ratings = new HashMap<String, Rating>();
     @Exclude private Map<String, Comment> comments = new HashMap<String, Comment>();
     @Exclude private Map<String, Step> steps = new HashMap<String, Step>();
     @Exclude private Map<String, Ingredient> ingredients = new HashMap<String, Ingredient>();
 
-    public RecipeData() {}
+    public RecipeData() {
+        time = -1;
+        portions = -1;
+        views = -1;
+        thumbs_up = -1;
+        thumbs_down = -1;
+    }
 
     public String getTitle() {
         return title;
@@ -49,6 +56,14 @@ public class RecipeData {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getUser_nickname() {
+        return user_nickname;
+    }
+
+    public void setUser_nickname(String user_nickname) {
+        this.user_nickname = user_nickname;
     }
 
     public String getDatetime_created() {
@@ -97,6 +112,14 @@ public class RecipeData {
 
     public void setInfo(String info) {
         this.info = info;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public int getPortions() {
@@ -173,146 +196,5 @@ public class RecipeData {
     @Exclude
     public void addIngredient(Ingredient ingredient) {
         this.ingredients.put(Integer.toString(this.ingredients.size()), ingredient);
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    @Exclude
-    public boolean hasTitle() {
-        if (title != null) {
-            return true;
-        }
-        Log.i(TAG, "hasTitle(): title not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasUser() {
-        if (user != null) {
-            return true;
-        }
-        Log.i(TAG, "hasUser(): user not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasDatetimeCreated() {
-        if (datetime_created != null) {
-            return true;
-        }
-        Log.i(TAG, "hasDatetimeCreated(): datetime_created not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasDatetimeUpdated() {
-        if (datetime_updated != null) {
-            return true;
-        }
-        Log.i(TAG, "hasDatetimeUpdated(): datetime_updated not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasTime() {
-        if (time >= 0) {
-            return true;
-        }
-        Log.i(TAG, "hasTime(): time not initialized.");
-        return false;
-    }
-    @Exclude
-    public boolean hasPortions() {
-        if (portions >= 0) {
-            return true;
-        }
-        Log.i(TAG, "hasPortions(): portions not initialized.");
-        return false;
-    }
-    @Exclude
-    public boolean hasViews() {
-        if (views >= 0) {
-            return true;
-        }
-        Log.i(TAG, "hasViews(): views not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasCategory() {
-        if (category != null) {
-            return true;
-        }
-        Log.i(TAG, "hasCategory(): category not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasRatings() {
-        if (ratings.size() != 0) {
-            return true;
-        }
-        Log.i(TAG, "hasRatings(): ratings not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasComments() {
-        if (comments.size() != 0) {
-            return true;
-        }
-        Log.i(TAG, "hasComments(): comments not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasSteps() {
-        if (steps.size() != 0) {
-            return true;
-        }
-        Log.i(TAG, "hasSteps(): steps not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasIngredients() {
-        if (ingredients.size() != 0) {
-            return true;
-        }
-        Log.i(TAG, "hasIngredients(): ingredients not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasInfo() {
-        if (info != null) {
-            return true;
-        }
-        Log.i(TAG, "hasInfo(): info not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasThumbsUp() {
-        if (thumbs_up >= 0) {
-            return true;
-        }
-        Log.i(TAG, "hasThumbsUp(): thumbs_up not initialized.");
-        return false;
-    }
-
-    @Exclude
-    public boolean hasThumbsDown() {
-        if (thumbs_down >= 0) {
-            return true;
-        }
-        Log.i(TAG, "hasThumbsDown(): thumbs_down not initialized.");
-        return false;
     }
 }

@@ -1,39 +1,36 @@
 package net.r3dcraft.matbit;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
 
 public class SearchActivity extends AppCompatActivity {
     private final String TAG = "SearchActivity";
+    Context context;
+    Toolbar toolbar;
     private ArrayList<Recipe> recipes = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecipeAdapter recipeAdapter;
-    private String filter = "none";
-    private String category = "none";
+    private String filter = "";
+    private String category = "";
+    private String searchString = "";
     Spinner spinner_filter;
     Spinner spinner_category;
     ArrayAdapter<CharSequence> adapter_filter;
@@ -44,6 +41,13 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_search);
+        context = this;
+
+        // Set up toolbar
+        toolbar = (Toolbar) findViewById(R.id.activity_search_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         recyclerView = (RecyclerView)findViewById(R.id.activity_search_recyclerview);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -68,10 +72,15 @@ public class SearchActivity extends AppCompatActivity {
 
                 switch (filter) {
                     case "Nyeste":
+                        updateRecipeAdapter();
                     case "Mest sett":
+                        updateRecipeAdapter();
                     case "Mest likt":
+                        updateRecipeAdapter();
                     case "Tid":
+                        updateRecipeAdapter();
                     case "Alfabetisk":
+                        updateRecipeAdapter();
                 }
             }
             public void onNothingSelected(AdapterView<?> parent) {}
@@ -80,16 +89,7 @@ public class SearchActivity extends AppCompatActivity {
         spinner_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category = parent.getItemAtPosition(position).toString();
-                Log.d(TAG, category);
-                if (!category.equals("Alle")) {
-                    for (Recipe recipe : recipes) {
-                        if (recipe.getData().getCategory().equals(category))
-                            recipeAdapter.add(recipe);
-                        else
-                            recipeAdapter.remove(recipe);
-                    }
-                }
-                else recipeAdapter.add(recipes);
+                updateRecipeAdapter();
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
@@ -136,12 +136,55 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_search, menu);
+
         // Retrieve the SearchView and plug it into SearchManager
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                updateRecipeAdapter();
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                searchString = query;
+                updateRecipeAdapter();
+                return true;
+            }
+
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                searchView.clearFocus();
+                return false;
+            }
+        });
+
         return true;
+    }
+
+    private void updateRecipeAdapter() {
+        for (Recipe recipe : recipes) {
+            if ((category.equals("Alle") || recipe.getData().getCategory().equals(category))
+                    && (StringTools.search(searchString, recipe.getData().getTitle())))
+                recipeAdapter.add(recipe);
+            else
+                recipeAdapter.remove(recipe);
+        }
     }
 }

@@ -54,7 +54,7 @@ class IngredientAdapter extends BaseAdapter {
         final TextView txt_name = (TextView) view.findViewById(R.id.fragment_recipe_ingredient_name);
         final View stroke = (View) view.findViewById(R.id.fragment_recipe_ingredient_stroke);
 
-        txt_amount.setText(data.get(position).getAmount() + " " + data.get(position).getMeasurement());
+        txt_amount.setText(Math.round(data.get(position).getAmount()* 100.0) / 100.0 + " " + data.get(position).getMeasurement());
         txt_name.setText(data.get(position).getName());
 
         view.setOnClickListener(new View.OnClickListener() {

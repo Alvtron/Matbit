@@ -1,5 +1,6 @@
 package net.r3dcraft.matbit;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity
     private TextView user_name;
     private TextView user_email;
     private BottomNavigationView bottomNavigationView;
+    private Context context;
 
     private RecyclerView mRecyclerView;
 
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        context = this;
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -155,7 +159,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-            startActivity(new Intent(MainActivity.this, UserActivity.class));
+            MatbitDatabase.goToUser(context, MatbitDatabase.USER.getUid());
         } else if (id == R.id.nav_feed) {
             startActivity(new Intent(MainActivity.this, FeedActivity.class));
         } else if (id == R.id.nav_find_user) {

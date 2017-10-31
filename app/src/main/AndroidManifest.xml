@@ -8,37 +8,54 @@
     <application
         android:name=".MatbitApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_matbit"
+        android:icon="@drawable/logo_matbit_red_1025dp"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_matbit"
+        android:roundIcon="@drawable/logo_matbit_red_1025dp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".BaseActivity" />
-        <activity android:name=".SignInActivity">
+        <activity
+            android:name=".SignInActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity" />
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".FeedActivity" />
-        <activity android:name=".FindUserActivity" />
+        <activity
+            android:name=".FeedActivity"
+            android:label="Feed"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".FindUserActivity"
+            android:label="Find user"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity
             android:name=".UserActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RecipeActivity"
+            android:label="@string/title_activity_recipe"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".AddRecipeActivity" />
+        <activity
+            android:name=".AddRecipeActivity"
+            android:label="@string/title_activity_add_recipe"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

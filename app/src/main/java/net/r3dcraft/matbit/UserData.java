@@ -11,32 +11,52 @@ import java.util.Map;
  */
 
 public class UserData {
-    public String nickname;
-    public String gender;
-    public String birthday;
-    public String signUpDate;
-    public String lastLoginDate;
-    public int exp;
-    private Map<String, String> following = new HashMap<String, String>();
-    private Map<String, String> followers = new HashMap<String, String>();
-    private Map<String, String> recipes = new HashMap<String, String>();
-    private Map<String, String> favorites = new HashMap<String, String>();
+    private String nickname;
+    private String gender;
+    private String birthday;
+    private String signUpDate;
+    private String lastLoginDate;
+    private String bio;
+    private int exp;
+    private int num_followers;
+    private int num_recipes;
+    private Map<String, String> following;
+    private Map<String, String> followers;
+    private Map<String, String> recipes;
+    private Map<String, String> favorites;
 
     public UserData() {
+        nickname = new String();
+        gender = new String();
+        birthday = new String();
+        signUpDate = new String();
+        lastLoginDate = new String();
+        bio = new String();
+        exp = -1;
+        num_followers = -1;
+        num_recipes = -1;
+        following = new HashMap<String, String>();
+        followers = new HashMap<String, String>();
+        recipes = new HashMap<String, String>();
+        favorites = new HashMap<String, String>();
     }
 
-    public UserData(String nickname, String gender, String birthday, String signUpDate, String lastLoginDate, int exp, Map<String, String> following, Map<String, String> followers, Map<String, String> recipes, Map<String, String> favorites) {
+    public UserData(String nickname, String gender, String birthday, String signUpDate, String lastLoginDate, String bio, int exp, int num_followers, int num_recipes, Map<String, String> following, Map<String, String> followers, Map<String, String> recipes, Map<String, String> favorites) {
         this.nickname = nickname;
         this.gender = gender;
         this.birthday = birthday;
         this.signUpDate = signUpDate;
         this.lastLoginDate = lastLoginDate;
+        this.bio = bio;
         this.exp = exp;
+        this.num_followers = num_followers;
+        this.num_recipes = num_recipes;
         this.following = following;
         this.followers = followers;
         this.recipes = recipes;
         this.favorites = favorites;
     }
+
 
     public String getNickname() {
         return nickname;
@@ -116,5 +136,29 @@ public class UserData {
 
     public void setFavorites(Map<String, String> favorites) {
         this.favorites = favorites;
+    }
+
+    public int getNum_followers() {
+        return num_followers;
+    }
+
+    public void setNum_followers(int num_followers) {
+        this.num_followers = num_followers;
+    }
+
+    public int getNum_recipes() {
+        return num_recipes;
+    }
+
+    public void setNum_recipes(int num_recipes) {
+        this.num_recipes = num_recipes;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 }

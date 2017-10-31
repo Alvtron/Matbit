@@ -7,18 +7,21 @@ package net.r3dcraft.matbit;
 public class Comment {
     private String user;
     private String comment;
-    private String datetime;
+    private String datetimeCreated;
+    private String datetimeUpdated;
 
     public Comment() {
-        user = new String();
-        comment = new String();
-        datetime = DateTime.nowString();
+        user = "";
+        comment = "";
+        datetimeCreated = "";
+        this.datetimeUpdated = "";
     }
 
-    public Comment(String user, String comment, String datetime) {
+    public Comment(String user, String comment, String datetimeCreated, String datetimeUpdated) {
         this.user = user;
         this.comment = comment;
-        this.datetime = datetime;
+        this.datetimeCreated = datetimeCreated;
+        this.datetimeUpdated = datetimeUpdated;
     }
 
     public String getUser() {
@@ -37,11 +40,19 @@ public class Comment {
         this.comment = comment;
     }
 
-    public String getDatetime() {
-        return datetime;
+    public String getDatetimeCreated() {
+        return datetimeCreated;
     }
 
-    public void setDatetime(String datetime) {
-        this.datetime = datetime;
+    public void setDatetimeCreated(String datetimeCreated) {
+        this.datetimeCreated = datetimeCreated;
+    }
+
+    public String getDatetimeUpdated() {
+        return datetimeUpdated;
+    }
+
+    public void setDatetimeUpdated(String datetimeUpdated) {
+        this.datetimeUpdated = datetimeUpdated;
     }
 }

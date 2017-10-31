@@ -21,6 +21,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -34,6 +35,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
 
 /**
@@ -44,6 +48,8 @@ import com.google.firebase.storage.UploadTask;
 public class AddRecipeActivity extends AppCompatActivity {
     private static final String TAG = "AddRecipeActivity";
     private Context context;
+    private User user;
+    private Recipe recipe;
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     private ImageView recipeImageThumbnail;
     private String userChoosenTask;
@@ -113,7 +119,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         spinnerTimeHour.setAdapter(hourAdapter);
         spinnerTimeHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                hour = Integer.parseInt(parent.getItemAtPosition(position).toString());
+                hour = StringTools.stringToInt(parent.getItemAtPosition(position).toString());
             }
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -126,7 +132,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         spinnerTimeMinutes.setAdapter(minutesAdapter);
         spinnerTimeMinutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                minutes = Integer.parseInt(parent.getItemAtPosition(position).toString());
+                minutes = StringTools.stringToInt(parent.getItemAtPosition(position).toString());
             }
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -193,11 +199,38 @@ public class AddRecipeActivity extends AppCompatActivity {
         btnCreateRecipe.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageViewRecipeImage != null && editTitle.getText().toString() != null
-                        && hour * 60 + minutes != 0 && Integer.parseInt(editPortions.getText().toString()) != 0
-                        && category != null && editInfo.getText().toString() != null
-                        && steps != null && ingredients != null) {
-                    Recipe recipe = new Recipe();
+                boolean valid = true;
+                Integer portions = StringTools.stringToInt(editPortions.getText().toString());
+                if (imageViewRecipeImage == null) {
+                    Toast.makeText(context, "Du må laste opp et bilde!", Toast.LENGTH_SHORT).show();
+                    valid = false;
+                }
+                if(editTitle.getText().toString().trim().matches("")) {
+                    editTitle.setError("Du må ha en tittel");
+                    valid = false;
+                }
+                if(hour * 60 + minutes < 1) {
+                    Toast.makeText(context, "Velg en tid som virker fornuftig", Toast.LENGTH_SHORT).show();
+                    valid = false;
+                }
+                if(ingredients.isEmpty()) {
+                    editIngrediens.setError("Du må skrive minst en ingrediens");
+                    valid = false;
+                }
+                if(steps.isEmpty()) {
+                    editStep.setError("Du må skrive minst ett steg");
+                    valid = false;
+                }
+                if(category == null || category.trim() == "") {
+                    valid = false;
+                }
+                if(portions == null || portions < 1) {
+                    editPortions.setError("Porsjoner kan ikke være 0");
+                    valid = false;
+                }
+
+                if (valid) {
+                    recipe = new Recipe();
                     recipe.createNewRecipe(editTitle.getText().toString(),
                             hour * 60 + minutes,
                             Integer.parseInt(editPortions.getText().toString()),
@@ -206,9 +239,14 @@ public class AddRecipeActivity extends AppCompatActivity {
                             steps,
                             ingredients
                     );
-                    String uid = MatbitDatabase.uploadNewRecipe(recipe.getData());
 
-                    UploadTask uploadTask = MatbitDatabase.RECIPE_PHOTOS.child(uid +  ".jpg").putBytes(imageViewRecipeImage);
+                    // Upload recipe data to new unique firebase key
+                    recipe.setId(MatbitDatabase.uploadNewRecipe(recipe.getData()));
+                    // Add and upload new recipe to user
+                    user.addRecipe(recipe.getId(), recipe.getData().getDatetime_created());
+                    user.uploadRecipes();
+                    // Upload recipe photo
+                    UploadTask uploadTask = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() +  ".jpg").putBytes(imageViewRecipeImage);
                     uploadTask.addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
@@ -221,11 +259,38 @@ public class AddRecipeActivity extends AppCompatActivity {
                             Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         }
                     });
-
-                    MatbitDatabase.gotToRecipe(context, recipe);
+                    // Show dialog box for next step
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Oppskriften er lastet opp!")
+                            .setPositiveButton("Gå til oppskrift", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                    MatbitDatabase.gotToRecipe(context, recipe);
+                                }
+                            })
+                            .setNegativeButton("Gå til startsiden", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                    startActivity(new Intent(context, MainActivity.class));
+                                }
+                            });
+                    builder.show();
                 }
-                else
-                    Toast.makeText(context, "Du har ikke fylt ut alle feltene!", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        MatbitDatabase.USERS.child(MatbitDatabase.USER.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user = new User(dataSnapshot);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "createUserFromDatabase: Cancelled", databaseError.toException());
             }
         });
     }

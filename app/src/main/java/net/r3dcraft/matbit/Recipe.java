@@ -3,14 +3,12 @@ package net.r3dcraft.matbit;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.Exclude;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -60,7 +58,7 @@ public class Recipe {
 
     public void createNewRecipe(String title, int time, int portions, String category, String info, ArrayList<Step> steps, ArrayList<Ingredient> ingredients) {
         data.setTitle(title);
-        data.setUser(MatbitDatabase.getCurrentUser());
+        data.setUser(MatbitDatabase.getCurrentUserID());
         data.setDatetime_created(DateTime.nowString());
         data.setDatetime_updated(DateTime.nowString());
         data.setTime(time);
@@ -95,7 +93,7 @@ public class Recipe {
     }
 
     public int getRatingAverage() {
-        if (data.hasRatings()) {
+        if (hasRatings()) {
             double total = 0;
             for (Rating rating : data.getRatings().values())
                 if (rating.getThumbsUp()) total++;
@@ -107,16 +105,208 @@ public class Recipe {
             return 0;
     }
 
+    // VALIDATION ----------------------------------------------------------------------------------
+
     public boolean hasData() {
-        if (data != null) {
-            return true;
+        if (data == null) {
+            Log.i(TAG, "hasData(): Data not initialized.");
+            return false;
         }
-        Log.i(TAG, "hasData(): Data not initialized.");
-        return false;
+        return true;
     }
 
+    public boolean hasCompleteData() {
+        if (!hasData()) {
+            Log.i(TAG, "hasCompleteData(): data not initialized.");
+            return false;
+        } else if (!hasTitle()) {
+            Log.i(TAG, "hasCompleteData(): title not initialized.");
+            return false;
+        } else if (!hasUser()) {
+            Log.i(TAG, "hasCompleteData(): user not initialized.");
+            return false;
+        } else if (!hasUserNickname()) {
+            Log.i(TAG, "hasCompleteData(): user_nickname not initialized.");
+            return false;
+        } else if (!hasDatetimeCreated()) {
+            Log.i(TAG, "hasCompleteData(): datetime_created not initialized.");
+            return false;
+        } else if (!hasIngredients()) {
+            Log.i(TAG, "hasCompleteData(): ingredients not initialized.");
+            return false;
+        } else if (!hasSteps()) {
+            Log.i(TAG, "hasCompleteData(): steps not initialized.");
+            return false;
+        } else if (!hasTime()) {
+            Log.i(TAG, "hasCompleteData(): time not initialized.");
+            return false;
+        } else return true;
+    }
+
+    public boolean hasTitle() {
+        if (!hasData())
+            return false;
+        if (data.getTitle() == null) {
+            Log.i(TAG, "hasTitle: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasUser() {
+        if (!hasData())
+            return false;
+        if (data.getUser() == null) {
+            Log.i(TAG, "hasUser: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasUserNickname() {
+        if (!hasData())
+            return false;
+        if (data.getUser_nickname() == null) {
+            Log.i(TAG, "hasUserNickname: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasDatetimeCreated() {
+        if (!hasData())
+            return false;
+        if (data.getDatetime_created() == null) {
+            Log.i(TAG, "hasDatetimeCreated: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasDatetimeUpdated() {
+        if (!hasData())
+            return false;
+        if (data.getDatetime_updated() == null) {
+            Log.i(TAG, "hasDatetimeUpdated: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasTime() {
+        if (!hasData())
+            return false;
+        if (data.getTime() < 0) {
+            Log.i(TAG, "hasTime: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasPortions() {
+        if (!hasData())
+            return false;
+        if (data.getPortions() < 0) {
+            Log.i(TAG, "hasPortions: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasViews() {
+        if (!hasData())
+            return false;
+        if (data.getViews() < 0) {
+            Log.i(TAG, "hasViews: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasInfo() {
+        if (!hasData())
+            return false;
+        if (data.getInfo() == null) {
+            Log.i(TAG, "hasInfo: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasCategory() {
+        if (!hasData())
+            return false;
+        if (data.getCategory() == null) {
+            Log.i(TAG, "hasCategory: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasThumbsUp() {
+        if (!hasData())
+            return false;
+        if (data.getThumbs_up() < 0) {
+            Log.i(TAG, "hasThumbsUp: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasThumbsDown() {
+        if (!hasData())
+            return false;
+        if (data.getThumbs_down() < 0) {
+            Log.i(TAG, "hasThumbsDown: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasRatings() {
+        if (!hasData())
+            return false;
+        if (data.getRatings() == null || data.getRatings().size() == 0) {
+            Log.i(TAG, "hasRatings: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasComments() {
+        if (!hasData())
+            return false;
+        if (data.getComments() == null || data.getComments().size() == 0) {
+            Log.i(TAG, "hasComments: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasSteps() {
+        if (!hasData())
+            return false;
+        if (data.getSteps() == null || data.getSteps().size() == 0) {
+            Log.i(TAG, "hasSteps: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasIngredients() {
+        if (!hasData())
+            return false;
+        if (data.getIngredients() == null || data.getIngredients().size() == 0) {
+            Log.i(TAG, "hasIngredients: data not initialized.");
+            return false;
+        }
+        return true;
+    }
+
+    // ADDERS --------------------------------------------------------------------------------------
+
     public boolean addView() {
-        if (data.hasViews() && synced) {
+        if (hasViews() && synced) {
             data.setViews(data.getViews() + 1);
             uploadViews();
             return true;
@@ -128,8 +318,18 @@ public class Recipe {
     }
 
     public void addRating(final boolean VALUE) {
-        data.addRating(new Rating(MatbitDatabase.getCurrentUser(), VALUE, DateTime.nowString()));
+        data.addRating(new Rating(MatbitDatabase.getCurrentUserID(), VALUE, DateTime.nowString()));
         uploadRatings();
+    }
+
+    public void addComment(final String COMMENT) {
+        Comment comment = new Comment(MatbitDatabase.USER.getUid(), COMMENT, DateTime.nowString(), DateTime.nowString());
+        MatbitDatabase.recipeComments(id).push().setValue(comment);
+    }
+
+    public static void changeComment(final String RECIPE_UID, final String COMMENT_UID, final String COMMENT) {
+        MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT_UID).child("datetimeUpdated").setValue(DateTime.nowString());
+        MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT_UID).child("comment").setValue(COMMENT);
     }
 
     // DOWNLOAD ------------------------------------------------------------------------------------
@@ -192,7 +392,8 @@ public class Recipe {
             comments.put(commentSnapshot.getKey(), new Comment(
                     commentSnapshot.child("user").getValue(String.class),
                     commentSnapshot.child("comment").getValue(String.class),
-                    commentSnapshot.child("datetime").getValue(String.class))
+                    commentSnapshot.child("datetimeCreated").getValue(String.class),
+                    commentSnapshot.child("datetimeUpdated").getValue(String.class))
             );
         }
         data.setComments(comments);
@@ -221,155 +422,155 @@ public class Recipe {
     // UPLOAD --------------------------------------------------------------------------------------
 
     public boolean uploadTitle() {
-        if (hasData() && data.hasTitle()) {
+        if (hasTitle()) {
             MatbitDatabase.recipeTitle(id).setValue(getData().getTitle());
             return true;
         }
         else {
-            Log.e(TAG, "uploadTitle(): Can't upload empty values");
+            Log.e(TAG, "uploadTitle: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadUser () {
-        if (hasData() && data.hasUser()) {
+        if (hasUser()) {
             MatbitDatabase.recipeUser(id).setValue(getData().getUser());
             return true;
         }
         else {
-            Log.e(TAG, "uploadUser(): Can't upload empty values");
+            Log.e(TAG, "uploadUser: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadDatetimeCreated () {
-        if (hasData() && data.hasDatetimeCreated()) {
+        if (hasDatetimeCreated()) {
             MatbitDatabase.recipeDatetimeUpdated(id).setValue(getData().getDatetime_created());
             return true;
         }
         else {
-            Log.e(TAG, "uploadDatetimeCreated(): Can't upload empty values");
+            Log.e(TAG, "uploadDatetimeCreated: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadDatetimeUpdated () {
-        if (hasData() && data.hasDatetimeUpdated()) {
+        if (hasDatetimeUpdated()) {
             MatbitDatabase.recipeDatetimeUpdated(id).setValue(getData().getDatetime_updated());
             return true;
         }
         else {
-            Log.e(TAG, "uploadDatetimeUpdated(): Can't upload empty values");
+            Log.e(TAG, "uploadDatetimeUpdated: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadTime () {
-        if (hasData() && data.hasTime()) {
+        if (hasTime()) {
             MatbitDatabase.recipeTime(id).setValue(getData().getTime());
             return true;
         }
         else {
-            Log.e(TAG, "uploadTime(): Can't upload empty values");
+            Log.e(TAG, "uploadTime: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadPortions () {
-        if (hasData() && data.hasPortions()) {
+        if (hasPortions()) {
             MatbitDatabase.recipePortions(id).setValue(getData().getPortions());
             return true;
         }
         else {
-            Log.e(TAG, "uploadPortions(): Can't upload empty values");
+            Log.e(TAG, "uploadPortions: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadViews () {
-        if (hasData() && data.hasViews()) {
+        if (hasViews()) {
             MatbitDatabase.recipeViews(id).setValue(getData().getViews());;
             return true;
         }
         else {
-            Log.e(TAG, "uploadViews(): Can't upload empty values");
+            Log.e(TAG, "uploadViews: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadInfo () {
-        if (hasData() && data.hasInfo()) {
+        if (hasInfo()) {
             MatbitDatabase.recipeInfo(id).setValue(getData().getInfo());;
             return true;
         }
         else {
-            Log.e(TAG, "uploadInfo(): Can't upload empty values");
+            Log.e(TAG, "uploadInfo: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadThumbsUp () {
-        if (hasData() && data.hasThumbsUp()) {
+        if (hasThumbsUp()) {
             MatbitDatabase.recipeThumbsUp(id).setValue(getData().getThumbs_up());;
             return true;
         }
         else {
-            Log.e(TAG, "uploadThumbsUp(): Can't upload empty values");
+            Log.e(TAG, "uploadThumbsUp: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadThumbsDown () {
-        if (hasData() && data.hasThumbsDown()) {
+        if (hasThumbsDown()) {
             MatbitDatabase.recipeThumbsDown(id).setValue(getData().getThumbs_down());;
             return true;
         }
         else {
-            Log.e(TAG, "uploadThumbsDown(): Can't upload empty values");
+            Log.e(TAG, "uploadThumbsDown: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadRatings () {
-        if (hasData() && data.hasRatings()) {
+        if (hasRatings()) {
             MatbitDatabase.recipeRatings(id).setValue(getData().getRatings());
             return true;
         }
         else {
-            Log.e(TAG, "uploadRatings(): Can't upload empty values");
+            Log.e(TAG, "uploadRatings: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadComments () {
-        if (hasData() && data.hasComments()) {
+        if (hasComments()) {
             MatbitDatabase.recipeComments(id).setValue(getData().getComments());
             return true;
         }
         else {
-            Log.e(TAG, "uploadComments(): Can't upload empty values");
+            Log.e(TAG, "uploadComments: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadSteps () {
-        if (hasData() && data.hasSteps()) {
+        if (hasSteps()) {
             MatbitDatabase.recipeSteps(id).setValue(getData().getSteps());
             return true;
         }
         else {
-            Log.e(TAG, "uploadSteps(): Can't upload empty values");
+            Log.e(TAG, "uploadSteps: Can't upload empty data");
             return false;
         }
     }
 
     public boolean uploadIngredients () {
-        if (hasData() && data.hasIngredients()) {
+        if (hasIngredients()) {
             MatbitDatabase.recipeIngredients(id).setValue(data.getIngredients());
             return true;
         }
         else {
-            Log.e(TAG, "uploadIngredients(): Can't upload empty values");
+            Log.e(TAG, "uploadIngredients: Can't upload empty data");
             return false;
         }
     }

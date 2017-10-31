@@ -27,16 +27,16 @@ import com.google.firebase.storage.StorageReference;
 
 public final class MatbitDatabase {
     private static final String TAG = "MatbitDatabase";
+    public static final FirebaseAuth AUTH = FirebaseAuth.getInstance();
     public static final FirebaseUser USER = FirebaseAuth.getInstance().getCurrentUser();
     public static final FirebaseStorage STORAGE = FirebaseStorage.getInstance();
     public static final StorageReference RECIPE_PHOTOS = STORAGE.getReference("recipe_photos");
     public static final StorageReference USER_PHOTOS = STORAGE.getReference("user_photos");
-    public static final FirebaseAuth AUTH = FirebaseAuth.getInstance();
     public static final DatabaseReference ROOT = FirebaseDatabase.getInstance().getReference();
     public static final DatabaseReference RECIPES = FirebaseDatabase.getInstance().getReference().child("recipes");
     public static final DatabaseReference USERS = FirebaseDatabase.getInstance().getReference().child("users");
 
-    public static String getCurrentUser() {
+    public static String getCurrentUserID() {
         return USER.getUid();
     }
 
@@ -121,7 +121,7 @@ public final class MatbitDatabase {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Log.d(TAG, "Could not load recipe photo");
+                Log.d(TAG, "recipePictureToImageView: Could not load recipe photo");
             }
         });
     }
@@ -137,7 +137,7 @@ public final class MatbitDatabase {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Log.d(TAG, "Could not load user photo");
+                Log.d(TAG, "userPictureToImageView: Could not load user photo");
                 IMAGE_VIEW.setImageResource(R.drawable.icon_profile);
             }
         });
@@ -155,10 +155,33 @@ public final class MatbitDatabase {
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "Load User: onCancelled", databaseError.toException());
+                Log.w(TAG, "userNicknameToTextView: onCancelled", databaseError.toException());
             }
         });
     }
+
+    public static void uploadNewUserIfNew() {
+        final String UID = USER.getUid();
+        final Uri PHOTO_URL = USER.getPhotoUrl();
+        USERS.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild(UID)) {
+                    Log.d(TAG, "uploadNewUserIfNew: Uploading new empty user to database at: " + UID);
+                    new UploadUserPhoto().execute(PHOTO_URL);
+                    uploadNewUser(UserExamples.NEW_USER_TEMPLATE());
+                }
+                else {
+                    Log.d(TAG, "uploadNewUserIfNew: User " + UID + " already exists");
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "uploadNewUserIfNew: onCancelled", databaseError.toException());
+            }
+        });
+    }
+
     public static void gotToRecipe(final Context CONTEXT, Recipe recipe) {
         recipe.addView();
         Intent intent = new Intent(CONTEXT, RecipeActivity.class);

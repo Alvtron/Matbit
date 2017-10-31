@@ -181,34 +181,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             }
         });
 
-        MatbitDatabase.RECIPE_PHOTOS.child(RECIPE.getId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Glide.with(context)
-                        .load(uri)
-                        .into(recipeViewHolder.vRecipePhoto);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.d(TAG, "Could not load recipe photo");
-            }
-        });
+        MatbitDatabase.recipePictureToImageView(RECIPE.getId(), context, recipeViewHolder.vRecipePhoto);
+        MatbitDatabase.userPictureToImageView(RECIPE.getData().getUser(), context, recipeViewHolder.vUserPhoto);
 
-        MatbitDatabase.USER_PHOTOS.child(RECIPE.getData().getUser() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Glide.with(context)
-                        .load(uri)
-                        .into(recipeViewHolder.vUserPhoto);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.d(TAG, "Could not load user photo");
-                recipeViewHolder.vUserPhoto.setImageResource(R.drawable.icon_profile);
-            }
-        });
 
     }
 }

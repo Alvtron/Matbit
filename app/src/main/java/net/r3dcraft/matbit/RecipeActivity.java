@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017.
@@ -34,9 +35,16 @@ public class RecipeActivity extends AppCompatActivity {
         
         bundle = getIntent().getExtras();
         recipeID = bundle.getString("recipeID");
+        if (recipeID == null || recipeID.trim() == "") {
+            Toast.makeText(context, "Denne oppskriften er uleselig. Huff!", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // Set up toolbar
+        toolbar = (Toolbar) findViewById(R.id.activity_recipe_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         recipeTabAdapter = new RecipeTabAdapter(getSupportFragmentManager(), bundle);
 
@@ -46,6 +54,12 @@ public class RecipeActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.activity_recipe_tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override

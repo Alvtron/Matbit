@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutionException;
  * Created by Thomas Angeland, student at Ostfold University College, on 22.10.2017.
  */
 
-class UploadUserPhoto extends AsyncTask<String, Void, Void> {
+class UploadUserPhoto extends AsyncTask<Uri, Void, Void> {
 
     private final static String TAG = "UploadUserPhoto";
 
@@ -41,34 +41,36 @@ class UploadUserPhoto extends AsyncTask<String, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(String... str) {
+    protected Void doInBackground(Uri... uris) {
+        StorageReference reference = MatbitDatabase.USER_PHOTOS.child(MatbitDatabase.USER.getUid() + ".jpg");
 
-        try {
-            StorageReference reference = MatbitDatabase.USER_PHOTOS.child(MatbitDatabase.USER.getUid() + ".jpg");
+        for (int i  = 0; i < uris.length; i++) {
+            try {
+                URL url = new URL(uris[i].toString());
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
 
-            URL url = new URL(MatbitDatabase.USER.getPhotoUrl().toString());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
+                UploadTask uploadTask = reference.putStream(input);
+                ;
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.v(TAG, "Failed to upload image");
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    }
+                });
 
-            UploadTask uploadTask = reference.putStream(input);;
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Log.v(TAG, "Failed to upload image");
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                }
-            });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(TAG, "Failed to upload image");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.v(TAG, "Failed to upload image");
+            }
         }
         return null;
     }
