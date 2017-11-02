@@ -1,0 +1,94 @@
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/feed_item_card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardElevation="0dp"
+    android:layout_marginBottom="4dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/feed_item_thumbnail"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            card_view:layout_constraintLeft_toLeftOf="parent"
+            android:src="@color/grey_500"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="16dp"
+            card_view:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/feed_item_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="6 nye følgere!"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:minLines="1"
+            android:maxLines = "1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            card_view:layout_constraintLeft_toRightOf="@id/feed_item_thumbnail"
+            card_view:layout_constraintRight_toRightOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/feed_item_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="6t"
+            android:textColor="@color/grey_500"
+            android:textSize="12sp"
+            android:minLines="1"
+            android:maxLines = "1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            card_view:layout_constraintLeft_toRightOf="@id/feed_item_thumbnail"
+            card_view:layout_constraintRight_toRightOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@id/feed_item_title" />
+
+        <TextView
+            android:id="@+id/feed_item_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:minLines="1"
+            android:maxLines = "6"
+            android:layout_marginTop="6dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            card_view:layout_constraintLeft_toLeftOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/feed_item_thumbnail"
+            card_view:layout_constraintRight_toRightOf="parent" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/feed_item_featured_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            card_view:srcCompat="@drawable/icon_meat_410dp"
+            android:scaleType="fitCenter"
+            card_view:layout_constraintLeft_toLeftOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/feed_item_text"
+            card_view:layout_constraintRight_toRightOf="parent" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/grey_300"
+            android:layout_marginTop="10dp"
+            card_view:layout_constraintLeft_toLeftOf="parent"
+            card_view:layout_constraintRight_toRightOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/feed_item_featured_image" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

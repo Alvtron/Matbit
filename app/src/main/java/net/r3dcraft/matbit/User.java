@@ -1,16 +1,8 @@
 package net.r3dcraft.matbit;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 21.10.2017.
@@ -51,6 +43,34 @@ public class User {
 
     public void setData(UserData data) {
         this.data = data;
+    }
+
+    // ADD & REMOVE --------------------------------------------------------------------------------
+
+    public boolean hasFollower(String followerUID) {
+        if (getData().getFollowers().get(followerUID) == null)
+            return false;
+        else
+            return true;
+    }
+
+    public void addFollower(String followerUID) {
+        if (!hasFollower(followerUID)) {
+            String date = DateUtility.nowString();
+            getData().getFollowers().put(followerUID, date);
+            getData().setNum_followers(getData().getNum_followers() + 1);
+            MatbitDatabase.USERS.child(id).child("followers").child(followerUID).setValue(date);
+            uploadNumFollowers();
+        }
+    }
+
+    public void removeFollower(String followerUID) {
+        if (hasFollower(followerUID)) {
+            getData().getFollowers().remove(followerUID);
+            getData().setNum_followers(getData().getNum_followers() - 1);
+            MatbitDatabase.USERS.child(id).child("followers").child(followerUID).removeValue();
+            uploadNumFollowers();
+        }
     }
 
     // VALIDATION ----------------------------------------------------------------------------------

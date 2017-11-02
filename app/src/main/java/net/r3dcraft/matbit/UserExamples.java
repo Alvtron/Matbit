@@ -1,11 +1,6 @@
 package net.r3dcraft.matbit;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 22.10.2017.
@@ -17,8 +12,8 @@ public final class UserExamples {
                 "",
                 "",
                 "",
-                DateTime.nowString(),
-                DateTime.nowString(),
+                DateUtility.nowString(),
+                DateUtility.nowString(),
                 "",
                 0,
                 0,

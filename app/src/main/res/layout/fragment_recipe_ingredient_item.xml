@@ -8,8 +8,8 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp">
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin">
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/fragment_recipe_ingredient_icon"

@@ -186,6 +186,7 @@ public final class MatbitDatabase {
         recipe.addView();
         Intent intent = new Intent(CONTEXT, RecipeActivity.class);
         intent.putExtra("recipeID", recipe.getId());
+        intent.putExtra("authorID", recipe.getData().getUser());
         CONTEXT.startActivity(intent);
     }
 

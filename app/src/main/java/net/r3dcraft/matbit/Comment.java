@@ -1,5 +1,9 @@
 package net.r3dcraft.matbit;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.Comparator;
+
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 21.10.2017.
  */
@@ -55,4 +59,22 @@ public class Comment {
     public void setDatetimeUpdated(String datetimeUpdated) {
         this.datetimeUpdated = datetimeUpdated;
     }
+
+    @Exclude
+    public static final Comparator<Comment> DATE_COMPARATOR_ASC = new Comparator<Comment>() {
+        @Override
+        public int compare(Comment a, Comment b) {
+            return DateUtility.stringToDate(a.getDatetimeCreated())
+                    .compareTo(DateUtility.stringToDate(b.getDatetimeCreated()));
+        }
+    };
+
+    @Exclude
+    public static final Comparator<Comment> DATE_COMPARATOR_DESC = new Comparator<Comment>() {
+        @Override
+        public int compare(Comment a, Comment b) {
+            return DateUtility.stringToDate(b.getDatetimeCreated())
+                    .compareTo(DateUtility.stringToDate(a.getDatetimeCreated()));
+        }
+    };
 }

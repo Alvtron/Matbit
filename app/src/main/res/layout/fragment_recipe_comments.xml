@@ -2,62 +2,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/fragment_recipe_comments_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingTop="10dp"
+        android:scrollbars="vertical"
+        android:background="@color/grey_300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/fragment_recipe_comments_comment_layout"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/fragment_recipe_comments_comment_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
+        android:padding="16dp"
         app:layout_constraintEnd_toStartOf="@id/fragment_recipe_comments_comment_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/fragment_recipe_comments_comment_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/string_write_comment"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:inputType="textMultiLine"
             android:maxLength="500" />
     </android.support.design.widget.TextInputLayout>
 
-    <Button style="@style/Widget.AppCompat.Button.Colored"
+    <Button
         android:id="@+id/fragment_recipe_comments_comment_button"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/string_publish"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/fragment_recipe_comments_comment_layout"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/fragment_recipe_comments_comment_layout" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/grey_300"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/string_publish"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_recipe_comments_comment_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_recipe_comments_comment_layout"/>
-    <ListView
-        android:id="@+id/fragment_recipe_comments_listview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="6.0sp"
-        android:layout_marginTop="16dp"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_recipe_comments_comment_layout" />
+        app:layout_constraintTop_toTopOf="@+id/fragment_recipe_comments_comment_layout" />
 
 </android.support.constraint.ConstraintLayout>

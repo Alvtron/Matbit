@@ -171,7 +171,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 recipeViewHolder.vRecipeInfo.setText(
                         dataSnapshot.child("nickname").getValue(String.class)
                                 + " • " + RECIPE.getRatingAverage()
-                                + "% liked • " + RECIPE.getData().getTime() + " min"
+                                + "% liked • " + RECIPE.getTimeToText()
                 );
             }
 
@@ -183,7 +183,5 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         MatbitDatabase.recipePictureToImageView(RECIPE.getId(), context, recipeViewHolder.vRecipePhoto);
         MatbitDatabase.userPictureToImageView(RECIPE.getData().getUser(), context, recipeViewHolder.vUserPhoto);
-
-
     }
 }

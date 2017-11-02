@@ -22,24 +22,35 @@ public class RecipeData {
     private String user_nickname;
     private String datetime_created;
     private String datetime_updated;
+    private String info;
+    private String category;
     private int time;
     private int portions;
     private int views;
-    private String info;
-    private String category;
     private int thumbs_up;
     private int thumbs_down;
-    @Exclude private Map<String, Rating> ratings = new HashMap<String, Rating>();
-    @Exclude private Map<String, Comment> comments = new HashMap<String, Comment>();
-    @Exclude private Map<String, Step> steps = new HashMap<String, Step>();
-    @Exclude private Map<String, Ingredient> ingredients = new HashMap<String, Ingredient>();
+    @Exclude private Map<String, Rating> ratings;
+    @Exclude private Map<String, Comment> comments;
+    @Exclude private Map<String, Step> steps;
+    @Exclude private Map<String, Ingredient> ingredients;
 
     public RecipeData() {
+        title = new String();
+        user = new String();
+        user_nickname = new String();
+        datetime_created = new String();
+        datetime_updated = new String();
+        info = new String();
+        category = new String();
         time = -1;
         portions = -1;
         views = -1;
         thumbs_up = -1;
         thumbs_down = -1;
+        ratings = new HashMap<String, Rating>();
+        comments = new HashMap<String, Comment>();
+        steps = new HashMap<String, Step>();
+        ingredients = new HashMap<String, Ingredient>();
     }
 
     public String getTitle() {
@@ -82,6 +93,22 @@ public class RecipeData {
         this.datetime_updated = datetime_updated;
     }
 
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public int getTime() {
         return time;
     }
@@ -104,22 +131,6 @@ public class RecipeData {
 
     public void setThumbs_down(int thumbs_down) {
         this.thumbs_down = thumbs_down;
-    }
-
-    public String getInfo() {
-        return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public int getPortions() {
@@ -149,8 +160,8 @@ public class RecipeData {
     }
 
     @Exclude
-    public void addRating(Rating rating) {
-        this.ratings.put(Integer.toString(this.ratings.size()), rating);
+    public void addRating(String key, Rating rating) {
+        this.ratings.put(key, rating);
     }
 
     @Exclude
@@ -164,8 +175,8 @@ public class RecipeData {
     }
 
     @Exclude
-    public void addComments(Comment comment) {
-        this.comments.put(Integer.toString(this.comments.size()), comment);
+    public void addComments(String key, Comment comment) {
+        this.comments.put(key, comment);
     }
 
     @Exclude

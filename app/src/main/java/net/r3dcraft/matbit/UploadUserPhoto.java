@@ -57,7 +57,7 @@ class UploadUserPhoto extends AsyncTask<Uri, Void, Void> {
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        Log.v(TAG, "Failed to upload image");
+                        Log.v(TAG, "Failed to upload img_thumbnail");
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -69,7 +69,7 @@ class UploadUserPhoto extends AsyncTask<Uri, Void, Void> {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.v(TAG, "Failed to upload image");
+                Log.v(TAG, "Failed to upload img_thumbnail");
             }
         }
         return null;

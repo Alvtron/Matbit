@@ -18,6 +18,7 @@ import java.util.Map;
  */
 
 public class Recipe {
+    public enum THUMB { UP, DOWN, NOTHING }
     private static final String TAG = "Recipe";
     private String id;
     private RecipeData data;
@@ -46,6 +47,31 @@ public class Recipe {
         this.data = recipeData;
     }
 
+    public void printRecipeToLog(){
+        printRecipeToLog(this);
+    }
+
+    public static void printRecipeToLog(final Recipe recipe){
+        Log.d(TAG, "RECIPE  INFORMATION PRINT:");
+        Log.d(TAG, "ID: " + recipe.getId());
+        Log.d(TAG, "title: " + recipe.getData().getTitle());
+        Log.d(TAG, "user: " + recipe.getData().getUser());
+        Log.d(TAG, "user_nickname: " + recipe.getData().getUser_nickname());
+        Log.d(TAG, "datetime_created: " + recipe.getData().getDatetime_created());
+        Log.d(TAG, "datetime_updated: " + recipe.getData().getDatetime_updated());
+        Log.d(TAG, "info: " + recipe.getData().getInfo());
+        Log.d(TAG, "category: " + recipe.getData().getCategory());
+        Log.d(TAG, "time: " + Integer.toString(recipe.getData().getTime()));
+        Log.d(TAG, "portions: " + Integer.toString(recipe.getData().getPortions()));
+        Log.d(TAG, "views: " + Integer.toString(recipe.getData().getViews()));
+        Log.d(TAG, "thumbs_up: " + Integer.toString(recipe.getData().getThumbs_up()));
+        Log.d(TAG, "thumbs_down: " + Integer.toString(recipe.getData().getThumbs_down()));
+        Log.d(TAG, "ratings: " + Integer.toString(recipe.getData().getRatings().size()));
+        Log.d(TAG, "comments: " + Integer.toString(recipe.getData().getComments().size()));
+        Log.d(TAG, "steps: " + Integer.toString(recipe.getData().getSteps().size()));
+        Log.d(TAG, "ingredients: " + Integer.toString(recipe.getData().getIngredients().size()));
+    }
+
     public boolean downloadData(final DataSnapshot DATA_SNAPSHOT) {;
         this.id = DATA_SNAPSHOT.getKey();
         this.data = DATA_SNAPSHOT.getValue(RecipeData.class);
@@ -59,8 +85,8 @@ public class Recipe {
     public void createNewRecipe(String title, int time, int portions, String category, String info, ArrayList<Step> steps, ArrayList<Ingredient> ingredients) {
         data.setTitle(title);
         data.setUser(MatbitDatabase.getCurrentUserID());
-        data.setDatetime_created(DateTime.nowString());
-        data.setDatetime_updated(DateTime.nowString());
+        data.setDatetime_created(DateUtility.nowString());
+        data.setDatetime_updated(DateUtility.nowString());
         data.setTime(time);
         data.setPortions(portions);
         data.setViews(0);
@@ -103,6 +129,102 @@ public class Recipe {
         }
         else
             return 0;
+    }
+
+    // ADD & REMOVE --------------------------------------------------------------------------------------
+
+    public boolean addView() {
+        if (hasViews() && synced) {
+            data.setViews(data.getViews() + 1);
+            uploadViews();
+            return true;
+        }
+        else {
+            Log.e(TAG, "addView(): Can't add views to uninitialized views");
+            return false;
+        }
+    }
+
+    public void addRating(final THUMB thumb) {
+        if (thumb == THUMB.NOTHING)
+            return;
+
+        removeUserRating();
+        if (thumb == THUMB.UP) {
+            data.setThumbs_up(data.getThumbs_up() + 1);
+            uploadThumbsUp();
+            Rating new_rating = new Rating(MatbitDatabase.getCurrentUserID(), true, DateUtility.nowString());
+            String key = MatbitDatabase.recipeRatings(id).push().getKey();
+            MatbitDatabase.recipeRatings(id).child(key).setValue(new_rating);
+            data.addRating(key, new_rating);
+        } else if (thumb == THUMB.DOWN) {
+            data.setThumbs_down(data.getThumbs_down() + 1);
+            uploadThumbsDown();
+            Rating new_rating = new Rating(MatbitDatabase.getCurrentUserID(), false, DateUtility.nowString());
+            String key = MatbitDatabase.recipeRatings(id).push().getKey();
+            MatbitDatabase.recipeRatings(id).child(key).setValue(new_rating);
+            data.addRating(key, new_rating);
+        }
+    }
+
+    public void removeUserRating() {
+        ArrayList<String> keys_to_remove = new ArrayList<String>();
+        for (Map.Entry<String, Rating> ratingSet : data.getRatings().entrySet()) {
+            String key = ratingSet.getKey();
+            Rating rating = ratingSet.getValue();
+            if (rating.getUser().equals(MatbitDatabase.getCurrentUserID())) {
+                if (rating.getThumbsUp()) {
+                    data.setThumbs_up(data.getThumbs_up() - 1);
+                    uploadThumbsUp();
+                } else {
+                    data.setThumbs_down(data.getThumbs_down() - 1);
+                    uploadThumbsDown();
+                }
+                keys_to_remove.add(key);
+            }
+        }
+        for (String key : keys_to_remove) {
+            MatbitDatabase.recipeRatings(id).child(key).removeValue();
+            data.getRatings().remove(key);
+        }
+        printRecipeToLog(this);
+    }
+
+    public THUMB hasUserRated(){
+        for (Rating rating : data.getRatings().values())
+            if (rating.getUser().equals(MatbitDatabase.getCurrentUserID())) {
+                if (rating.getThumbsUp())
+                    return THUMB.UP;
+                else
+                    return THUMB.DOWN;
+            }
+        return THUMB.NOTHING;
+    }
+
+    public void addComment(final String COMMENT) {
+        Comment comment = new Comment(MatbitDatabase.USER.getUid(), COMMENT, DateUtility.nowString(), DateUtility.nowString());
+        MatbitDatabase.recipeComments(id).push().setValue(comment);
+    }
+
+    public static void changeComment(final String RECIPE_UID, final String COMMENT_UID, final String COMMENT) {
+        MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT_UID).child("datetimeUpdated").setValue(DateUtility.nowString());
+        MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT_UID).child("comment").setValue(COMMENT);
+    }
+
+    public String getTimeToText() {
+        if (hasTime()) {
+            String hours = Integer.toString(data.getTime() / 60 % 24);
+            String minutes = Integer.toString(data.getTime() % 60);
+            if (data.getTime() > 60 && data.getTime() % 60 != 0)
+                return hours + "t:" + minutes + "m";
+            else if (data.getTime() > 60 && data.getTime() % 60 == 0)
+                return hours + "t";
+            else if (data.getTime() < 60 && data.getTime() % 60 != 0)
+                return minutes + "m";
+            else
+                return "0";
+        } else
+            return "";
     }
 
     // VALIDATION ----------------------------------------------------------------------------------
@@ -303,35 +425,6 @@ public class Recipe {
         return true;
     }
 
-    // ADDERS --------------------------------------------------------------------------------------
-
-    public boolean addView() {
-        if (hasViews() && synced) {
-            data.setViews(data.getViews() + 1);
-            uploadViews();
-            return true;
-        }
-        else {
-            Log.e(TAG, "addView(): Can't add views to uninitialized views");
-            return false;
-        }
-    }
-
-    public void addRating(final boolean VALUE) {
-        data.addRating(new Rating(MatbitDatabase.getCurrentUserID(), VALUE, DateTime.nowString()));
-        uploadRatings();
-    }
-
-    public void addComment(final String COMMENT) {
-        Comment comment = new Comment(MatbitDatabase.USER.getUid(), COMMENT, DateTime.nowString(), DateTime.nowString());
-        MatbitDatabase.recipeComments(id).push().setValue(comment);
-    }
-
-    public static void changeComment(final String RECIPE_UID, final String COMMENT_UID, final String COMMENT) {
-        MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT_UID).child("datetimeUpdated").setValue(DateTime.nowString());
-        MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT_UID).child("comment").setValue(COMMENT);
-    }
-
     // DOWNLOAD ------------------------------------------------------------------------------------
 
     public void downloadTitle(DataSnapshot DATA_SNAPSHOT) {
@@ -379,7 +472,7 @@ public class Recipe {
         for (DataSnapshot ratingsSnapshot : DATA_SNAPSHOT.child("ratings").getChildren()) {
             ratings.put(ratingsSnapshot.getKey(), new Rating(
                     ratingsSnapshot.child("user").getValue(String.class),
-                    ratingsSnapshot.child("rating").getValue(Boolean.class),
+                    ratingsSnapshot.child("thumbsUp").getValue(Boolean.class),
                     ratingsSnapshot.child("datetime").getValue(String.class))
             );
         }
@@ -643,8 +736,8 @@ public class Recipe {
     public static final Comparator<Recipe> DATE_COMPARATOR_ASC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
-            return DateTime.stringToDate(a.getData().getDatetime_created())
-                    .compareTo(DateTime.stringToDate(b.getData().getDatetime_created()));
+            return DateUtility.stringToDate(a.getData().getDatetime_created())
+                    .compareTo(DateUtility.stringToDate(b.getData().getDatetime_created()));
         }
     };
 

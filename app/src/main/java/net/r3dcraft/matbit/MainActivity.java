@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,12 +15,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Date;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017
@@ -29,12 +33,11 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static String TAG = "WallActivity";
-
+    private Context context;
     private Toolbar toolbar;
     private ImageView featured_recipe_photo;
     private NewsFeedAdapter newsFeedAdapter;
     private LinearLayoutManager llm;
-    private ArrayList<NewsFeed> newsFeedList;
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
     private NavigationView navigationView;
@@ -43,7 +46,6 @@ public class MainActivity extends AppCompatActivity
     private TextView user_name;
     private TextView user_email;
     private BottomNavigationView bottomNavigationView;
-    private Context context;
 
     private RecyclerView mRecyclerView;
 
@@ -51,28 +53,19 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         context = this;
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.activity_main_content_toolbar);
         setSupportActionBar(toolbar);
 
-        // Featured recipe
-        featured_recipe_photo = (ImageView) findViewById(R.id.content_main_featured_recipe_photo);
-
         // Feed
-        mRecyclerView = (RecyclerView)findViewById(R.id.content_main_recyclerview_feed);
+        mRecyclerView = (RecyclerView)findViewById(R.id.activity_main_content_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        newsFeedList = new ArrayList<NewsFeed>();
-        newsFeedList.add(new NewsFeed());
-        newsFeedList.add(new NewsFeed());
-        newsFeedList.add(new NewsFeed());
-
-        newsFeedAdapter = new NewsFeedAdapter(newsFeedList, MainActivity.this);
+        newsFeedAdapter = new NewsFeedAdapter(context, NewsFeed.DATE_COMPARATOR_DESC);
         mRecyclerView.setAdapter(newsFeedAdapter);
 
         // Navigation bar
@@ -90,7 +83,7 @@ public class MainActivity extends AppCompatActivity
 
         // Bottom navigation
         bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.navigation);
+                findViewById(R.id.activity_main_content_bottom_navigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -100,10 +93,10 @@ public class MainActivity extends AppCompatActivity
                             case R.id.navigation_luck:
                                 return true;
                             case R.id.navigation_add:
-                                startActivity(new Intent(MainActivity.this, AddRecipeActivity.class));
+                                startActivity(new Intent(context, AddRecipeActivity.class));
                                 return true;
                             case R.id.navigation_search:
-                                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                                startActivity(new Intent(context, SearchActivity.class));
                                 return true;
                         }
                         return false;
@@ -115,11 +108,49 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
 
+        String photo_url = MatbitDatabase.USER.getPhotoUrl().toString();
+
+        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL1", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-10-22 14:53:25")));
+        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL2", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-11-02 18:08:08")));
+        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL3", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-10-27 08:22:47")));
+        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL4", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-10-30 19:56:23")));
+        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL5", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-11-02 18:36:20")));
+        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL6", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-11-02 18:36:26")));
+        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL7", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-02-22 14:53:25")));
+        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL8", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-01-22 14:53:25")));
+
         user_name.setText(MatbitDatabase.USER.getDisplayName());
         user_email.setText(MatbitDatabase.USER.getEmail());
+        MatbitDatabase.currentUserPictureToImageView(context, user_photo);
 
-        MatbitDatabase.recipePictureToImageView("KT4NTZTzFduj3DNLQgg", MainActivity.this, featured_recipe_photo);
-        MatbitDatabase.currentUserPictureToImageView(MainActivity.this, user_photo);
+        MatbitDatabase.RECIPES.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Date newest_date = null;
+                boolean first = true;
+                String newest_recipe_id = "";
+                for (DataSnapshot recipesSnapshot : dataSnapshot.getChildren()) {
+                    Date date = DateUtility.stringToDate(recipesSnapshot.child("datetime_created").getValue(String.class));
+                    String recipe_id = recipesSnapshot.getKey();
+
+                    if (first) {
+                        newest_date = date;
+                        first = false;
+                    } else if (date.after(newest_date)) {
+                            newest_date = date;
+                            newest_recipe_id = recipe_id;
+                        }
+                }
+                //if (!newest_recipe_id.equals(""))
+                    //MatbitDatabase.recipePictureToImageView(newest_recipe_id, MainActivity.this, featured_recipe_photo);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+
     }
 
     @Override
@@ -129,28 +160,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

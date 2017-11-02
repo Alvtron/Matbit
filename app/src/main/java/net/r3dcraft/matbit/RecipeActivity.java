@@ -25,6 +25,7 @@ public class RecipeActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private Recipe recipe;
     private String recipeID;
+    private String authorID;
     private Bundle bundle;
 
     @Override
@@ -35,6 +36,7 @@ public class RecipeActivity extends AppCompatActivity {
         
         bundle = getIntent().getExtras();
         recipeID = bundle.getString("recipeID");
+        authorID = bundle.getString("authorID");
         if (recipeID == null || recipeID.trim() == "") {
             Toast.makeText(context, "Denne oppskriften er uleselig. Huff!", Toast.LENGTH_SHORT).show();
             finish();
@@ -49,7 +51,7 @@ public class RecipeActivity extends AppCompatActivity {
         recipeTabAdapter = new RecipeTabAdapter(getSupportFragmentManager(), bundle);
 
         // Set up the ViewPager with the sections adapter.
-        viewPager = (ViewPager) findViewById(R.id.container);
+        viewPager = (ViewPager) findViewById(R.id.activity_main_container);
         viewPager.setAdapter(recipeTabAdapter);
 
         tabLayout = (TabLayout) findViewById(R.id.activity_recipe_tabs);
@@ -64,20 +66,17 @@ public class RecipeActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_recipe, menu);
+        if (authorID.equals(MatbitDatabase.getCurrentUserID()))
+            getMenuInflater().inflate(R.menu.activity_recipe, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.activity_recipe_menu_edit) {
+        if (id == R.id.activity_recipe_action_edit) {
+            Toast.makeText(context, "BOY, YOU HAVE DONE IT NOW", Toast.LENGTH_SHORT).show();
             return true;
         }
 

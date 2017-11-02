@@ -343,7 +343,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     private void galleryIntent()
     {
         Intent intent = new Intent();
-        intent.setType("image/*");
+        intent.setType("img_thumbnail/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);//
         startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
     }

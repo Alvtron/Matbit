@@ -53,7 +53,7 @@ public class SearchActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        recipeAdapter = new RecipeAdapter(this, Recipe.ALPHABETICAL_COMPARATOR_ASC);
+        recipeAdapter = new RecipeAdapter(this, Recipe.DATE_COMPARATOR_DESC);
         recyclerView.setAdapter(recipeAdapter);
 
         spinner_filter = (Spinner) findViewById(R.id.activity_search_filter_spinner);

@@ -12,7 +12,7 @@ public class Rating {
     public Rating() {
         this.user = new String();
         this.thumbsUp = false;
-        this.datetime = DateTime.nowString();
+        this.datetime = DateUtility.nowString();
     }
 
     public Rating(String user, boolean rating, String datetime) {
