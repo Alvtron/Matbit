@@ -24,7 +24,7 @@ import java.util.List;
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
  */
 
-public class FragmentRecipeIngredients extends Fragment {
+public class RecipeFragmentIngredients extends Fragment {
     private static final String TAG = "FragmentRecipeIngred";
     private String recipeID;
     private Recipe recipe;

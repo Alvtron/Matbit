@@ -39,6 +39,10 @@ public final class StringTools {
         }
     }
 
+    public static boolean stringIsNotEmpty(String string) {
+        return (string != null && !string.equals(""));
+    }
+
     public static boolean search(String key, String source) {
         key.toLowerCase(); source.toLowerCase();
 

@@ -12,7 +12,7 @@
         <ImageView
             android:id="@+id/activity_recipe_fragment_info_recipe_photo_img"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="@dimen/recipe_photo_height"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:background="@color/grey_300"

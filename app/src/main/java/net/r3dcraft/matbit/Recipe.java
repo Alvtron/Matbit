@@ -1,5 +1,7 @@
 package net.r3dcraft.matbit;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -22,7 +24,6 @@ public class Recipe {
     private static final String TAG = "Recipe";
     private String id;
     private RecipeData data;
-    private boolean synced = false;
 
     public Recipe() {
         data = new RecipeData();
@@ -37,9 +38,11 @@ public class Recipe {
         downloadData(DATA_SNAPSHOT);
     }
 
-    public Recipe(String id, RecipeData data, ArrayList<Rating> ratings, ArrayList<Comment> comments, ArrayList<Step> steps, ArrayList<Ingredient> ingredients) {
-        this.id = id;
-        this.data = data;
+    public Recipe(final DataSnapshot DATA_SNAPSHOT, final boolean minimal) {
+        if (minimal)
+            downloadDataMinimal(DATA_SNAPSHOT);
+        else
+            downloadData(DATA_SNAPSHOT);
     }
 
     public Recipe(String id, RecipeData recipeData) {
@@ -61,7 +64,7 @@ public class Recipe {
         Log.d(TAG, "datetime_updated: " + recipe.getData().getDatetime_updated());
         Log.d(TAG, "info: " + recipe.getData().getInfo());
         Log.d(TAG, "category: " + recipe.getData().getCategory());
-        Log.d(TAG, "time: " + Integer.toString(recipe.getData().getTime()));
+        Log.d(TAG, "step_time: " + Integer.toString(recipe.getData().getTime()));
         Log.d(TAG, "portions: " + Integer.toString(recipe.getData().getPortions()));
         Log.d(TAG, "views: " + Integer.toString(recipe.getData().getViews()));
         Log.d(TAG, "thumbs_up: " + Integer.toString(recipe.getData().getThumbs_up()));
@@ -74,12 +77,24 @@ public class Recipe {
 
     public boolean downloadData(final DataSnapshot DATA_SNAPSHOT) {;
         this.id = DATA_SNAPSHOT.getKey();
+        if (id == null || id.equals("")) {
+            Log.e(TAG, "downloadData: Unable to download recipe from Firebase");
+            return false;
+        }
         this.data = DATA_SNAPSHOT.getValue(RecipeData.class);
         downloadRatings(DATA_SNAPSHOT);
         downloadComments(DATA_SNAPSHOT);
         downloadSteps(DATA_SNAPSHOT);
         downloadIngredients(DATA_SNAPSHOT);
-        return synced = true;
+        return true;
+    }
+
+    public boolean downloadDataMinimal(final DataSnapshot DATA_SNAPSHOT) {;
+        this.id = DATA_SNAPSHOT.getKey();
+        if (id == null || id.equals(""))
+            return false;
+        this.data = DATA_SNAPSHOT.getValue(RecipeData.class);
+        return true;
     }
 
     public void createNewRecipe(String title, int time, int portions, String category, String info, ArrayList<Step> steps, ArrayList<Ingredient> ingredients) {
@@ -134,13 +149,13 @@ public class Recipe {
     // ADD & REMOVE --------------------------------------------------------------------------------------
 
     public boolean addView() {
-        if (hasViews() && synced) {
+        if (hasViews()) {
             data.setViews(data.getViews() + 1);
             uploadViews();
             return true;
         }
         else {
-            Log.e(TAG, "addView(): Can't add views to uninitialized views");
+            Log.e(TAG, "addView: Can't add views to uninitialized views");
             return false;
         }
     }
@@ -187,7 +202,6 @@ public class Recipe {
             MatbitDatabase.recipeRatings(id).child(key).removeValue();
             data.getRatings().remove(key);
         }
-        printRecipeToLog(this);
     }
 
     public THUMB hasUserRated(){
@@ -227,6 +241,19 @@ public class Recipe {
             return "";
     }
 
+    public int changeTimeAverage(final int TIME) {
+        int recipeTime = getData().getTime();
+        // If new TIME is twice as high or half as low as current TIME, discard it
+        if (TIME > recipeTime * 2 || TIME < recipeTime * 0.5)
+            return -1;
+        else {
+            int newAverage = (int) Math.round((double) (recipeTime + TIME) / 2.0);
+            getData().setTime(newAverage);
+            uploadTime();
+            return newAverage;
+        }
+    }
+
     // VALIDATION ----------------------------------------------------------------------------------
 
     public boolean hasData() {
@@ -260,7 +287,7 @@ public class Recipe {
             Log.i(TAG, "hasCompleteData(): steps not initialized.");
             return false;
         } else if (!hasTime()) {
-            Log.i(TAG, "hasCompleteData(): time not initialized.");
+            Log.i(TAG, "hasCompleteData(): step_time not initialized.");
             return false;
         } else return true;
     }
@@ -444,7 +471,7 @@ public class Recipe {
     }
 
     public void downloadTime (DataSnapshot DATA_SNAPSHOT) {
-        data.setTime(DATA_SNAPSHOT.child("time").getValue(Integer.class));
+        data.setTime(DATA_SNAPSHOT.child("step_time").getValue(Integer.class));
     }
 
     public void downloadPortions (DataSnapshot DATA_SNAPSHOT) {
@@ -470,11 +497,8 @@ public class Recipe {
     public void downloadRatings (DataSnapshot DATA_SNAPSHOT) {
         Map<String, Rating> ratings = new HashMap<String, Rating>();
         for (DataSnapshot ratingsSnapshot : DATA_SNAPSHOT.child("ratings").getChildren()) {
-            ratings.put(ratingsSnapshot.getKey(), new Rating(
-                    ratingsSnapshot.child("user").getValue(String.class),
-                    ratingsSnapshot.child("thumbsUp").getValue(Boolean.class),
-                    ratingsSnapshot.child("datetime").getValue(String.class))
-            );
+            Rating rating = ratingsSnapshot.getValue(Rating.class);
+            ratings.put(ratingsSnapshot.getKey(), rating);
         }
         data.setRatings(ratings);
     }
@@ -482,19 +506,16 @@ public class Recipe {
     public void downloadComments (DataSnapshot DATA_SNAPSHOT) {
         Map<String, Comment> comments = new HashMap<String, Comment>();
         for (DataSnapshot commentSnapshot : DATA_SNAPSHOT.child("comments").getChildren()) {
-            comments.put(commentSnapshot.getKey(), new Comment(
-                    commentSnapshot.child("user").getValue(String.class),
-                    commentSnapshot.child("comment").getValue(String.class),
-                    commentSnapshot.child("datetimeCreated").getValue(String.class),
-                    commentSnapshot.child("datetimeUpdated").getValue(String.class))
-            );
+            Comment comment = commentSnapshot.getValue(Comment.class);
+            comments.put(commentSnapshot.getKey(), comment);
         }
         data.setComments(comments);
     }
     public void downloadSteps (DataSnapshot DATA_SNAPSHOT) {
         Map<String, Step> steps = new HashMap<String, Step>();
         for (DataSnapshot stepsSnapshot : DATA_SNAPSHOT.child("steps").getChildren()) {
-            steps.put(stepsSnapshot.getKey(), new Step(stepsSnapshot.child("string").getValue(String.class)));
+            Step step = stepsSnapshot.getValue(Step.class);
+            steps.put(stepsSnapshot.getKey(), step);
         }
         data.setSteps(steps);
     }
@@ -502,12 +523,8 @@ public class Recipe {
     public void downloadIngredients (DataSnapshot DATA_SNAPSHOT) {
         Map<String, Ingredient> ingredients = new HashMap<String, Ingredient>();
         for (DataSnapshot ingredientsSnapshot : DATA_SNAPSHOT.child("ingredients").getChildren()) {
-            ingredients.put(ingredientsSnapshot.getKey(), new Ingredient(
-                    ingredientsSnapshot.child("course").getValue(String.class),
-                    ingredientsSnapshot.child("name").getValue(String.class),
-                    ingredientsSnapshot.child("amount").getValue(Double.class),
-                    ingredientsSnapshot.child("measurement").getValue(String.class))
-            );
+            Ingredient ingredient = ingredientsSnapshot.getValue(Ingredient.class);
+            ingredients.put(ingredientsSnapshot.getKey(), ingredient);
         }
         data.setIngredients(ingredients);
     }

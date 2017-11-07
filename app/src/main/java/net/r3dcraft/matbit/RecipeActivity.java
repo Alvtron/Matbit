@@ -37,7 +37,7 @@ public class RecipeActivity extends AppCompatActivity {
         bundle = getIntent().getExtras();
         recipeID = bundle.getString("recipeID");
         authorID = bundle.getString("authorID");
-        if (recipeID == null || recipeID.trim() == "") {
+        if (recipeID == null || recipeID.trim().equals("")) {
             Toast.makeText(context, "Denne oppskriften er uleselig. Huff!", Toast.LENGTH_SHORT).show();
             finish();
         }

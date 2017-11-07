@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main_drawer_header_layout"
+    android:layout_width="match_parent"
+    android:layout_height="94dp"
+    android:paddingTop="24dp"
+    android:background="@color/colorAccent"
+    android:gravity="bottom"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/activity_main_drawer_user_photo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop"
+        android:src="@color/grey_500"
+        android:layout_marginStart="@dimen/activity_vertical_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/activity_main_drawer_text_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/activity_main_drawer_user_photo"
+        app:layout_constraintTop_toTopOf="@id/activity_main_drawer_user_photo"
+        app:layout_constraintStart_toEndOf="@id/activity_main_drawer_user_photo">
+
+        <TextView
+            android:id="@+id/activity_main_drawer_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/activity_main_drawer_user_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:tint="@color/white"
+        app:srcCompat="@drawable/icon_keyboard_arrow_down_black_24dp"
+        android:layout_marginEnd="@dimen/activity_vertical_margin"
+        app:layout_constraintTop_toTopOf="@id/activity_main_drawer_text_layout"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

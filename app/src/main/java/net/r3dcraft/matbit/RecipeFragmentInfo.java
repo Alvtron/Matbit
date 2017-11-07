@@ -23,8 +23,8 @@ import com.google.firebase.database.ValueEventListener;
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
  */
 
-public class FragmentRecipeInfo extends Fragment {
-    private static final String TAG = "FragmentRecipeInfo";
+public class RecipeFragmentInfo extends Fragment {
+    private static final String TAG = "RecipeFragmentInfo";
     private Recipe recipe;
     private String recipeID;
     private User user;
@@ -179,7 +179,9 @@ public class FragmentRecipeInfo extends Fragment {
 
         btn_create.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(context, "Splashy effects!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, CreateRecipeActivity.class);
+                intent.putExtra("recipeID", recipe.getId());
+                context.startActivity(intent);
             }
         });
 
@@ -195,9 +197,7 @@ public class FragmentRecipeInfo extends Fragment {
 
         img_user_photo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(context, UserActivity.class);
-                intent.putExtra("authorID", recipe.getData().getUser());
-                startActivity(intent);
+                MatbitDatabase.goToUser(context, authorID);
             }
         });
     }
@@ -205,15 +205,15 @@ public class FragmentRecipeInfo extends Fragment {
     private void updateFollowAppearance() {
         if (user.hasFollower(MatbitDatabase.getCurrentUserID())) {
             txt_follow.setText("Følger");
-            txt_follow.setTextColor(getResources().getColor(R.color.colorPrimary));
-            icon_follow.setImageDrawable(getResources().getDrawable(R.drawable.icon_add_circle_black_24dp));
-            icon_follow.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-        }
-        else {
-            txt_follow.setText("Følg");
             txt_follow.setTextColor(getResources().getColor(R.color.grey_500));
             icon_follow.setImageDrawable(getResources().getDrawable(R.drawable.icon_check_black_24dp));
             icon_follow.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
+        else {
+            txt_follow.setText("Følg");
+            txt_follow.setTextColor(getResources().getColor(R.color.colorPrimary));
+            icon_follow.setImageDrawable(getResources().getDrawable(R.drawable.icon_add_circle_black_24dp));
+            icon_follow.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
         }
     }
 }

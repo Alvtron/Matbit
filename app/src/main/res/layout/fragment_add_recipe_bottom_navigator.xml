@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="70dp">
+
+    <View
+        android:id="@+id/fragment_add_recipe_separator_view"
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:background="@color/grey_500"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/fragment_add_recipe_btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:tint="@color/black"
+        android:src="@drawable/icon_keyboard_arrow_left_black_24dp"
+        app:layout_constraintBottom_toBottomOf="@id/fragment_add_recipe_btn_action"
+        app:layout_constraintTop_toTopOf="@id/fragment_add_recipe_btn_action"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/fragment_add_recipe_btn_action"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="160dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_height="wrap_content"
+        android:text="@string/string_btn_next"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_add_recipe_separator_view" />
+
+    <ImageView
+        android:id="@+id/fragment_add_recipe_btn_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:tint="@color/black"
+        android:src="@drawable/icon_keyboard_arrow_right_black_24dp"
+        app:layout_constraintBottom_toBottomOf="@id/fragment_add_recipe_btn_action"
+        app:layout_constraintTop_toTopOf="@id/fragment_add_recipe_btn_action"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>

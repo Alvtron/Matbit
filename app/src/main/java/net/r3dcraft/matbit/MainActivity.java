@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity
     private TextView user_name;
     private TextView user_email;
     private BottomNavigationView bottomNavigationView;
-
     private RecyclerView mRecyclerView;
+    private ConstraintLayout navigation_drawer_header_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,14 +75,22 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.activity_main_navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
         header = navigationView.getHeaderView(0);
-        user_photo = (ImageView) header.findViewById(R.id.activity_main_user_photo);
-        user_name = (TextView) header.findViewById(R.id.activity_main_user_name);
-        user_email = (TextView) header.findViewById(R.id.activity_main_user_email);
+        user_photo = (ImageView) header.findViewById(R.id.activity_main_drawer_user_photo);
+        user_name = (TextView) header.findViewById(R.id.activity_main_drawer_user_name);
+        user_email = (TextView) header.findViewById(R.id.activity_main_drawer_user_email);
+        navigation_drawer_header_layout = (ConstraintLayout) header.findViewById(R.id.activity_main_drawer_header_layout);
+        navigation_drawer_header_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(context, SignInActivity.class));
 
-        // Bottom navigation
+            }
+        });
+
+        // Bottom activity_main_bottom_navigation
         bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.activity_main_content_bottom_navigation);
 
@@ -102,6 +111,8 @@ public class MainActivity extends AppCompatActivity
                         return false;
                     }
                 });
+
+
     }
 
     @Override
@@ -164,17 +175,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
             MatbitDatabase.goToUser(context, MatbitDatabase.USER.getUid());
         } else if (id == R.id.nav_feed) {
-            startActivity(new Intent(MainActivity.this, FeedActivity.class));
+            startActivity(new Intent(context, FeedActivity.class));
         } else if (id == R.id.nav_find_user) {
-            startActivity(new Intent(MainActivity.this, FindUserActivity.class));
+            startActivity(new Intent(context, FindUserActivity.class));
         } else if (id == R.id.nav_settings) {
-            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            startActivity(new Intent(context, SettingsActivity.class));
         } else if (id == R.id.nav_about) {
 
         }

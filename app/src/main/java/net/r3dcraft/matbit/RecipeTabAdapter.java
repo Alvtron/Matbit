@@ -15,17 +15,17 @@ public class RecipeTabAdapter extends FragmentPagerAdapter {
     private static final String FRAGMENT_RECIPE_INGREDIENTS_TITLE = "Ingredienser";
     private static final String FRAGMENT_RECIPE_STEPS_TITLE = "Steg";
     private static final String FRAGMENT_RECIPE_COMMENTS_TITLE = "Kommentarer";
-    private FragmentRecipeInfo fragmentRecipeInfo;
-    private FragmentRecipeIngredients fragmentRecipeIngredients;
-    private FragmentRecipeSteps fragmentRecipeSteps;
-    private FragmentRecipeComments fragmentRecipeComments;
+    private RecipeFragmentInfo fragmentRecipeInfo;
+    private RecipeFragmentIngredients fragmentRecipeIngredients;
+    private RecipeFragmentSteps fragmentRecipeSteps;
+    private RecipeFragmentComments fragmentRecipeComments;
 
     public RecipeTabAdapter(FragmentManager fm,  Bundle bundle) {
         super(fm);
-        this.fragmentRecipeInfo = new FragmentRecipeInfo();
-        this.fragmentRecipeIngredients = new FragmentRecipeIngredients();
-        this.fragmentRecipeSteps = new FragmentRecipeSteps();
-        this.fragmentRecipeComments = new FragmentRecipeComments();
+        this.fragmentRecipeInfo = new RecipeFragmentInfo();
+        this.fragmentRecipeIngredients = new RecipeFragmentIngredients();
+        this.fragmentRecipeSteps = new RecipeFragmentSteps();
+        this.fragmentRecipeComments = new RecipeFragmentComments();
         this.fragmentRecipeInfo.setArguments(bundle);
         this.fragmentRecipeIngredients.setArguments(bundle);
         this.fragmentRecipeSteps.setArguments(bundle);
@@ -71,35 +71,35 @@ public class RecipeTabAdapter extends FragmentPagerAdapter {
         return null;
     }
 
-    public FragmentRecipeInfo getFragmentRecipeInfo() {
+    public RecipeFragmentInfo getFragmentRecipeInfo() {
         return fragmentRecipeInfo;
     }
 
-    public void setFragmentRecipeInfo(FragmentRecipeInfo fragmentRecipeInfo) {
+    public void setFragmentRecipeInfo(RecipeFragmentInfo fragmentRecipeInfo) {
         this.fragmentRecipeInfo = fragmentRecipeInfo;
     }
 
-    public FragmentRecipeIngredients getFragmentRecipeIngredients() {
+    public RecipeFragmentIngredients getFragmentRecipeIngredients() {
         return fragmentRecipeIngredients;
     }
 
-    public void setFragmentRecipeIngredients(FragmentRecipeIngredients fragmentRecipeIngredients) {
+    public void setFragmentRecipeIngredients(RecipeFragmentIngredients fragmentRecipeIngredients) {
         this.fragmentRecipeIngredients = fragmentRecipeIngredients;
     }
 
-    public FragmentRecipeSteps getFragmentRecipeSteps() {
+    public RecipeFragmentSteps getFragmentRecipeSteps() {
         return fragmentRecipeSteps;
     }
 
-    public void setFragmentRecipeSteps(FragmentRecipeSteps fragmentRecipeSteps) {
+    public void setFragmentRecipeSteps(RecipeFragmentSteps fragmentRecipeSteps) {
         this.fragmentRecipeSteps = fragmentRecipeSteps;
     }
 
-    public FragmentRecipeComments getFragmentRecipeComments() {
+    public RecipeFragmentComments getFragmentRecipeComments() {
         return fragmentRecipeComments;
     }
 
-    public void setFragmentRecipeComments(FragmentRecipeComments fragmentRecipeComments) {
+    public void setFragmentRecipeComments(RecipeFragmentComments fragmentRecipeComments) {
         this.fragmentRecipeComments = fragmentRecipeComments;
     }
 

@@ -23,7 +23,7 @@ public final class DateUtility {
             .appendSuffix(" dag", " dager")
             .appendSeparator(" og ")
             .appendHours()
-            .appendSuffix(" time", " timer")
+            .appendSuffix(" step_time", " timer")
             .appendSeparator(" og ")
             .appendMinutes()
             .appendSuffix(" minutt", " minutter")

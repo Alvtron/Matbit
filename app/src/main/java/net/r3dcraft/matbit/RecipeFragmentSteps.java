@@ -20,8 +20,8 @@ import java.util.ArrayList;
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
  */
 
-public class FragmentRecipeSteps extends Fragment {
-    private static final String TAG = "FragmentRecipeSteps";
+public class RecipeFragmentSteps extends Fragment {
+    private static final String TAG = "RecipeFragmentSteps";
     private Context context;
     private String recipeID;
     private Recipe recipe;

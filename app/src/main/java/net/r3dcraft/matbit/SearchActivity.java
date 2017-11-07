@@ -103,7 +103,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot recipesSnapshot : dataSnapshot.getChildren()) {
-                    Recipe recipe = new Recipe(recipesSnapshot);
+                    Recipe recipe = new Recipe(recipesSnapshot, true);
                     recipes.add(recipe);
                 }
                 recipeAdapter.replaceAll(recipes);
