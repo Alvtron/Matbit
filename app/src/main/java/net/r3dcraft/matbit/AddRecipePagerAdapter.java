@@ -26,22 +26,21 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
     private User user;
     private Recipe recipe;
     private byte[] recipePhoto;
-    private String title, info;
-    private ArrayList<Ingredient> ingredients;
-    private ArrayList<Step> steps;
-    private String category;
-    private int hour, minutes, portions;
+    private String title = "", info = "", category = "";
+    private int hour = 0, minutes = 0, portions = 0;
+    private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
+    private ArrayList<Step> steps = new ArrayList<Step>();
 
     private static final int NUM_PAGES = 8;
 
-    private static final String ADD_PHOTO_TITLE = "Foto";
-    private static final String ADD_TITLE_TITILE = "Tittel";
-    private static final String ADD_INFO_TITLE = "Info";
-    private static final String ADD_INGREDIENTS_TITLE = "Ingredienser";
-    private static final String ADD_STEPS_TITLE = "Steg";
-    private static final String ADD_CATEGORY_TITLE = "Kategori";
-    private static final String ADD_TIME_TITLE = "Tid";
-    private static final String ADD_PORTIONS_TITLE = "Porsjoner";
+    public static final String ADD_PHOTO_TITLE = "Legg til bilde";
+    public static final String ADD_TITLE_TITLE = "Legg til tittel";
+    public static final String ADD_INFO_TITLE = "Legg til info";
+    public static final String ADD_INGREDIENTS_TITLE = "Legg til ingredienser";
+    public static final String ADD_STEPS_TITLE = "Legg til steg";
+    public static final String ADD_CATEGORY_TITLE = "Velg kategori";
+    public static final String ADD_TIME_TITLE = "Legg til tid";
+    public static final String ADD_PORTIONS_TITLE = "Legg til porsjoner";
 
     private AddRecipeFragmentPhoto addRecipeFragmentPhoto;
     private AddRecipeFragmentTitle addRecipeFragmentTitle;
@@ -102,7 +101,7 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return ADD_PHOTO_TITLE;
             case 1:
-                return ADD_TITLE_TITILE;
+                return ADD_TITLE_TITLE;
             case 2:
                 return ADD_INFO_TITLE;
             case 3:
@@ -121,7 +120,7 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
         return null;
     }
 
-    public void createRecipe(){
+    public boolean createRecipe(){
         boolean valid = true;
         if (recipePhoto == null) {
             Toast.makeText(context, "Du må laste opp et bilde!", Toast.LENGTH_SHORT).show();
@@ -198,7 +197,9 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
                         }
                     });
             builder.show();
+            return true;
         }
+        return false;
     }
 
     public void setRecipePhoto(byte[] recipePhoto) {
@@ -221,6 +222,10 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
         this.steps = steps;
     }
 
+    public void addStep(Step step) {
+        steps.add(step);
+    }
+
     public void setCategory(String category) {
         this.category = category;
     }
@@ -235,5 +240,37 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
 
     public void setPortions(int portions) {
         this.portions = portions;
+    }
+
+    public ArrayList<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public ArrayList<Step> getSteps() {
+        return steps;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public int getHour() {
+        return hour;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public int getPortions() {
+        return portions;
     }
 }

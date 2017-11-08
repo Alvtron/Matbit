@@ -15,13 +15,13 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/fragment_add_recipe_btn_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:tint="@color/black"
-        android:src="@drawable/icon_keyboard_arrow_left_black_24dp"
+        app:srcCompat="@drawable/icon_keyboard_arrow_left_black_24dp"
         app:layout_constraintBottom_toBottomOf="@id/fragment_add_recipe_btn_action"
         app:layout_constraintTop_toTopOf="@id/fragment_add_recipe_btn_action"
         app:layout_constraintStart_toStartOf="parent" />
@@ -32,20 +32,21 @@
         android:layout_width="160dp"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_height="wrap_content"
-        android:text="@string/string_btn_next"
+        android:text="@string/string_btn_save"
         android:textSize="24sp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_add_recipe_separator_view" />
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/fragment_add_recipe_btn_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
         android:tint="@color/black"
-        android:src="@drawable/icon_keyboard_arrow_right_black_24dp"
+        app:srcCompat="@drawable/icon_keyboard_arrow_right_black_24dp"
         app:layout_constraintBottom_toBottomOf="@id/fragment_add_recipe_btn_action"
         app:layout_constraintTop_toTopOf="@id/fragment_add_recipe_btn_action"
         app:layout_constraintEnd_toEndOf="parent"/>

@@ -7,7 +7,7 @@
 
     <include
         layout="@layout/fragment_add_recipe_header"
-        android:id="@+id/activity_add_recipe_header"
+        android:id="@+id/activity_add_recipe_header_steps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/activity_add_recipe_header"
+        app:layout_constraintTop_toBottomOf="@id/activity_add_recipe_header_steps"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -51,14 +51,14 @@
         android:id="@+id/activity_add_recipe_listview_steps"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/activity_add_recipe_bottom_navigator"
+        app:layout_constraintBottom_toTopOf="@+id/activity_add_recipe_bottom_navigator_steps"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_add_recipe_layout_step" />
 
     <include
         layout="@layout/fragment_add_recipe_bottom_navigator"
-        android:id="@+id/activity_add_recipe_bottom_navigator"
+        android:id="@+id/activity_add_recipe_bottom_navigator_steps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

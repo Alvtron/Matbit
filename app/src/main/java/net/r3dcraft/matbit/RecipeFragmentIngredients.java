@@ -7,11 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,7 +31,7 @@ public class RecipeFragmentIngredients extends Fragment {
     private SeekBar seekBar;
     private ListView listview;
     private int portions;
-    private IngredientAdapter ingredientAdapter;
+    private IngredientRecipeAdapter ingredientRecipeAdapter;
     private Context context;
 
     @Override
@@ -65,8 +63,8 @@ public class RecipeFragmentIngredients extends Fragment {
                 portions = recipe.getData().getPortions();
                 txt_portions.setText(Integer.toString(portions) + " porsjoner");
                 seekBar.setProgress(portions - 1);
-                ingredientAdapter = new IngredientAdapter(context, ingredients);
-                listview.setAdapter(ingredientAdapter);
+                ingredientRecipeAdapter = new IngredientRecipeAdapter(context, ingredients);
+                listview.setAdapter(ingredientRecipeAdapter);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -77,12 +75,12 @@ public class RecipeFragmentIngredients extends Fragment {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
-                if (ingredientAdapter != null) {
-                    for (Ingredient ingredient : ingredientAdapter.getData())
+                if (ingredientRecipeAdapter != null) {
+                    for (Ingredient ingredient : ingredientRecipeAdapter.getData())
                         ingredient.setAmount((ingredient.getAmount() / portions) * (progresValue + 1));
                     portions = progresValue + 1;
                     txt_portions.setText(Integer.toString(portions) + " porsjoner");
-                    ingredientAdapter.notifyDataSetChanged();
+                    ingredientRecipeAdapter.notifyDataSetChanged();
                 }
             }
             @Override
