@@ -5,8 +5,7 @@ android {
         config {
             keyAlias 'MatbitKey'
             keyPassword '#Alvtron1'
-            //storeFile file('C:/Users/unibl/Desktop/Matbit/matbit.jks')
-            storeFile file('C:/Users/thoma/Desktop/Matbit/matbit.jks')
+            storeFile file('../matbit.jks')
             storePassword '#Alvtron1'
         }
     }
