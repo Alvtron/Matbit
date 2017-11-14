@@ -148,7 +148,8 @@ public class SearchActivity extends AppCompatActivity {
         // Retrieve the SearchView and plug it into SearchManager
         final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        if (searchManager != null)
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -181,7 +182,7 @@ public class SearchActivity extends AppCompatActivity {
     private void updateRecipeAdapter() {
         for (Recipe recipe : recipes) {
             if ((category.equals("Alle") || recipe.getData().getCategory().equals(category))
-                    && (StringTools.search(searchString, recipe.getData().getTitle())))
+                    && (StringUtility.search(searchString, recipe.getData().getTitle())))
                 recipeAdapter.add(recipe);
             else
                 recipeAdapter.remove(recipe);

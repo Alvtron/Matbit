@@ -17,8 +17,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -86,82 +88,72 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(context, SignInActivity.class));
-
             }
         });
 
-        // Bottom activity_main_bottom_navigation
-        bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.activity_main_content_bottom_navigation);
+        View try_luck = (View) findViewById(R.id.navigation_luck);
+        try_luck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.navigation_luck:
-                                return true;
-                            case R.id.navigation_add:
-                                startActivity(new Intent(context, AddRecipeActivity.class));
-                                return true;
-                            case R.id.navigation_search:
-                                startActivity(new Intent(context, SearchActivity.class));
-                                return true;
-                        }
-                        return false;
-                    }
-                });
+        View btn_add_recipe = (View) findViewById(R.id.navigation_add);
+        btn_add_recipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(context, AddRecipeActivity.class));
+            }
+        });
 
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        String photo_url = MatbitDatabase.USER.getPhotoUrl().toString();
-
-        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL1", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-10-22 14:53:25")));
-        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL2", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-11-02 18:08:08")));
-        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL3", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-10-27 08:22:47")));
-        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL4", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-10-30 19:56:23")));
-        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL5", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-11-02 18:36:20")));
-        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL6", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-11-02 18:36:26")));
-        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL7", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-02-22 14:53:25")));
-        newsFeedAdapter.add(new NewsFeed(photo_url, photo_url, "TITTEL8", getResources().getString(R.string.lorem_ipsum), DateUtility.stringToDate("2017-01-22 14:53:25")));
+        View btn_search_recipe = (View) findViewById(R.id.navigation_search);
+        btn_search_recipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(context, SearchActivity.class));
+            }
+        });
 
         user_name.setText(MatbitDatabase.USER.getDisplayName());
         user_email.setText(MatbitDatabase.USER.getEmail());
         MatbitDatabase.currentUserPictureToImageView(context, user_photo);
 
         MatbitDatabase.RECIPES.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Date newest_date = null;
-                boolean first = true;
-                String newest_recipe_id = "";
-                for (DataSnapshot recipesSnapshot : dataSnapshot.getChildren()) {
-                    Date date = DateUtility.stringToDate(recipesSnapshot.child("datetime_created").getValue(String.class));
-                    String recipe_id = recipesSnapshot.getKey();
 
-                    if (first) {
-                        newest_date = date;
-                        first = false;
-                    } else if (date.after(newest_date)) {
-                            newest_date = date;
-                            newest_recipe_id = recipe_id;
-                        }
-                }
-                //if (!newest_recipe_id.equals(""))
-                    //MatbitDatabase.recipePictureToImageView(newest_recipe_id, MainActivity.this, featured_recipe_photo);
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot){
+                newsFeedAdapter.empty();
+                NewsFeed recipe_of_the_week = new NewsFeed(context);
+                NewsFeed most_liked_recipe = new NewsFeed(context);
+                NewsFeed newest_recipe = new NewsFeed(context);
+
+                if (recipe_of_the_week.recipeOfTheWeek(dataSnapshot))
+                    newsFeedAdapter.add(recipe_of_the_week);
+                if (most_liked_recipe.mostLikedRecipe(dataSnapshot))
+                    newsFeedAdapter.add(most_liked_recipe);
+                if (newest_recipe.newestRecipe(dataSnapshot))
+                    newsFeedAdapter.add(newest_recipe);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                Log.w(TAG, "loadRecipes: onCancelled", databaseError.toException());
             }
         });
 
+        MatbitDatabase.USERS.child(MatbitDatabase.getCurrentUserID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                NewsFeed new_followers = new NewsFeed(context);
+                if (new_followers.newFollowers(dataSnapshot))
+                    newsFeedAdapter.add(new_followers);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadUsers: onCancelled", databaseError.toException());
+            }
+        });
     }
 
     @Override

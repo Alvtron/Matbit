@@ -1,10 +1,10 @@
 package net.r3dcraft.matbit;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -25,13 +25,11 @@ public class Recipe {
     private String id;
     private RecipeData data;
 
-    public Recipe() {
-        data = new RecipeData();
-    }
+    public Recipe() {}
 
     @Override
     public String toString() {
-        return getData().getTitle();
+        return id;
     }
 
     public Recipe(final DataSnapshot DATA_SNAPSHOT) {
@@ -97,9 +95,11 @@ public class Recipe {
         return true;
     }
 
-    public void createNewRecipe(String title, int time, int portions, String category, String info, ArrayList<Step> steps, ArrayList<Ingredient> ingredients) {
+    public void createNewRecipe(final User user, final String title, final int time, final int portions, final String category, final String info, final ArrayList<Step> steps, final ArrayList<Ingredient> ingredients) {
+        data = new RecipeData();
         data.setTitle(title);
-        data.setUser(MatbitDatabase.getCurrentUserID());
+        data.setUser(user.getId());
+        data.setUser_nickname(user.getData().getNickname());
         data.setDatetime_created(DateUtility.nowString());
         data.setDatetime_updated(DateUtility.nowString());
         data.setTime(time);
@@ -134,16 +134,29 @@ public class Recipe {
     }
 
     public int getRatingAverage() {
-        if (hasRatings()) {
-            double total = 0;
-            for (Rating rating : data.getRatings().values())
-                if (rating.getThumbsUp()) total++;
-            BigDecimal average = new BigDecimal(100 * (total / (double) data.getRatings().size()));
-            average = average.setScale(0, RoundingMode.HALF_UP);
-            return average.intValue();
-        }
-        else
+        if (!hasData() || !hasRatings())
             return 0;
+
+        double total = 0;
+        for (Rating rating : data.getRatings().values())
+            if (rating.getThumbsUp()) total++;
+        BigDecimal average = new BigDecimal(100 * (total / (double) data.getRatings().size()));
+        average = average.setScale(0, RoundingMode.HALF_UP);
+        return average.intValue();
+    }
+
+    public String getThumbsUp() {
+        if (!hasData() || !hasThumbsUp())
+            return null;
+
+        return StringUtility.shortNumber(data.getThumbs_up());
+    }
+
+    public String getThumbsDown() {
+        if (!hasData() || !hasThumbsUp())
+            return null;
+
+        return StringUtility.shortNumber(data.getThumbs_down());
     }
 
     // ADD & REMOVE --------------------------------------------------------------------------------------
@@ -229,14 +242,7 @@ public class Recipe {
         if (hasTime()) {
             String hours = Integer.toString(data.getTime() / 60 % 24);
             String minutes = Integer.toString(data.getTime() % 60);
-            if (data.getTime() > 60 && data.getTime() % 60 != 0)
-                return hours + "t:" + minutes + "m";
-            else if (data.getTime() > 60 && data.getTime() % 60 == 0)
-                return hours + "t";
-            else if (data.getTime() < 60 && data.getTime() % 60 != 0)
-                return minutes + "m";
-            else
-                return "0";
+            return hours + "t:" + minutes + "m";
         } else
             return "";
     }

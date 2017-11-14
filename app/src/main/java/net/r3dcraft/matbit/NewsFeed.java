@@ -1,70 +1,180 @@
 package net.r3dcraft.matbit;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.support.constraint.solver.widgets.Snapshot;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeParser;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 17.10.2017.
  */
 
 public class NewsFeed {
-    private String url_thumbnail = "";
-    private String url_featured_image = "";
+    private static final String TAG = "NewsFeed";
+    private static final String RECIPE_OF_THE_WEEK = "Denne ukas oppskrift!";
+    private static final String MOST_LIKED_RECIPE = "Mest populær oppskrift!";
+    private static final String LASTEST_RECIPE = "Ny oppskrift!";
+    private static final String NEW_FOLLOWERS = "Du har nye følgere!";
+    private Context context;
+    private StorageReference storage_reference_thumbnail = null;
+    private StorageReference storage_reference_featured_image = null;
     private String title = "";
+    private String subtitle = "";
     private String text = "";
-    private Date date = null;
+    private Intent action;
+    private DateTime date = null;
 
-    public NewsFeed(){}
-
-    public NewsFeed(String url_thumbnail, String url_featured_image, String title, String text, Date date) {
-        this.url_thumbnail = url_thumbnail;
-        this.url_featured_image = url_featured_image;
-        this.title = title;
-        this.text = text;
-        this.date = date;
+    public NewsFeed(Context context){
+        this.context = context;
     }
 
-    public String getUrl_thumbnail() {
-        return url_thumbnail;
+    public boolean recipeOfTheWeek(final DataSnapshot DATA_SNAPSHOT){
+        Recipe recipe = new Recipe();
+
+        for (DataSnapshot recipesSnapshot : DATA_SNAPSHOT.getChildren()) {
+
+            Recipe this_recipe = new Recipe(recipesSnapshot);
+
+            if (!recipe.hasData() || this_recipe.getData().getThumbs_up() * 3 + this_recipe.getData().getViews()
+                    > recipe.getData().getThumbs_up() * 3 + recipe.getData().getViews()) {
+                recipe = this_recipe;
+
+                title = RECIPE_OF_THE_WEEK;
+                text = recipe.getData().getInfo() + " - <i><font color='#9E9E9E'> postet av "
+                        + recipe.getData().getUser_nickname() + "</font></i>";
+                subtitle = "Med " + String.valueOf(recipe.getData().getViews()) + " visninger og " + String.valueOf(recipe.getThumbsUp()) + " likes!";
+
+                storage_reference_thumbnail = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
+                storage_reference_featured_image = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
+
+                action = new Intent(context, RecipeActivity.class);
+                action.putExtra("recipeID", recipe.getId());
+                action.putExtra("authorID", recipe.getData().getUser());
+            }
+        }
+
+        date = new DateTime();
+        return recipe.hasData();
     }
 
-    public void setUrl_thumbnail(String url_thumbnail) {
-        this.url_thumbnail = url_thumbnail;
+    public boolean mostLikedRecipe(final DataSnapshot DATA_SNAPSHOT){
+        Recipe recipe = new Recipe();
+
+        for (DataSnapshot recipesSnapshot : DATA_SNAPSHOT.getChildren()) {
+
+            Recipe this_recipe = new Recipe(recipesSnapshot);
+
+            if (!recipe.hasData() || this_recipe.getData().getThumbs_up() > recipe.getData().getThumbs_up()) {
+                recipe = this_recipe;
+
+                title = MOST_LIKED_RECIPE;
+                text = recipe.getData().getInfo() + " - <i><font color='#9E9E9E'> postet av "
+                        + recipe.getData().getUser_nickname() + "</font></i>";
+                subtitle = "Med " + String.valueOf(recipe.getData().getViews()) + " visninger og " + String.valueOf(recipe.getThumbsUp()) + " likes!";
+
+                storage_reference_thumbnail = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
+                storage_reference_featured_image = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
+
+                action = new Intent(context, RecipeActivity.class);
+                action.putExtra("recipeID", recipe.getId());
+                action.putExtra("authorID", recipe.getData().getUser());
+            }
+        }
+
+        date = new DateTime();
+
+        return recipe.hasData();
     }
 
-    public String getUrl_featured_image() {
-        return url_featured_image;
+    public boolean newestRecipe(final DataSnapshot DATA_SNAPSHOT){
+        Recipe recipe = new Recipe();
+
+        for (DataSnapshot recipesSnapshot : DATA_SNAPSHOT.getChildren()) {
+            Recipe this_recipe = new Recipe(recipesSnapshot);
+            DateTime this_date = DateUtility.stringToDate(this_recipe.getData().getDatetime_created());
+
+            if (!recipe.hasData() || this_date.isAfter(DateUtility.stringToDate(recipe.getData().getDatetime_created()))){
+                recipe = this_recipe;
+
+                title = LASTEST_RECIPE;
+                text = recipe.getData().getInfo() + " - <i><font color='#9E9E9E'> postet av "
+                        + recipe.getData().getUser_nickname() + "</font></i>";
+                subtitle = "Med " + String.valueOf(recipe.getData().getViews()) + " visninger og " + String.valueOf(recipe.getThumbsUp()) + " likes!";
+
+                storage_reference_thumbnail = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
+                storage_reference_featured_image = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
+
+                action = new Intent(context, RecipeActivity.class);
+                action.putExtra("recipeID", recipe.getId());
+                action.putExtra("authorID", recipe.getData().getUser());
+            }
+        }
+
+        date = new DateTime();
+
+        return recipe.hasData();
     }
 
-    public void setUrl_featured_image(String url_featured_image) {
-        this.url_featured_image = url_featured_image;
+    public boolean newFollowers(final DataSnapshot DATA_SNAPSHOT){
+        User user = new User(DATA_SNAPSHOT);
+        ArrayList<String> newFollowers = new ArrayList<String>();
+        DateTime newest_date = null;
+
+        for (Map.Entry<String, String> ratingSet : user.getData().getFollowers().entrySet()) {
+            String user_id = ratingSet.getKey();
+            DateTime date = DateUtility.stringToDate(ratingSet.getValue()) ;
+
+            if (Days.daysBetween(date, DateTime.now()).getDays() <= 7) {
+                newFollowers.add(user_id);
+                if (newest_date == null || date.isAfter(newest_date))
+                    newest_date = date;
+            }
+        }
+        if (!newFollowers.isEmpty()) {
+            title = NEW_FOLLOWERS;
+            text = "Du har " + String.valueOf(newFollowers.size()) + " nye følgere!";
+
+            subtitle = DateUtility.dateToTimeText(newest_date) + " siden";
+
+            storage_reference_thumbnail = MatbitDatabase.USER_PHOTOS.child(user.getId() + ".jpg");
+
+            action = new Intent(context, UserActivity.class);
+            action.putExtra("userID", MatbitDatabase.getCurrentUserID());
+
+            date = newest_date;
+            return true;
+        }
+        else return false;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getText() {
         return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public static final Comparator<NewsFeed> DATE_COMPARATOR_ASC = new Comparator<NewsFeed>() {
@@ -86,4 +196,24 @@ public class NewsFeed {
                 return b.date.compareTo(a.date);
         }
     };
+
+    public StorageReference getStorage_reference_thumbnail() {
+        return storage_reference_thumbnail;
+    }
+
+    public StorageReference getStorage_reference_featured_image() {
+        return storage_reference_featured_image;
+    }
+
+    public Intent getAction() {
+        return action;
+    }
+
+    public DateTime getDate() {
+        return date;
+    }
+
+    public String getSubtitle() {
+        return subtitle;
+    }
 }

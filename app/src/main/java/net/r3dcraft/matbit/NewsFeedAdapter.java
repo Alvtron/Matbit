@@ -3,6 +3,7 @@ package net.r3dcraft.matbit;
 import android.content.Context;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +120,11 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.NewsFe
         return new NewsFeedAdapter.NewsFeedViewHolder(itemView);
     }
 
+    public void empty() {
+        sortedNewsfeedList.clear();
+        notifyDataSetChanged();
+    }
+
     public static class NewsFeedViewHolder extends RecyclerView.ViewHolder {
         private NewsFeed newsFeed;
         private ImageView img_thumbnail;
@@ -143,17 +149,20 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedAdapter.NewsFe
         final String MAINLINE = NEWSFEED.getTitle();
         newsFeedViewHolder.newsFeed = NEWSFEED;
 
-        if (!NEWSFEED.getUrl_thumbnail().equals("") || NEWSFEED.getUrl_thumbnail() != null)
-            Glide.with(context)
-                    .load(NEWSFEED.getUrl_thumbnail())
-                    .into(newsFeedViewHolder.img_thumbnail);
-        if (!NEWSFEED.getUrl_featured_image().equals("") || NEWSFEED.getUrl_featured_image() != null)
-            Glide.with(context)
-                    .load(NEWSFEED.getUrl_featured_image())
-                    .into(newsFeedViewHolder.img_featured_image);
+        if (NEWSFEED.getStorage_reference_thumbnail() != null)
+            MatbitDatabase.downloadToImageView(NEWSFEED.getStorage_reference_thumbnail(), context, newsFeedViewHolder.img_thumbnail);
+        if (NEWSFEED.getStorage_reference_featured_image() != null)
+            MatbitDatabase.downloadToImageView(NEWSFEED.getStorage_reference_thumbnail(), context, newsFeedViewHolder.img_featured_image);
 
         newsFeedViewHolder.txt_title.setText(NEWSFEED.getTitle());
-        newsFeedViewHolder.txt_time.setText(DateUtility.dateToTimeText(NEWSFEED.getDate()) + " siden");
-        newsFeedViewHolder.txt_text.setText(NEWSFEED.getText());
+        newsFeedViewHolder.txt_time.setText(NEWSFEED.getSubtitle());
+        newsFeedViewHolder.txt_text.setText(Html.fromHtml(NEWSFEED.getText()));
+
+        newsFeedViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.startActivity(NEWSFEED.getAction());
+            }
+        });
     }
 }

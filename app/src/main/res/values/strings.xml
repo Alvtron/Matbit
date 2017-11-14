@@ -267,4 +267,7 @@
     <string name="string_btn_next">NESTE</string>
     <string name="string_btn_finished">FERDIG</string>
     <string name="string_btn_save">LAGRE</string>
+    <string name="string_information">Informasjon</string>
+    <string name="string_amount">Mengde</string>
+    <string name="string_ingredient">Ingrediens</string>
 </resources>

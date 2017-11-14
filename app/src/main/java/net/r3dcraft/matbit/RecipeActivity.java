@@ -76,7 +76,7 @@ public class RecipeActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.activity_recipe_action_edit) {
-            Toast.makeText(context, "BOY, YOU HAVE DONE IT NOW", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "[Ikke ferdig]", Toast.LENGTH_SHORT).show();
             return true;
         }
 

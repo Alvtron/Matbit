@@ -89,8 +89,6 @@ public class RecipeFragmentInfo extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipe = new Recipe(dataSnapshot);
                 txt_title.setText(recipe.getData().getTitle());
-                //created = recipe.getData().getDatetime_created();
-                //updated = recipe.getData().getDatetime_updated();
                 txt_info.setText(dataSnapshot.child("info").getValue(String.class));
                 txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
                 txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));

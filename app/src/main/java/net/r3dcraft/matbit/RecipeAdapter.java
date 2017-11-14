@@ -165,8 +165,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipeViewHolder.vRecipeInfo.setText(
                         dataSnapshot.child("nickname").getValue(String.class)
-                                + " • " + RECIPE.getRatingAverage()
-                                + "% liked • " + RECIPE.getTimeToText()
+                                + " • " + RECIPE.getThumbsUp()
+                                + " liked • " + RECIPE.getTimeToText()
                 );
             }
 

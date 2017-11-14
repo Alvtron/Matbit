@@ -28,9 +28,10 @@
             android:id="@+id/activity_add_recipe_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Informasjon"
+            android:hint="@string/string_information"
             app:backgroundTint="@color/colorPrimary"
-            android:inputType="textImeMultiLine"
+            android:inputType="textMultiLine"
+            android:maxLines="15"
             android:maxLength="500" />
     </android.support.design.widget.TextInputLayout>
 

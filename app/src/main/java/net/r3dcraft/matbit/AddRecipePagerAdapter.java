@@ -125,35 +125,37 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
         if (recipePhoto == null) {
             Toast.makeText(context, "Du må laste opp et bilde!", Toast.LENGTH_SHORT).show();
             valid = false;
-        }
-        if(title.trim().equals("")) {
-            Toast.makeText(context, "DÅRLIG INPUT", Toast.LENGTH_SHORT).show();
+        } else if(title.trim().equals("")) {
+            Toast.makeText(context, "Du mangler tittel!", Toast.LENGTH_SHORT).show();
             valid = false;
-        }
-        if(hour * 60 + minutes < 1) {
-            Toast.makeText(context, "Velg en tid som virker fornuftig", Toast.LENGTH_SHORT).show();
+        } else if(hour * 60 + minutes < 1) {
+            Toast.makeText(context, "Velg en tid høyere enn 0 minutter", Toast.LENGTH_SHORT).show();
             valid = false;
-        }
-        if(ingredients.isEmpty()) {
-            Toast.makeText(context, "DÅRLIG INPUT", Toast.LENGTH_SHORT).show();
+        } else if(hour * 60 + minutes > 1440) {
+            Toast.makeText(context, "Velg en tid lavere enn 24 timer", Toast.LENGTH_SHORT).show();
             valid = false;
-        }
-        if(steps.isEmpty()) {
-            Toast.makeText(context, "DÅRLIG INPUT", Toast.LENGTH_SHORT).show();
+        } else if(ingredients.isEmpty()) {
+            Toast.makeText(context, "Du må legge til minst en ignrediens", Toast.LENGTH_SHORT).show();
             valid = false;
-        }
-        if(category == null || category.trim().equals("")) {
-            Toast.makeText(context, "DÅRLIG INPUT", Toast.LENGTH_SHORT).show();
+        } else if(steps.isEmpty()) {
+            Toast.makeText(context, "Du må legge til minst ett steg", Toast.LENGTH_SHORT).show();
             valid = false;
-        }
-        if(portions < 1) {
-            Toast.makeText(context, "DÅRLIG INPUT", Toast.LENGTH_SHORT).show();
+        } else if(category == null || category.trim().equals("")) {
+            Toast.makeText(context, "Du må velge en kategori", Toast.LENGTH_SHORT).show();
+            valid = false;
+        } else if(portions < 1) {
+            Toast.makeText(context, "Antall porsjoner er for lav (minst 1)", Toast.LENGTH_SHORT).show();
+            valid = false;
+        } else if (portions > 12) {
+            Toast.makeText(context, "Antall porsjoner er for høy (maks 12)", Toast.LENGTH_SHORT).show();
             valid = false;
         }
 
         if (valid) {
             recipe = new Recipe();
-            recipe.createNewRecipe(title,
+            recipe.createNewRecipe(
+                    user,
+                    title,
                     hour * 60 + minutes,
                     portions,
                     category,
@@ -161,6 +163,7 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
                     steps,
                     ingredients
             );
+            recipe.printRecipeToLog();
 
             // Upload recipe data to new unique firebase key
             recipe.setId(MatbitDatabase.uploadNewRecipe(recipe.getData()));
@@ -184,16 +187,19 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
             // Show dialog box for next step
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setMessage("Oppskriften er lastet opp!")
+                    .setCancelable(false)
                     .setPositiveButton("Gå til oppskrift", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             ((AddRecipeActivity)context).finish();
                             MatbitDatabase.gotToRecipe(context, recipe);
+                            ((AddRecipeActivity) context).finish();
                         }
                     })
                     .setNegativeButton("Gå til startsiden", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             ((AddRecipeActivity)context).finish();
                             context.startActivity(new Intent(context, MainActivity.class));
+                            ((AddRecipeActivity) context).finish();
                         }
                     });
             builder.show();

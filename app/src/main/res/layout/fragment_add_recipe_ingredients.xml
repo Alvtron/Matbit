@@ -28,14 +28,14 @@
             android:id="@+id/activity_add_recipe_input_layout_ingredient_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:layout_weight="1">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/activity_add_recipe_ingredient_amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Mengde"
+                android:hint="@string/string_amount"
                 android:inputType="numberDecimal"
                 android:maxLength="20" />
         </android.support.design.widget.TextInputLayout>
@@ -50,7 +50,7 @@
             android:id="@+id/activity_add_recipe_input_layout_ingredient_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:inputType="text"
             android:layout_weight="1">
 
@@ -58,7 +58,7 @@
                 android:id="@+id/activity_add_recipe_ingredient_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingrediens"
+                android:hint="@string/string_ingredient"
                 android:maxLength="20" />
         </android.support.design.widget.TextInputLayout>
 

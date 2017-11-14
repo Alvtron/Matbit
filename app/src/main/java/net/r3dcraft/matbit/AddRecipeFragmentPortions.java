@@ -54,8 +54,7 @@ public class AddRecipeFragmentPortions extends Fragment {
         btn_action.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pagerAdapter.createRecipe())
-                    getActivity().finish();
+                pagerAdapter.createRecipe();
             }
         });
 

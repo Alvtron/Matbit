@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
  * Created by Thomas Angeland, student at Ostfold University College, on 31.10.2017.
  */
 
-public final class StringTools {
-    private static final String TAG = "StringTools";
+public final class StringUtility {
+    private static final String TAG = "StringUtility";
 
     public static Integer stringToInt(String text) {
         try {
@@ -54,5 +54,14 @@ public final class StringTools {
                return true;
         }
         return false;
+    }
+
+    public static String shortNumber(int number) {
+        if (number >= 1000000)
+            return String.valueOf(Math.round(((double)number / 1000000.00) * 100) / 100) + "m";
+        else if (number >= 1000)
+            return String.valueOf(Math.round(((double)number / 1000.00) * 100) / 100) + "k";
+        else
+            return String.valueOf(number);
     }
 }

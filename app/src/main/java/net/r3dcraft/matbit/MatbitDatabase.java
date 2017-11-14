@@ -34,8 +34,8 @@ public final class MatbitDatabase {
     public static final StorageReference RECIPE_PHOTOS = STORAGE.getReference("recipe_photos");
     public static final StorageReference USER_PHOTOS = STORAGE.getReference("user_photos");
     public static final DatabaseReference ROOT = FirebaseDatabase.getInstance().getReference();
-    public static final DatabaseReference RECIPES = FirebaseDatabase.getInstance().getReference().child("recipes");
-    public static final DatabaseReference USERS = FirebaseDatabase.getInstance().getReference().child("users");
+    public static final DatabaseReference RECIPES = ROOT.child("recipes");
+    public static final DatabaseReference USERS = ROOT.child("users");
 
     public static String getCurrentUserID() {
         return USER.getUid();
@@ -171,6 +171,35 @@ public final class MatbitDatabase {
             public void onFailure(@NonNull Exception exception) {
                 Log.d(TAG, "userPictureToImageView: Could not load user photo");
                 IMAGE_VIEW.setImageResource(R.drawable.icon_profile);
+            }
+        });
+        return true;
+    }
+
+    public static boolean downloadToImageView(final StorageReference STORAGE_REFERENCE, final Context CONTEXT, final ImageView IMAGE_VIEW) {
+        if (STORAGE_REFERENCE == null) {
+            Log.d(TAG, "downloadToImageView: STORAGE_REFERENCE is not initialized (is null)");
+            return true;
+        } else if (CONTEXT == null) {
+            Log.d(TAG, "userPictureToImageView: CONTEXT is not initialized (is null)");
+            return true;
+        } else if (IMAGE_VIEW == null) {
+            Log.d(TAG, "userPictureToImageView: IMAGE_VIEW is not initialized (is null)");
+            return true;
+        }
+
+        STORAGE_REFERENCE.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(CONTEXT)
+                        .load(uri)
+                        .into(IMAGE_VIEW);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d(TAG, "downloadToImageView: Could not load image. Maybe storage refference is invalid");
+                IMAGE_VIEW.setImageResource(R.drawable.icon_broken_image_black_24dp);
             }
         });
         return true;

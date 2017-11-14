@@ -25,15 +25,90 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_main_content_toolbar" />
 
-    <android.support.design.widget.BottomNavigationView
+    <LinearLayout
         android:id="@+id/activity_main_content_bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:orientation="horizontal"
         android:background="?android:attr/windowBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/activity_main_bottom_navigation" />
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Views details -->
+        <LinearLayout
+            android:id="@+id/navigation_luck"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="1">
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:srcCompat="@drawable/icon_home_black_24dp"
+                app:tint="@color/grey_500"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="@string/title_try_luck"
+                android:textColor="@color/grey_500"
+                android:minLines="1"
+                android:maxLines="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navigation_add"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="1">
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:srcCompat="@drawable/icon_add"
+                app:tint="@color/grey_500"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="@string/title_add_recipe"
+                android:textColor="@color/grey_500"
+                android:minLines="1"
+                android:maxLines="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navigation_search"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="1">
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:srcCompat="@drawable/icon_search"
+                app:tint="@color/grey_500"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/grey_500"
+                android:text="@string/title_search"
+                android:minLines="1"
+                android:maxLines="1"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>
