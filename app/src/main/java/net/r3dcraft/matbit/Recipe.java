@@ -3,8 +3,6 @@ package net.r3dcraft.matbit;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -181,14 +179,14 @@ public class Recipe {
         if (thumb == THUMB.UP) {
             data.setThumbs_up(data.getThumbs_up() + 1);
             uploadThumbsUp();
-            Rating new_rating = new Rating(MatbitDatabase.getCurrentUserID(), true, DateUtility.nowString());
+            Rating new_rating = new Rating(MatbitDatabase.getCurrentUserUID(), true, DateUtility.nowString());
             String key = MatbitDatabase.recipeRatings(id).push().getKey();
             MatbitDatabase.recipeRatings(id).child(key).setValue(new_rating);
             data.addRating(key, new_rating);
         } else if (thumb == THUMB.DOWN) {
             data.setThumbs_down(data.getThumbs_down() + 1);
             uploadThumbsDown();
-            Rating new_rating = new Rating(MatbitDatabase.getCurrentUserID(), false, DateUtility.nowString());
+            Rating new_rating = new Rating(MatbitDatabase.getCurrentUserUID(), false, DateUtility.nowString());
             String key = MatbitDatabase.recipeRatings(id).push().getKey();
             MatbitDatabase.recipeRatings(id).child(key).setValue(new_rating);
             data.addRating(key, new_rating);
@@ -200,7 +198,7 @@ public class Recipe {
         for (Map.Entry<String, Rating> ratingSet : data.getRatings().entrySet()) {
             String key = ratingSet.getKey();
             Rating rating = ratingSet.getValue();
-            if (rating.getUser().equals(MatbitDatabase.getCurrentUserID())) {
+            if (rating.getUser().equals(MatbitDatabase.getCurrentUserUID())) {
                 if (rating.getThumbsUp()) {
                     data.setThumbs_up(data.getThumbs_up() - 1);
                     uploadThumbsUp();
@@ -219,7 +217,7 @@ public class Recipe {
 
     public THUMB hasUserRated(){
         for (Rating rating : data.getRatings().values())
-            if (rating.getUser().equals(MatbitDatabase.getCurrentUserID())) {
+            if (rating.getUser().equals(MatbitDatabase.getCurrentUserUID())) {
                 if (rating.getThumbsUp())
                     return THUMB.UP;
                 else
@@ -229,7 +227,7 @@ public class Recipe {
     }
 
     public void addComment(final String COMMENT) {
-        Comment comment = new Comment(MatbitDatabase.USER.getUid(), COMMENT, DateUtility.nowString(), DateUtility.nowString());
+        Comment comment = new Comment(MatbitDatabase.getCurrentUserUID(), COMMENT, DateUtility.nowString(), DateUtility.nowString());
         MatbitDatabase.recipeComments(id).push().setValue(comment);
     }
 
@@ -693,7 +691,7 @@ public class Recipe {
 
     public boolean uploadAll() {
         if (hasData()) {
-            MatbitDatabase.RECIPES.child(id).setValue(data);
+            MatbitDatabase.recipe(id).setValue(data);
             MatbitDatabase.recipeRatings(id).setValue(data.getRatings());
             MatbitDatabase.recipeComments(id).setValue(data.getComments());
             MatbitDatabase.recipeSteps(id).setValue(data.getSteps());

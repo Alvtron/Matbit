@@ -134,28 +134,38 @@ public class CreateRecipeFragment extends Fragment {
             // Show dialog box for next step
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setCancelable(false);
-            builder.setMessage("Du brukte " + (total_time_cooking / 60) + " minutter og " + (total_time_cooking % 60) + " sekunder på denne retten.")
-                    .setPositiveButton("Lagre", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            MatbitDatabase.RECIPES.child(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Recipe recipe = new Recipe(dataSnapshot);
-                                    recipe.changeTimeAverage((int)total_time_cooking / 60);
-                                    getActivity().finish();
-                                }
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.w(TAG, "createRecipeFromDatabase: Cancelled", databaseError.toException());
-                                }
-                            });
-                        }
-                    })
-                    .setNegativeButton("Ikke lagre", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            getActivity().finish();
-                        }
-                    });
+            builder.setMessage("Du brukte " + (total_time_cooking / 60) + " minutter og " + (total_time_cooking % 60) + " sekunder på denne retten.");
+            if (MatbitDatabase.hasUser()) {
+                builder.setPositiveButton("Lagre", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        MatbitDatabase.recipe(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Recipe recipe = new Recipe(dataSnapshot);
+                                recipe.changeTimeAverage((int) total_time_cooking / 60);
+                                getActivity().finish();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.w(TAG, "createRecipeFromDatabase: Cancelled", databaseError.toException());
+                            }
+                        });
+                    }
+                });
+                builder.setNegativeButton("Ikke lagre", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        getActivity().finish();
+                    }
+                });
+            }
+            else {
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        getActivity().finish();
+                    }
+                });
+            }
             builder.show();
         }
         else{

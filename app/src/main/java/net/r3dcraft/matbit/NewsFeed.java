@@ -2,29 +2,15 @@ package net.r3dcraft.matbit;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.support.constraint.solver.widgets.Snapshot;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeParser;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -66,8 +52,8 @@ public class NewsFeed {
                         + recipe.getData().getUser_nickname() + "</font></i>";
                 subtitle = "Med " + String.valueOf(recipe.getData().getViews()) + " visninger og " + String.valueOf(recipe.getThumbsUp()) + " likes!";
 
-                storage_reference_thumbnail = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
-                storage_reference_featured_image = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
+                storage_reference_thumbnail = MatbitDatabase.getRecipePhoto(recipe.getId());
+                storage_reference_featured_image = MatbitDatabase.getRecipePhoto(recipe.getId());
 
                 action = new Intent(context, RecipeActivity.class);
                 action.putExtra("recipeID", recipe.getId());
@@ -94,8 +80,8 @@ public class NewsFeed {
                         + recipe.getData().getUser_nickname() + "</font></i>";
                 subtitle = "Med " + String.valueOf(recipe.getData().getViews()) + " visninger og " + String.valueOf(recipe.getThumbsUp()) + " likes!";
 
-                storage_reference_thumbnail = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
-                storage_reference_featured_image = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
+                storage_reference_thumbnail = MatbitDatabase.getRecipePhoto(recipe.getId());
+                storage_reference_featured_image = MatbitDatabase.getRecipePhoto(recipe.getId());
 
                 action = new Intent(context, RecipeActivity.class);
                 action.putExtra("recipeID", recipe.getId());
@@ -123,8 +109,8 @@ public class NewsFeed {
                         + recipe.getData().getUser_nickname() + "</font></i>";
                 subtitle = "Med " + String.valueOf(recipe.getData().getViews()) + " visninger og " + String.valueOf(recipe.getThumbsUp()) + " likes!";
 
-                storage_reference_thumbnail = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
-                storage_reference_featured_image = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() + ".jpg");
+                storage_reference_thumbnail = MatbitDatabase.getRecipePhoto(recipe.getId());
+                storage_reference_featured_image = MatbitDatabase.getRecipePhoto(recipe.getId());
 
                 action = new Intent(context, RecipeActivity.class);
                 action.putExtra("recipeID", recipe.getId());
@@ -158,10 +144,10 @@ public class NewsFeed {
 
             subtitle = DateUtility.dateToTimeText(newest_date) + " siden";
 
-            storage_reference_thumbnail = MatbitDatabase.USER_PHOTOS.child(user.getId() + ".jpg");
+            storage_reference_thumbnail = MatbitDatabase.getUserPhoto(user.getId());
 
             action = new Intent(context, UserActivity.class);
-            action.putExtra("userID", MatbitDatabase.getCurrentUserID());
+            action.putExtra("userID", MatbitDatabase.getCurrentUserUID());
 
             date = newest_date;
             return true;

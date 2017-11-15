@@ -270,4 +270,8 @@
     <string name="string_information">Informasjon</string>
     <string name="string_amount">Mengde</string>
     <string name="string_ingredient">Ingrediens</string>
+    <string name="string_log_in_to_comment">Logg inn for å kommentere</string>
+    <string name="string_you_must_log_in_to_publish_dish">Du må logge inn for å publisere ny matrett.</string>
+    <string name="string_log_in">Logg inn</string>
+    <string name="string_dont_log_in">Ikke logg inn</string>
 </resources>

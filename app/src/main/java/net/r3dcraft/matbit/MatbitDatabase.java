@@ -28,82 +28,265 @@ import com.google.firebase.storage.StorageReference;
 
 public final class MatbitDatabase {
     private static final String TAG = "MatbitDatabase";
-    public static final FirebaseAuth AUTH = FirebaseAuth.getInstance();
-    public static final FirebaseUser USER = FirebaseAuth.getInstance().getCurrentUser();
-    public static final FirebaseStorage STORAGE = FirebaseStorage.getInstance();
-    public static final StorageReference RECIPE_PHOTOS = STORAGE.getReference("recipe_photos");
-    public static final StorageReference USER_PHOTOS = STORAGE.getReference("user_photos");
-    public static final DatabaseReference ROOT = FirebaseDatabase.getInstance().getReference();
-    public static final DatabaseReference RECIPES = ROOT.child("recipes");
-    public static final DatabaseReference USERS = ROOT.child("users");
+    private static final FirebaseAuth AUTH = FirebaseAuth.getInstance();
+    private static final FirebaseUser USER = AUTH.getCurrentUser();
+    private static final FirebaseStorage STORAGE = FirebaseStorage.getInstance();
+    private static final StorageReference RECIPE_PHOTOS = STORAGE.getReference("recipe_photos");
+    private static final StorageReference USER_PHOTOS = STORAGE.getReference("user_photos");
+    private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
+    private static final DatabaseReference DATABASE_ROOT = DATABASE.getReference();
+    private static final DatabaseReference RECIPE_DATA = DATABASE_ROOT.child("recipes");
+    private static final DatabaseReference USER_DATA = DATABASE_ROOT.child("users");
 
-    public static String getCurrentUserID() {
+    public static boolean hasAuth() {
+        if (AUTH == null) {
+            Log.d(TAG, "FirebaseAuth is not connected");
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean hasStorage() {
+        if (STORAGE == null) {
+            Log.d(TAG, "FirebaseStorage is not connected");
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean hasDatabase() {
+        if (DATABASE == null) {
+            Log.d(TAG, "FirebaseDatabase is not connected");
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean hasUser() {
+        if (USER == null) {
+            Log.d(TAG, "FirebaseUser is not logged in");
+            return false;
+        }
+        return true;
+    }
+
+    public static String getCurrentUserUID() {
+        if (!hasAuth()) return null;
+        if (!hasUser()) return null;
         return USER.getUid();
     }
 
+    public static String getCurrentUserDisplayName() {
+        if (!hasAuth()) return null;
+        if (!hasUser()) return null;
+        return USER.getDisplayName();
+    }
+
+    public static String getCurrentUserEmail() {
+        if (!hasAuth()) return null;
+        if (!hasUser()) return null;
+        return USER.getEmail();
+    }
+
+    public static StorageReference getRecipePhoto(final String RECIPE_ID) {
+        if (!hasStorage()) return null;
+        return RECIPE_PHOTOS.child(RECIPE_ID +  ".jpg");
+    }
+
+    public static StorageReference getUserPhoto(final String USER_ID) {
+        if (!hasStorage()) return null;
+        return USER_PHOTOS.child(USER_ID +  ".jpg");
+    }
+
+    // USER DATABASE -----------------------------------------------------------------------------
+
+    public final static DatabaseReference USERS () {
+        if (!hasDatabase()) return null;
+        return USER_DATA;
+    }
+
+    public static DatabaseReference user (final String USER_ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(USER_ID);
+    }
+
+    public static DatabaseReference getCurrentUser() {
+        if (!hasAuth()) return null;
+        if (!hasUser()) return null;
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(MatbitDatabase.USER.getUid());
+    }
+
+    public static DatabaseReference getUser(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID);
+    }
+
+    public static DatabaseReference getUserNickname(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("nickname");
+    }
+
+    public static DatabaseReference getUserGender(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("gender");
+    }
+
+    public static DatabaseReference getUserBirthday(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("birthday");
+    }
+
+    public static DatabaseReference getUserSignUpDate(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("signUpDate");
+    }
+
+    public static DatabaseReference getUserLastLoginDate(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("lastLoginDate");
+    }
+
+    public static DatabaseReference getUserBio(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("bio");
+    }
+
+    public static DatabaseReference getUserExp(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("exp");
+    }
+
+    public static DatabaseReference getUserNumFollowers(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("num_followers");
+    }
+
+    public static DatabaseReference getUserNumRecipes(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("num_recipes");
+    }
+
+    public static DatabaseReference getUserFollowing(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("following");
+    }
+
+    public static DatabaseReference getUserFollowers(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("followers");
+    }
+
+    public static DatabaseReference getUserRecipes(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("recipes");
+    }
+
+    public static DatabaseReference getUserFavorites(final String ID) {
+        if (!hasDatabase()) return null;
+        return USER_DATA.child(ID).child("favorites");
+    }
+
+    // RECIPE DATABASE -----------------------------------------------------------------------------
+
+    public final static DatabaseReference RECIPES () {
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA;
+    }
+
+    public static DatabaseReference recipe (final String ID) {
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID);
+    }
+
     public static DatabaseReference recipeTitle (final String ID) {
-        return RECIPES.child(ID).child("title");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("title");
     }
 
     public static DatabaseReference recipeUser (final String ID) {
-        return RECIPES.child(ID).child("user");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("user");
+    }
+
+    public static DatabaseReference recipeUserNickname (final String ID) {
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("user_nickname");
     }
 
     public static DatabaseReference recipeDatetimeCreated (final String ID) {
-        return RECIPES.child(ID).child("datetime_created");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("datetime_created");
     }
 
     public static DatabaseReference recipeDatetimeUpdated (final String ID) {
-        return RECIPES.child(ID).child("datetime_updated");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("datetime_updated");
     }
 
     public static DatabaseReference recipeTime (final String ID) {
-        return RECIPES.child(ID).child("step_time");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("step_time");
     }
 
     public static DatabaseReference recipePortions (final String ID) {
-        return RECIPES.child(ID).child("portions");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("portions");
     }
 
     public static DatabaseReference recipeViews (final String ID) {
-        return RECIPES.child(ID).child("views");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("views");
     }
 
     public static DatabaseReference recipeRatings (final String ID) {
-        return RECIPES.child(ID).child("ratings");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("ratings");
     }
 
     public static DatabaseReference recipeComments (final String ID) {
-        return RECIPES.child(ID).child("comments");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("comments");
     }
 
     public static DatabaseReference recipeSteps (final String ID) {
-        return RECIPES.child(ID).child("steps");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("steps");
     }
 
     public static DatabaseReference recipeIngredients (final String ID) {
-        return RECIPES.child(ID).child("ingredients");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("ingredients");
     }
 
     public static DatabaseReference recipeThumbsUp (final String ID) {
-        return RECIPES.child(ID).child("thumbs_up");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("thumbs_up");
     }
 
     public static DatabaseReference recipeThumbsDown (final String ID) {
-        return RECIPES.child(ID).child("thumbs_down");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("thumbs_down");
     }
 
     public static DatabaseReference recipeInfo (final String ID) {
-        return RECIPES.child(ID).child("info");
+        if (!hasDatabase()) return null;
+        return RECIPE_DATA.child(ID).child("info");
     }
 
+    // FUNCTIONS -----------------------------------------------------------------------------------
+
     public static String uploadNewRecipe(final RecipeData RECIPE_DATA) {
+        if (!hasAuth()) return null;
+        if (!hasDatabase()) return null;
+
         if (RECIPE_DATA == null) {
             Log.d(TAG, "uploadNewRecipe: RECIPE_DATA is not initialized (is null)");
             return null;
         }
-        String uid = MatbitDatabase.RECIPES.push().getKey();
-        RECIPES.child(uid).setValue(RECIPE_DATA);
+
+        String uid = MatbitDatabase.RECIPE_DATA.push().getKey();
+        MatbitDatabase.RECIPE_DATA.child(uid).setValue(RECIPE_DATA);
         recipeRatings(uid).setValue(RECIPE_DATA.getRatings());
         recipeComments(uid).setValue(RECIPE_DATA.getComments());
         recipeSteps(uid).setValue(RECIPE_DATA.getSteps());
@@ -112,15 +295,21 @@ public final class MatbitDatabase {
     }
 
     public static boolean uploadNewUser(final UserData USER_DATA) {
+        if (!hasAuth()) return false;
+        if (!hasDatabase()) return false;
+
         if (USER_DATA == null) {
             Log.d(TAG, "uploadNewUser: USER_DATA is not initialized (is null)");
             return false;
         }
-        USERS.child(USER.getUid()).setValue(USER_DATA);
+        MatbitDatabase.USER_DATA.child(USER.getUid()).setValue(USER_DATA);
         return true;
     }
 
     public static boolean recipePictureToImageView(final String RECIPE_UID, final Context CONTEXT, final ImageView IMAGE_VIEW) {
+        if (!hasAuth()) return false;
+        if (!hasStorage()) return false;
+
         if (RECIPE_UID == null || RECIPE_UID.trim().equals("")) {
             Log.d(TAG, "recipePictureToImageView: RECIPE_UID is not initialized (is null)");
             return true;
@@ -134,20 +323,29 @@ public final class MatbitDatabase {
         MatbitDatabase.RECIPE_PHOTOS.child(RECIPE_UID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Glide.with(CONTEXT)
-                        .load(uri)
-                        .into(IMAGE_VIEW);
+                try{
+                    Glide.with(CONTEXT)
+                            .load(uri)
+                            .into(IMAGE_VIEW);
+                } catch(IllegalArgumentException e) {
+                    Log.e(TAG, "recipePictureToImageView: Cannot start a load for a destroyed activity");
+                    IMAGE_VIEW.setImageResource(R.drawable.icon_broken_image_black_24dp);
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 Log.d(TAG, "recipePictureToImageView: Could not load recipe photo");
+                IMAGE_VIEW.setImageResource(R.drawable.icon_broken_image_black_24dp);
             }
         });
         return true;
     }
 
     public static boolean userPictureToImageView(final String USER_UID, final Context CONTEXT, final ImageView IMAGE_VIEW) {
+        if (!hasAuth()) return false;
+        if (!hasStorage()) return false;
+
         if (USER_UID == null || USER_UID.trim().equals("")) {
             Log.d(TAG, "userPictureToImageView: USER_UID is not initialized (is null)");
             return true;
@@ -162,9 +360,14 @@ public final class MatbitDatabase {
         MatbitDatabase.USER_PHOTOS.child(USER_UID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Glide.with(CONTEXT)
-                        .load(uri)
-                        .into(IMAGE_VIEW);
+                try{
+                    Glide.with(CONTEXT)
+                            .load(uri)
+                            .into(IMAGE_VIEW);
+                } catch(IllegalArgumentException e) {
+                    Log.e(TAG, "userPictureToImageView: Cannot start a load for a destroyed activity");
+                    IMAGE_VIEW.setImageResource(R.drawable.icon_broken_image_black_24dp);
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -177,6 +380,9 @@ public final class MatbitDatabase {
     }
 
     public static boolean downloadToImageView(final StorageReference STORAGE_REFERENCE, final Context CONTEXT, final ImageView IMAGE_VIEW) {
+        if (!hasAuth()) return false;
+        if (!hasStorage()) return false;
+
         if (STORAGE_REFERENCE == null) {
             Log.d(TAG, "downloadToImageView: STORAGE_REFERENCE is not initialized (is null)");
             return true;
@@ -191,14 +397,19 @@ public final class MatbitDatabase {
         STORAGE_REFERENCE.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Glide.with(CONTEXT)
-                        .load(uri)
-                        .into(IMAGE_VIEW);
+                try{
+                    Glide.with(CONTEXT)
+                            .load(uri)
+                            .into(IMAGE_VIEW);
+                } catch(IllegalArgumentException e) {
+                    Log.e(TAG, "downloadToImageView: Cannot start a load for a destroyed activity");
+                    IMAGE_VIEW.setImageResource(R.drawable.icon_broken_image_black_24dp);
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Log.d(TAG, "downloadToImageView: Could not load image. Maybe storage refference is invalid");
+                Log.d(TAG, "downloadToImageView: Could not load image. Maybe storage reference is invalid");
                 IMAGE_VIEW.setImageResource(R.drawable.icon_broken_image_black_24dp);
             }
         });
@@ -206,10 +417,16 @@ public final class MatbitDatabase {
     }
 
     public static void currentUserPictureToImageView(final Context CONTEXT, final ImageView IMAGE_VIEW) {
+        if (!hasAuth()) return;
+        if (!hasUser()) return;
+        if (!hasStorage()) return;
         Glide.with(CONTEXT).load(USER.getPhotoUrl()).into(IMAGE_VIEW);
     }
 
     public static boolean userNicknameToTextView(final String USER_UID, final TextView TEXT_VIEW) {
+        if (!hasAuth()) return false;
+        if (!hasDatabase()) return false;
+
         if (USER_UID == null || USER_UID.trim().equals("")) {
             Log.d(TAG, "userNicknameToTextView: USER_UID is not initialized (is null)");
             return false;
@@ -217,7 +434,7 @@ public final class MatbitDatabase {
             Log.d(TAG, "userNicknameToTextView: TEXT_VIEW is not initialized (is null)");
             return false;
         }
-        USERS.child(USER_UID).addListenerForSingleValueEvent(new ValueEventListener()  {
+        USER_DATA.child(USER_UID).addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 TEXT_VIEW.setText(dataSnapshot.child("nickname").getValue(String.class));
@@ -231,11 +448,15 @@ public final class MatbitDatabase {
     }
 
     public static boolean uploadNewUserIfNew() {
+        if (!hasAuth()) return false;
+        if (!hasUser()) return false;
+        if (!hasDatabase()) return false;
+
         final String USER_UID = USER.getUid();
         final Uri PHOTO_URL = USER.getPhotoUrl();
         if (USER_UID.equals("") || PHOTO_URL.equals(""))
             return false;
-        USERS.addListenerForSingleValueEvent(new ValueEventListener()  {
+        USER_DATA.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(USER_UID)) {

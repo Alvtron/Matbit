@@ -6,7 +6,6 @@ import android.support.v7.util.SortedList;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,7 +149,7 @@ class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHold
         final String USER_UID = COMMENT.getUser();
         commentViewHolder.comment = COMMENT;
 
-        MatbitDatabase.USERS.child(USER_UID).addListenerForSingleValueEvent(new ValueEventListener()  {
+        MatbitDatabase.getUser(USER_UID).addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final String USERNAME = dataSnapshot.child("nickname").getValue(String.class);
@@ -163,9 +162,9 @@ class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHold
 
                 commentViewHolder.txt_info.setText(COMMENT.getDatetimeCreated());
 
-                if (MatbitDatabase.USER.getUid().equals(USER_UID)) {
-                    commentViewHolder.img_edit.setVisibility(View.VISIBLE);
-                }
+                if (MatbitDatabase.hasUser())
+                    if (MatbitDatabase.getCurrentUserUID().equals(USER_UID))
+                        commentViewHolder.img_edit.setVisibility(View.VISIBLE);
 
                 commentViewHolder.img_user.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {

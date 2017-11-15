@@ -1,30 +1,19 @@
 package net.r3dcraft.matbit;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 22.10.2017.
@@ -42,7 +31,7 @@ class UploadUserPhoto extends AsyncTask<Uri, Void, Void> {
 
     @Override
     protected Void doInBackground(Uri... uris) {
-        StorageReference reference = MatbitDatabase.USER_PHOTOS.child(MatbitDatabase.USER.getUid() + ".jpg");
+        StorageReference reference = MatbitDatabase.getUserPhoto(MatbitDatabase.getCurrentUserUID());
 
         for (int i  = 0; i < uris.length; i++) {
             try {

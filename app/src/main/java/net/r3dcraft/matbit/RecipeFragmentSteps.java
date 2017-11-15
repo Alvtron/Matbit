@@ -44,7 +44,7 @@ public class RecipeFragmentSteps extends Fragment {
     public void onStart() {
         super.onStart();
         // Get recipe information
-        MatbitDatabase.RECIPES.child(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
+        MatbitDatabase.recipe(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipe = new Recipe(dataSnapshot);

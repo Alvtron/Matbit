@@ -1,7 +1,7 @@
 package net.r3dcraft.matbit;
 
 import android.content.Context;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,13 +35,24 @@ public class RecipeFragmentComments extends Fragment {
     private EditText editText_comment;
     private Button btn_comment;
     private RecyclerView recyclerView;
+    private TextView comment_message;
+    private TextInputLayout textInputLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootViewInfo = inflater.inflate(R.layout.fragment_recipe_comments, container, false);
         context = getActivity();
         recipeID = getArguments().getString("recipeID");
-        editText_comment = (EditText) rootViewInfo.findViewById(R.id.fragment_recipe_comments_comment_text);
+        editText_comment = (EditText) rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_edittext);
+        comment_message = (TextView) rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_message);
+        btn_comment = (Button) rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_button);
+        textInputLayout = (TextInputLayout) rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_txt_layout);
+
+        if (MatbitDatabase.hasUser()) {
+            comment_message.setVisibility(View.GONE);
+            btn_comment.setVisibility(View.VISIBLE);
+            textInputLayout.setVisibility(View.VISIBLE);
+        }
 
         recyclerView = (RecyclerView)rootViewInfo.findViewById(R.id.fragment_recipe_comments_recycler_view);
         LinearLayoutManager llm = new LinearLayoutManager(context);
@@ -51,7 +62,6 @@ public class RecipeFragmentComments extends Fragment {
         recyclerView.setAdapter(commentAdaptert);
 
         // Add new comment
-        btn_comment = (Button) rootViewInfo.findViewById(R.id.fragment_recipe_comments_comment_button);
         btn_comment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String comment_string = editText_comment.getText().toString();
@@ -82,7 +92,7 @@ public class RecipeFragmentComments extends Fragment {
     public void onStart() {
         super.onStart();
         // Get recipe information
-        MatbitDatabase.RECIPES.child(recipeID).addValueEventListener(new ValueEventListener() {
+        MatbitDatabase.recipe(recipeID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipe = new Recipe(dataSnapshot);

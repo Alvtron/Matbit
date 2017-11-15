@@ -1,14 +1,16 @@
 package net.r3dcraft.matbit;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,25 +19,21 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017
  */
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-
-    private static String TAG = "WallActivity";
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private static String TAG = "MainActivity";
     private Context context;
     private Toolbar toolbar;
     private ImageView featured_recipe_photo;
@@ -95,6 +93,25 @@ public class MainActivity extends AppCompatActivity
         try_luck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatbitDatabase.RECIPES().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Random random = new Random();
+                        int index = random.nextInt((int) dataSnapshot.getChildrenCount());
+                        int count = 0;
+                        for (DataSnapshot recipeSnapshot : dataSnapshot.getChildren()) {
+                            if (count++ == index) {
+                                Recipe recipe = new Recipe(recipeSnapshot, true);
+                                MatbitDatabase.gotToRecipe(context, recipe);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
 
@@ -102,7 +119,23 @@ public class MainActivity extends AppCompatActivity
         btn_add_recipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(context, AddRecipeActivity.class));
+                if (MatbitDatabase.hasUser()) {
+                    startActivity(new Intent(context, AddRecipeActivity.class));
+                }
+                else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage(R.string.string_you_must_log_in_to_publish_dish);
+                    builder.setPositiveButton(R.string.string_log_in, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startActivity(new Intent(context, SignInActivity.class));
+                        }
+                    });
+                    builder.setNegativeButton(R.string.string_dont_log_in, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+                    builder.show();
+                }
             }
         });
 
@@ -114,11 +147,11 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        user_name.setText(MatbitDatabase.USER.getDisplayName());
-        user_email.setText(MatbitDatabase.USER.getEmail());
+        user_name.setText(MatbitDatabase.getCurrentUserDisplayName());
+        user_email.setText(MatbitDatabase.getCurrentUserEmail());
         MatbitDatabase.currentUserPictureToImageView(context, user_photo);
 
-        MatbitDatabase.RECIPES.addListenerForSingleValueEvent(new ValueEventListener() {
+        MatbitDatabase.RECIPES().addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot){
@@ -141,19 +174,35 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        MatbitDatabase.USERS.child(MatbitDatabase.getCurrentUserID()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                NewsFeed new_followers = new NewsFeed(context);
-                if (new_followers.newFollowers(dataSnapshot))
-                    newsFeedAdapter.add(new_followers);
-            }
+        if (MatbitDatabase.hasUser()) {
+            MatbitDatabase.user(MatbitDatabase.getCurrentUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    NewsFeed new_followers = new NewsFeed(context);
+                    if (new_followers.newFollowers(dataSnapshot))
+                        newsFeedAdapter.add(new_followers);
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadUsers: onCancelled", databaseError.toException());
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "loadUsers: onCancelled", databaseError.toException());
+                }
+            });
+        }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        MenuItem profile = navigationView.getMenu().findItem(R.id.nav_profile);
+        MenuItem feed = navigationView.getMenu().findItem(R.id.nav_feed);
+
+        if(MatbitDatabase.hasUser()) {
+            profile.setVisible(true);
+            feed.setVisible(true);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -170,13 +219,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-            MatbitDatabase.goToUser(context, MatbitDatabase.USER.getUid());
+            MatbitDatabase.goToUser(context, MatbitDatabase.getCurrentUserUID());
         } else if (id == R.id.nav_feed) {
             startActivity(new Intent(context, FeedActivity.class));
         } else if (id == R.id.nav_find_user) {
             startActivity(new Intent(context, FindUserActivity.class));
         } else if (id == R.id.nav_settings) {
-            startActivity(new Intent(context, SettingsActivity.class));
+            ;
         } else if (id == R.id.nav_about) {
 
         }

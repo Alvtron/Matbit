@@ -1,7 +1,6 @@
 package net.r3dcraft.matbit;
 
 import android.content.Context;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -59,7 +58,7 @@ public class UserActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        MatbitDatabase.USERS.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+        MatbitDatabase.user(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 user = new User(dataSnapshot);
@@ -81,7 +80,7 @@ public class UserActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; add menu items. Add edit button if visitor is user.
-        if (userID.equals(MatbitDatabase.getCurrentUserID())) {
+        if (userID.equals(MatbitDatabase.getCurrentUserUID())) {
             getMenuInflater().inflate(R.menu.activity_user, menu);
         }
         return true;

@@ -171,7 +171,7 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
             user.addRecipe(recipe.getId(), recipe.getData().getDatetime_created());
             user.uploadRecipes();
             // Upload recipe photo
-            UploadTask uploadTask = MatbitDatabase.RECIPE_PHOTOS.child(recipe.getId() +  ".jpg").putBytes(recipePhoto);
+            UploadTask uploadTask = MatbitDatabase.getRecipePhoto(recipe.getId()).putBytes(recipePhoto);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {

@@ -59,7 +59,7 @@ public class User {
             String date = DateUtility.nowString();
             getData().getFollowers().put(followerUID, date);
             getData().setNum_followers(getData().getNum_followers() + 1);
-            MatbitDatabase.USERS.child(id).child("followers").child(followerUID).setValue(date);
+            MatbitDatabase.getUserFollowers(id).child(followerUID).setValue(date);
             uploadNumFollowers();
         }
     }
@@ -68,7 +68,7 @@ public class User {
         if (hasFollower(followerUID)) {
             getData().getFollowers().remove(followerUID);
             getData().setNum_followers(getData().getNum_followers() - 1);
-            MatbitDatabase.USERS.child(id).child("followers").child(followerUID).removeValue();
+            MatbitDatabase.getUserFollowers(id).child(followerUID).removeValue();
             uploadNumFollowers();
         }
     }
@@ -242,14 +242,14 @@ public class User {
             Log.e(TAG, "uploadNickname: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("nickname").setValue(data.getNickname());
+            MatbitDatabase.getUserNickname(id).setValue(data.getNickname());
             return true;
         }
 
     }
 
     public static void uploadNickname(String id, String nickname)  {
-        MatbitDatabase.USERS.child(id).child("nickname").setValue(nickname);
+        MatbitDatabase.getUserNickname(id).setValue(nickname);
     }
 
     public boolean uploadGender()  {
@@ -257,13 +257,13 @@ public class User {
             Log.e(TAG, "uploadGender: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("gender").setValue(data.getGender());
+            MatbitDatabase.getUserGender(id).setValue(data.getGender());
             return true;
         }
     }
 
     public static void uploadGender(String id, String gender)  {
-        MatbitDatabase.USERS.child(id).child("gender").setValue(gender);
+        MatbitDatabase.getUserGender(id).setValue(gender);
     }
 
     public boolean uploadBirthday()  {
@@ -271,13 +271,13 @@ public class User {
             Log.e(TAG, "uploadBirthday: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("birthday").setValue(data.getBirthday());
+            MatbitDatabase.getUserBirthday(id).setValue(data.getBirthday());
             return true;
         }
     }
 
     public static void uploadBirthday(String id, String birthday)  {
-        MatbitDatabase.USERS.child(id).child("birthday").setValue(birthday);
+        MatbitDatabase.getUserBirthday(id).setValue(birthday);
     }
 
     public boolean uploadSignUpDate()  {
@@ -285,13 +285,13 @@ public class User {
             Log.e(TAG, "uploadSignUpDate: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("signUpDate").setValue(data.getSignUpDate());
+            MatbitDatabase.getUserSignUpDate(id).setValue(data.getSignUpDate());
             return true;
         }
     }
 
     public static void uploadSignUpDate(String id, String signUpDate)  {
-        MatbitDatabase.USERS.child(id).child("signUpDate").setValue(signUpDate);
+        MatbitDatabase.getUserSignUpDate(id).setValue(signUpDate);
     }
 
     public boolean uploadLastLoginDate()  {
@@ -299,13 +299,13 @@ public class User {
             Log.e(TAG, "uploadLastLoginDate: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("lastLoginDate").setValue(data.getLastLoginDate());
+            MatbitDatabase.getUserLastLoginDate(id).setValue(data.getLastLoginDate());
             return true;
         }
     }
 
     public static void uploadLastLoginDate(String id, String lastLoginDate)  {
-        MatbitDatabase.USERS.child(id).child("lastLoginDate").setValue(lastLoginDate);
+        MatbitDatabase.getUserLastLoginDate(id).setValue(lastLoginDate);
     }
 
     public boolean uploadBio()  {
@@ -313,13 +313,13 @@ public class User {
             Log.e(TAG, "uploadBio: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("bio").setValue(data.getBio());
+            MatbitDatabase.getUserBio(id).setValue(data.getBio());
             return true;
         }
     }
 
     public static void uploadBio(String id, String bio)  {
-        MatbitDatabase.USERS.child(id).child("bio").setValue(bio);
+        MatbitDatabase.getUserBio(id).setValue(bio);
     }
 
     public boolean uploadExp()  {
@@ -327,13 +327,13 @@ public class User {
             Log.e(TAG, "uploadExp: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("exp").setValue(data.getExp());
+            MatbitDatabase.getUserExp(id).setValue(data.getExp());
             return true;
         }
     }
 
     public static void uploadExp(String id, int exp)  {
-        MatbitDatabase.USERS.child(id).child("exp").setValue(exp);
+        MatbitDatabase.getUserExp(id).setValue(exp);
     }
 
     public boolean uploadNumFollowers()  {
@@ -341,13 +341,13 @@ public class User {
             Log.e(TAG, "uploadNumFollowers: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("num_followers").setValue(data.getNum_followers());
+            MatbitDatabase.getUserNumFollowers(id).setValue(data.getNum_followers());
             return true;
         }
     }
 
     public static void uploadNumFollowers(String id, int num_followers)  {
-        MatbitDatabase.USERS.child(id).child("num_followers").setValue(num_followers);
+        MatbitDatabase.getUserNumFollowers(id).setValue(num_followers);
     }
 
     public boolean uploadNumRecipes()  {
@@ -355,13 +355,13 @@ public class User {
             Log.e(TAG, "uploadNumRecipes: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("num_recipes").setValue(data.getNum_recipes());
+            MatbitDatabase.getUserNumRecipes(id).setValue(data.getNum_recipes());
             return true;
         }
     }
 
     public static void uploadNumRecipes(String id, int num_recipes)  {
-        MatbitDatabase.USERS.child(id).child("num_recipes").setValue(num_recipes);
+        MatbitDatabase.getUserNumRecipes(id).setValue(num_recipes);
     }
 
     public boolean uploadFollowing() {
@@ -369,13 +369,13 @@ public class User {
             Log.e(TAG, "uploadFollowing: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("following").setValue(data.getFollowing());
+            MatbitDatabase.getUserFollowing(id).setValue(data.getFollowing());
             return true;
         }
     }
 
     public static void uploadFollowing(String id, String userID, String date)  {
-        MatbitDatabase.USERS.child(id).child("following").child(userID).setValue(date);
+        MatbitDatabase.getUserFollowing(id).child(userID).setValue(date);
     }
 
     public boolean uploadFollowers()  {
@@ -386,13 +386,13 @@ public class User {
             Log.e(TAG, "uploadFollowers: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("followers").setValue(data.getFollowers());
+            MatbitDatabase.getUserFollowers(id).setValue(data.getFollowers());
             return true;
         }
     }
 
     public static void uploadFollowers(String id, String userID, String date)  {
-        MatbitDatabase.USERS.child(id).child("followers").child(userID).setValue(date);
+        MatbitDatabase.getUserFollowers(id).child(userID).setValue(date);
     }
 
     public boolean uploadRecipes()  {
@@ -403,13 +403,13 @@ public class User {
             Log.e(TAG, "uploadRecipes: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("recipes").setValue(data.getRecipes());
+            MatbitDatabase.getUserRecipes(id).setValue(data.getRecipes());
             return true;
         }
     }
 
     public static void uploadRecipes(String id, String userID, String date)  {
-        MatbitDatabase.USERS.child(id).child("recipes").child(userID).setValue(date);
+        MatbitDatabase.getUserRecipes(id).child(userID).setValue(date);
     }
 
     public boolean uploadFavorites()  {
@@ -417,13 +417,13 @@ public class User {
             Log.e(TAG, "uploadFavorites: Upload failed. No data found");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).child("favorites").setValue(data.getFavorites());
+            MatbitDatabase.getUserFavorites(id).setValue(data.getFavorites());
             return true;
         }
     }
 
     public static void uploadFavorites(String id, String userID, String date)  {
-        MatbitDatabase.USERS.child(id).child("favorites").child(userID).setValue(date);
+        MatbitDatabase.getUserFavorites(id).child(userID).setValue(date);
     }
 
     public boolean uploadAll() {
@@ -431,7 +431,7 @@ public class User {
             Log.e(TAG, "uploadAll: Upload failed. No or not enough data");
             return false;
         } else {
-            MatbitDatabase.USERS.child(id).setValue(data);
+            MatbitDatabase.getUser(id).setValue(data);
             return true;
         }
     }

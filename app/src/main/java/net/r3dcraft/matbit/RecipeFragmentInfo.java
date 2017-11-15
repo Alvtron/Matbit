@@ -75,7 +75,7 @@ public class RecipeFragmentInfo extends Fragment {
     public void onStart() {
         super.onStart();
 
-        if (authorID.equals(MatbitDatabase.getCurrentUserID())) {
+        if (!MatbitDatabase.hasUser() || authorID.equals(MatbitDatabase.getCurrentUserUID())) {
             layout_follow.setVisibility(View.INVISIBLE);
             icon_follow.setVisibility(View.INVISIBLE);
             txt_follow.setVisibility(View.INVISIBLE);
@@ -84,7 +84,7 @@ public class RecipeFragmentInfo extends Fragment {
         MatbitDatabase.recipePictureToImageView(recipeID, context, img_recipe_photo);
 
         // Get recipe information
-        MatbitDatabase.RECIPES.child(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
+        MatbitDatabase.recipe(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipe = new Recipe(dataSnapshot);
@@ -111,7 +111,7 @@ public class RecipeFragmentInfo extends Fragment {
             }
         });
 
-        MatbitDatabase.USERS.child(authorID).addListenerForSingleValueEvent(new ValueEventListener() {
+        MatbitDatabase.user(authorID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 user = new User(dataSnapshot);
@@ -123,73 +123,16 @@ public class RecipeFragmentInfo extends Fragment {
             }
         });
 
-        icon_thumbs_up.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // User has already rated thumbs up --> remove it.
-                if (recipe.hasUserRated() == Recipe.THUMB.UP) {
-                    recipe.removeUserRating();
-                    txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
-                    icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
-                }
-                // User has already rated thumbs down --> remove it and add thumbs up.
-                else if (recipe.hasUserRated() == Recipe.THUMB.DOWN) {
-                    recipe.addRating(Recipe.THUMB.UP);
-                    txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
-                    txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
-                    icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-                    icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
-
-                }
-                // User has not rated --> add rating.
-                else if (recipe.hasUserRated() == Recipe.THUMB.NOTHING) {
-                    recipe.addRating(Recipe.THUMB.UP);
-                    txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
-                    icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-                }
-            }
-        });
-
-        icon_thumbs_down.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // User has already rated thumbs down --> remove it.
-                if (recipe.hasUserRated() == Recipe.THUMB.DOWN) {
-                    recipe.removeUserRating();
-                    txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
-                    icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
-                }
-                // User has already rated thumbs up --> remove it and add thumbs down.
-                else if (recipe.hasUserRated() == Recipe.THUMB.UP) {
-                    recipe.addRating(Recipe.THUMB.DOWN);
-                    txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
-                    txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
-                    icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-                    icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
-
-                }
-                // User has not rated --> add rating.
-                else if (recipe.hasUserRated() == Recipe.THUMB.NOTHING) {
-                    recipe.addRating(Recipe.THUMB.DOWN);
-                    txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
-                    icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
-                }
-            }
-        });
-
         btn_create.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+            if (recipe.getId() != null) {
                 Intent intent = new Intent(context, CreateRecipeActivity.class);
+
                 intent.putExtra("recipeID", recipe.getId());
                 context.startActivity(intent);
             }
-        });
-
-        layout_follow.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (user.hasFollower(MatbitDatabase.getCurrentUserID()))
-                    user.removeFollower(MatbitDatabase.getCurrentUserID());
-                else
-                    user.addFollower(MatbitDatabase.getCurrentUserID());
-                updateFollowAppearance();
+            else
+                Toast.makeText(context, "Oisann! Prøv å laste denne siden på nytt!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -198,10 +141,74 @@ public class RecipeFragmentInfo extends Fragment {
                 MatbitDatabase.goToUser(context, authorID);
             }
         });
+
+        if (MatbitDatabase.hasUser()) {
+            icon_thumbs_up.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    // User has already rated thumbs up --> remove it.
+                    if (recipe.hasUserRated() == Recipe.THUMB.UP) {
+                        recipe.removeUserRating();
+                        txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
+                        icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
+                    }
+                    // User has already rated thumbs down --> remove it and add thumbs up.
+                    else if (recipe.hasUserRated() == Recipe.THUMB.DOWN) {
+                        recipe.addRating(Recipe.THUMB.UP);
+                        txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
+                        txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
+                        icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
+
+                    }
+                    // User has not rated --> add rating.
+                    else if (recipe.hasUserRated() == Recipe.THUMB.NOTHING) {
+                        recipe.addRating(Recipe.THUMB.UP);
+                        txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
+                        icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                    }
+                }
+            });
+
+            icon_thumbs_down.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    // User has already rated thumbs down --> remove it.
+                    if (recipe.hasUserRated() == Recipe.THUMB.DOWN) {
+                        recipe.removeUserRating();
+                        txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
+                        icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
+                    }
+                    // User has already rated thumbs up --> remove it and add thumbs down.
+                    else if (recipe.hasUserRated() == Recipe.THUMB.UP) {
+                        recipe.addRating(Recipe.THUMB.DOWN);
+                        txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
+                        txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
+                        icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
+
+                    }
+                    // User has not rated --> add rating.
+                    else if (recipe.hasUserRated() == Recipe.THUMB.NOTHING) {
+                        recipe.addRating(Recipe.THUMB.DOWN);
+                        txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
+                        icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                    }
+                }
+            });
+
+            layout_follow.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (user.hasFollower(MatbitDatabase.getCurrentUserUID()))
+                        user.removeFollower(MatbitDatabase.getCurrentUserUID());
+                    else
+                        user.addFollower(MatbitDatabase.getCurrentUserUID());
+                    updateFollowAppearance();
+                }
+            });
+        }
     }
 
     private void updateFollowAppearance() {
-        if (user.hasFollower(MatbitDatabase.getCurrentUserID())) {
+        if (user.hasFollower(MatbitDatabase.getCurrentUserUID())) {
             txt_follow.setText("Følger");
             txt_follow.setTextColor(getResources().getColor(R.color.grey_500));
             icon_follow.setImageDrawable(getResources().getDrawable(R.drawable.icon_check_black_24dp));

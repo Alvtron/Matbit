@@ -14,6 +14,9 @@
         android:roundIcon="@drawable/logo_matbit_red_1025dp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!-- Activities -->
+
         <activity android:name=".BaseActivity" />
         <activity
             android:name=".SignInActivity"
@@ -28,10 +31,6 @@
         <activity
             android:name=".SearchActivity"
             android:label="@string/title_activity_search"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
@@ -63,7 +62,18 @@
             android:label="@string/title_activity_create_recipe"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <service android:name=".TimerService" />
-    </application>
+        <!-- Services -->
 
+        <service android:name=".TimerService" />
+        <service android:name=".MatbitMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service android:name=".FirebaseIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+    </application>
 </manifest>

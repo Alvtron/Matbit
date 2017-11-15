@@ -42,22 +42,23 @@
         <LinearLayout
             android:id="@+id/navigation_luck"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground">
             <android.support.v7.widget.AppCompatImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                app:srcCompat="@drawable/icon_home_black_24dp"
-                app:tint="@color/grey_500"/>
+                app:srcCompat="@drawable/icon_star_border_black_24dp"
+                app:tint="@color/colorPrimary"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
                 android:text="@string/title_try_luck"
-                android:textColor="@color/grey_500"
+                android:textColor="@color/colorPrimary"
                 android:minLines="1"
                 android:maxLines="1"/>
         </LinearLayout>
@@ -65,22 +66,23 @@
         <LinearLayout
             android:id="@+id/navigation_add"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground">
             <android.support.v7.widget.AppCompatImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 app:srcCompat="@drawable/icon_add"
-                app:tint="@color/grey_500"/>
+                app:tint="@color/colorPrimary"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
                 android:text="@string/title_add_recipe"
-                android:textColor="@color/grey_500"
+                android:textColor="@color/colorPrimary"
                 android:minLines="1"
                 android:maxLines="1"/>
         </LinearLayout>
@@ -88,21 +90,22 @@
         <LinearLayout
             android:id="@+id/navigation_search"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground">
             <android.support.v7.widget.AppCompatImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 app:srcCompat="@drawable/icon_search"
-                app:tint="@color/grey_500"/>
+                app:tint="@color/colorPrimary"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:textColor="@color/grey_500"
+                android:textColor="@color/colorPrimary"
                 android:text="@string/title_search"
                 android:minLines="1"
                 android:maxLines="1"/>

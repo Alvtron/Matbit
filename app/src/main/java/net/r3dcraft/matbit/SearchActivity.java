@@ -99,7 +99,7 @@ public class SearchActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: ");
-        MatbitDatabase.RECIPES.addListenerForSingleValueEvent(new ValueEventListener() {
+        MatbitDatabase.RECIPES().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot recipesSnapshot : dataSnapshot.getChildren()) {

@@ -66,7 +66,7 @@ public class RecipeActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (authorID.equals(MatbitDatabase.getCurrentUserID()))
+        if (authorID.equals(MatbitDatabase.getCurrentUserUID()))
             getMenuInflater().inflate(R.menu.activity_recipe, menu);
         return true;
     }

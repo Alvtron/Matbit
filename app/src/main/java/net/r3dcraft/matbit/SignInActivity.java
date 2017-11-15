@@ -33,8 +33,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -44,7 +42,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 /**
- * Demonstrate Firebase Authentication using a Google ID Token.
+ * Firebase Authentication using a Google ID Token.
  */
 public class SignInActivity extends BaseActivity implements
         GoogleApiClient.OnConnectionFailedListener,
@@ -111,7 +109,7 @@ public class SignInActivity extends BaseActivity implements
         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
             FirebaseUser user = firebaseAuth.getCurrentUser();
             if (user != null) {
-                mStatusTextView.setText(Html.fromHtml("<small>Velkommen tilbake,</small><br><b>" + MatbitDatabase.USER.getDisplayName() + "</b>"));
+                mStatusTextView.setText(Html.fromHtml("<small>Velkommen tilbake,</small><br><b>" + MatbitDatabase.getCurrentUserDisplayName() + "</b>"));
                 findViewById(R.id.activity_signin_btn_sign_out).setVisibility(View.VISIBLE);
                 findViewById(R.id.activity_signin_btn_continue).setVisibility(View.VISIBLE);
                 findViewById(R.id.activity_signin_btn_sign_in).setVisibility(View.GONE);
@@ -119,7 +117,7 @@ public class SignInActivity extends BaseActivity implements
                 mStatusTextView.setText(R.string.string_welcome_back);
                 findViewById(R.id.activity_signin_btn_sign_in).setVisibility(View.VISIBLE);
                 findViewById(R.id.activity_signin_btn_sign_out).setVisibility(View.GONE);
-                findViewById(R.id.activity_signin_btn_continue).setVisibility(View.GONE);
+                findViewById(R.id.activity_signin_btn_continue).setVisibility(View.VISIBLE);
             }
         }
     };
@@ -188,7 +186,8 @@ public class SignInActivity extends BaseActivity implements
         } else if (i == R.id.activity_signin_btn_sign_out) {
             signOut();
         } else if (i == R.id.activity_signin_btn_continue) {
-            MatbitDatabase.uploadNewUserIfNew();
+            if (MatbitDatabase.getCurrentUser() != null)
+                MatbitDatabase.uploadNewUserIfNew();
             startActivity(new Intent(this, MainActivity.class));
         }
     }

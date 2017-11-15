@@ -65,7 +65,7 @@ public class CreateRecipeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        MatbitDatabase.RECIPES.child(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
+        MatbitDatabase.recipe(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipe = new Recipe(dataSnapshot);

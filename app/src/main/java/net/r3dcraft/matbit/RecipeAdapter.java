@@ -160,7 +160,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         recipeViewHolder.vRecipeTitle.setText(RECIPE.getData().getTitle());
 
         // Insert user photo from database
-        MatbitDatabase.USERS.child(RECIPE.getData().getUser()).addListenerForSingleValueEvent(new ValueEventListener()  {
+        MatbitDatabase.user(RECIPE.getData().getUser()).addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipeViewHolder.vRecipeInfo.setText(
