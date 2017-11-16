@@ -24,15 +24,6 @@ public class AddRecipeActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private AddRecipePagerAdapter addRecipePagerAdapter;
 
-    private static int currentPage;
-
-    private static class PageListener extends ViewPager.SimpleOnPageChangeListener {
-        public void onPageSelected(int position) {
-            Log.i(TAG, "page selected " + position);
-            currentPage = position;
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +33,6 @@ public class AddRecipeActivity extends AppCompatActivity {
         context = this;
 
         viewPager = (ViewPager) findViewById(R.id.activity_add_recipe_viewpager);
-        viewPager.addOnPageChangeListener (new PageListener());
     }
 
     @Override

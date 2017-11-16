@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 public class AddRecipePagerAdapter extends FragmentPagerAdapter {
     private Context context;
+    private boolean edit = false;
     private User user;
     private Recipe recipe;
     private byte[] recipePhoto;
@@ -42,27 +43,35 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
     public static final String ADD_TIME_TITLE = "Legg til tid";
     public static final String ADD_PORTIONS_TITLE = "Legg til porsjoner";
 
-    private AddRecipeFragmentPhoto addRecipeFragmentPhoto;
-    private AddRecipeFragmentTitle addRecipeFragmentTitle;
-    private AddRecipeFragmentInfo addRecipeFragmentInfo;
-    private AddRecipeFragmentIngredients addRecipeFragmentIngredients;
-    private AddRecipeFragmentSteps addRecipeFragmentSteps;
-    private AddRecipeFragmentCategory addRecipeFragmentCategory;
-    private AddRecipeFragmentTime addRecipeFragmentTime;
-    private AddRecipeFragmentPortions addRecipeFragmentPortions;
+    public static final String CHANGE_PHOTO_TITLE = "Endre bilde";
+    public static final String CHANGE_TITLE_TITLE = "Endre tittel";
+    public static final String CHANGE_INFO_TITLE = "Endre info";
+    public static final String CHANGE_INGREDIENTS_TITLE = "Endre ingredienser";
+    public static final String CHANGE_STEPS_TITLE = "Endre steg";
+    public static final String CHANGE_CATEGORY_TITLE = "Endre kategori";
+    public static final String CHANGE_TIME_TITLE = "Endre tid";
+    public static final String CHANGE_PORTIONS_TITLE = "Endre antall porsjoner";
+
+    private AddRecipeFragmentPhoto addRecipeFragmentPhoto = new AddRecipeFragmentPhoto();
+    private AddRecipeFragmentTitle addRecipeFragmentTitle = new AddRecipeFragmentTitle();
+    private AddRecipeFragmentInfo addRecipeFragmentInfo = new AddRecipeFragmentInfo();
+    private AddRecipeFragmentIngredients addRecipeFragmentIngredients = new AddRecipeFragmentIngredients();
+    private AddRecipeFragmentSteps addRecipeFragmentSteps = new AddRecipeFragmentSteps();
+    private AddRecipeFragmentCategory addRecipeFragmentCategory = new AddRecipeFragmentCategory();
+    private AddRecipeFragmentTime addRecipeFragmentTime = new AddRecipeFragmentTime();
+    private AddRecipeFragmentPortions addRecipeFragmentPortions = new AddRecipeFragmentPortions();
 
     public AddRecipePagerAdapter(FragmentManager fm, User user, final Context CONTEXT) {
         super(fm);
         this.context = CONTEXT;
         this.user = user;
-        this.addRecipeFragmentPhoto = new AddRecipeFragmentPhoto();
-        this.addRecipeFragmentTitle = new AddRecipeFragmentTitle();
-        this.addRecipeFragmentInfo = new AddRecipeFragmentInfo();
-        this.addRecipeFragmentIngredients = new AddRecipeFragmentIngredients();
-        this.addRecipeFragmentSteps = new AddRecipeFragmentSteps();
-        this.addRecipeFragmentCategory = new AddRecipeFragmentCategory();
-        this.addRecipeFragmentTime = new AddRecipeFragmentTime();
-        this.addRecipeFragmentPortions = new AddRecipeFragmentPortions();
+    }
+
+    public AddRecipePagerAdapter(FragmentManager fm, User user, final Context CONTEXT, final boolean EDIT) {
+        super(fm);
+        this.context = CONTEXT;
+        this.edit = EDIT;
+        this.user = user;
     }
 
     @Override
@@ -97,25 +106,49 @@ public class AddRecipePagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case 0:
-                return ADD_PHOTO_TITLE;
-            case 1:
-                return ADD_TITLE_TITLE;
-            case 2:
-                return ADD_INFO_TITLE;
-            case 3:
-                return ADD_INGREDIENTS_TITLE;
-            case 4:
-                return ADD_STEPS_TITLE;
-            case 5:
-                return ADD_CATEGORY_TITLE;
-            case 6:
-                return ADD_TIME_TITLE;
-            case 7:
-                return ADD_PORTIONS_TITLE;
-            default:
-                break;
+        if (!edit) {
+            switch (position) {
+                case 0:
+                    return ADD_PHOTO_TITLE;
+                case 1:
+                    return ADD_TITLE_TITLE;
+                case 2:
+                    return ADD_INFO_TITLE;
+                case 3:
+                    return ADD_INGREDIENTS_TITLE;
+                case 4:
+                    return ADD_STEPS_TITLE;
+                case 5:
+                    return ADD_CATEGORY_TITLE;
+                case 6:
+                    return ADD_TIME_TITLE;
+                case 7:
+                    return ADD_PORTIONS_TITLE;
+                default:
+                    break;
+            }
+        }
+        else {
+            switch (position) {
+                case 0:
+                    return CHANGE_PHOTO_TITLE;
+                case 1:
+                    return CHANGE_TITLE_TITLE;
+                case 2:
+                    return CHANGE_INFO_TITLE;
+                case 3:
+                    return CHANGE_INGREDIENTS_TITLE;
+                case 4:
+                    return CHANGE_STEPS_TITLE;
+                case 5:
+                    return CHANGE_CATEGORY_TITLE;
+                case 6:
+                    return CHANGE_TIME_TITLE;
+                case 7:
+                    return CHANGE_PORTIONS_TITLE;
+                default:
+                    break;
+            }
         }
         return null;
     }

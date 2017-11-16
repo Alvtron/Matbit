@@ -67,7 +67,7 @@
             android:id="@+id/activity_add_recipe_btn_ingredient"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:text="+"/>
+            android:text="+" />
     </LinearLayout>
 
     <ListView

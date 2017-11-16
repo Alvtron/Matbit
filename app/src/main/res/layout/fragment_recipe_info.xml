@@ -6,7 +6,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="64dp">
 
         <!-- Recipe photo -->
         <ImageView
@@ -251,7 +252,6 @@
             android:id="@+id/activity_recipe_fragment_info_info_txt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activity_recipe_fragment_info_view_2"

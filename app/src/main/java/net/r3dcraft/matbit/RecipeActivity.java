@@ -33,7 +33,7 @@ public class RecipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
         context = RecipeActivity.this;
-        
+
         bundle = getIntent().getExtras();
         recipeID = bundle.getString("recipeID");
         authorID = bundle.getString("authorID");
@@ -56,6 +56,10 @@ public class RecipeActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.activity_recipe_tabs);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(0).setIcon(R.drawable.icon_info_white_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.icon_ingredients_white_24dp);
+        tabLayout.getTabAt(2).setIcon(R.drawable.icon_list_white_24dp);
+        tabLayout.getTabAt(3).setIcon(R.drawable.icon_comment_white_24dp);
     }
 
     @Override

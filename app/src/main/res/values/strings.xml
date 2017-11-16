@@ -276,4 +276,6 @@
     <string name="string_dont_log_in">Ikke logg inn</string>
     <string name="string_bio">Bio</string>
     <string name="string_username">Brukernavn</string>
+    <string name="string_gender">Kjønn</string>
+    <string name="string_this_page_cannot_load_at_this_moment">Oisann! Denne siden kan ikke lastes for øyeblikket</string>
 </resources>
