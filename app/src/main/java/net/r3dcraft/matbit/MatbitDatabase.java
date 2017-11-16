@@ -320,6 +320,9 @@ public final class MatbitDatabase {
             Log.d(TAG, "recipePictureToImageView: IMAGE_VIEW is not initialized (is null)");
             return true;
         }
+
+        IMAGE_VIEW.setImageResource(R.color.grey_100);
+
         MatbitDatabase.RECIPE_PHOTOS.child(RECIPE_UID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -356,6 +359,8 @@ public final class MatbitDatabase {
             Log.d(TAG, "userPictureToImageView: IMAGE_VIEW is not initialized (is null)");
             return true;
         }
+
+        IMAGE_VIEW.setImageResource(R.color.grey_100);
 
         MatbitDatabase.USER_PHOTOS.child(USER_UID + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -413,6 +418,7 @@ public final class MatbitDatabase {
                 IMAGE_VIEW.setImageResource(R.drawable.icon_broken_image_black_24dp);
             }
         });
+
         return true;
     }
 
@@ -420,6 +426,8 @@ public final class MatbitDatabase {
         if (!hasAuth()) return;
         if (!hasUser()) return;
         if (!hasStorage()) return;
+
+        IMAGE_VIEW.setImageResource(R.color.grey_100);
         Glide.with(CONTEXT).load(USER.getPhotoUrl()).into(IMAGE_VIEW);
     }
 

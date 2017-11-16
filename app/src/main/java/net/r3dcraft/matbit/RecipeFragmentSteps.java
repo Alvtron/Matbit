@@ -29,6 +29,9 @@ public class RecipeFragmentSteps extends Fragment {
     private ArrayAdapter<String> adapter;
     private ListView myListView;
 
+    private StepAdapter stepAdapter;
+    private ListView listViewSteps;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootViewInfo = inflater.inflate(R.layout.fragment_recipe_steps, container, false);
@@ -49,15 +52,11 @@ public class RecipeFragmentSteps extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipe = new Recipe(dataSnapshot);
 
-                int count = 0;
-                for (Step step : recipe.getData().getSteps().values()) {
-                    steps.add(++count + ": " + step.getString());
-                }
+                stepAdapter = new StepAdapter(context, false);
+                for (Step step : recipe.getData().getSteps().values())
+                    stepAdapter.addStep(step);
 
-                adapter = new ArrayAdapter<String>(context,
-                        android.R.layout.simple_list_item_1,
-                        steps);
-                myListView.setAdapter(adapter);
+                myListView.setAdapter(stepAdapter);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

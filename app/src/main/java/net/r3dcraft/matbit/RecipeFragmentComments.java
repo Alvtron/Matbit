@@ -65,7 +65,7 @@ public class RecipeFragmentComments extends Fragment {
         btn_comment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String comment_string = editText_comment.getText().toString();
-                if (comment_string == null || comment_string.trim().length() < 1) {
+                if (comment_string.trim().length() < 1) {
                     editText_comment.setError("Kommentar kan ikke være tom!");
                 } else {
                     recipe.addComment(comment_string);
@@ -73,7 +73,9 @@ public class RecipeFragmentComments extends Fragment {
                     editText_comment.clearFocus();
                     // Hide keyboard
                     InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(editText_comment.getWindowToken(), 0);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(editText_comment.getWindowToken(), 0);
+                    }
 
                     // Scroll to top
                     recyclerView.post(new Runnable() {
