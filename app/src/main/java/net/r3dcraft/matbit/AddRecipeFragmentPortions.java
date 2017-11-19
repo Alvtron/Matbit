@@ -1,6 +1,9 @@
 package net.r3dcraft.matbit;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -16,39 +19,37 @@ import android.widget.TextView;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
+ *
+ * This is one of the fragments initialized in the AddRecipePagerAdapter. This collects a number
+ * and stores it in the adapter.
  */
 
 public class AddRecipeFragmentPortions extends Fragment {
     private static final String TAG = "AddRecipeFragmentPortions";
     private static int currentPage = 0;
     private Context context;
-    private View view;
-    private View header;
-    private View bottomNavigation;
     private ViewPager viewPager;
     private AddRecipePagerAdapter pagerAdapter;
-    private TextView txt_page_title;
-    private ImageView btn_cancel;
-    private ImageView btn_back;
-    private Button btn_action;
 
     private EditText editPortions;
-    private Button btnCreateRecipe;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        // Default layout initialization -----------------------------------------------------------
+
         context = getActivity();
-        view = inflater.inflate(R.layout.fragment_add_recipe_portions, container, false);
-        header = (View) view.findViewById(R.id.activity_add_recipe_header_portions);
-        bottomNavigation = (View) view.findViewById(R.id.activity_add_recipe_bottom_navigator_portions);
-        viewPager = (ViewPager) getActivity().findViewById(R.id.activity_add_recipe_viewpager);
+        View view = inflater.inflate(R.layout.fragment_add_recipe_portions, container, false);
+        View header = view.findViewById(R.id.activity_add_recipe_header_portions);
+        View bottomNavigation = view.findViewById(R.id.activity_add_recipe_bottom_navigator_portions);
+        viewPager = getActivity().findViewById(R.id.activity_add_recipe_viewpager);
         pagerAdapter = (AddRecipePagerAdapter) viewPager.getAdapter();
-        txt_page_title = (TextView) header.findViewById(R.id.fragment_add_recipe_txt_page_title);
-        txt_page_title.setText(pagerAdapter.ADD_PORTIONS_TITLE);
-        btn_cancel = (ImageView) header.findViewById(R.id.fragment_add_recipe_btn_cancel);
-        btn_back = (ImageView) bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_back);
+        TextView txt_page_title = header.findViewById(R.id.fragment_add_recipe_txt_page_title);
+        txt_page_title.setText(AddRecipePagerAdapter.ADD_PORTIONS_TITLE);
+        ImageView btn_cancel = header.findViewById(R.id.fragment_add_recipe_btn_cancel);
+        ImageView btn_back = bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_back);
         bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_next).setVisibility(View.INVISIBLE);
-        btn_action = (Button) bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_action);
+        Button btn_action = bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_action);
         btn_action.setVisibility(View.VISIBLE);
 
         btn_action.setOnClickListener(new View.OnClickListener() {
@@ -72,11 +73,41 @@ public class AddRecipeFragmentPortions extends Fragment {
             }
         });
 
+        ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+            btn_delete.setVisibility(View.GONE);
+        }
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show dialog box for next step
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.string_delete_recipe)
+                        .setCancelable(false)
+                        .setMessage(R.string.string_are_you_sure_you_want_to_delete_this_recipe)
+                        .setIcon(R.drawable.icon_delete_black_24dp)
+                        .setPositiveButton(R.string.string_delete, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                MatbitDatabase.deleteRecipe(pagerAdapter.getRecipe().getId());
+                                startActivity(new Intent(getActivity(), MainActivity.class));
+                                getActivity().finish();
+                            }
+
+                        })
+                        .setNegativeButton(getResources().getString(R.string.string_cancel), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.show();
+            }
+        });
+
         // -----------------------------------------------------------------------------------------
 
-        editPortions = (EditText) view.findViewById(R.id.activity_add_recipe_portions);
-        if (pagerAdapter.getPortions() > 0)
-            editPortions.setText(Integer.toString(pagerAdapter.getPortions()));
+        editPortions = view.findViewById(R.id.activity_add_recipe_portions);
+        if (pagerAdapter.getRecipe().hasPortions())
+            editPortions.setText(Integer.toString(pagerAdapter.getRecipe().getData().getPortions()));
         editPortions.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
@@ -87,7 +118,7 @@ public class AddRecipeFragmentPortions extends Fragment {
                     else if (portions > 12)
                         editPortions.setError("Oisann! Dette er for høyt");
                     else
-                        pagerAdapter.setPortions(portions);
+                        pagerAdapter.getRecipe().getData().setPortions(portions);
                 }
                 catch (NumberFormatException e) {
                     editPortions.setError("Oisann! Dette er ikke et gyldig nummer!");

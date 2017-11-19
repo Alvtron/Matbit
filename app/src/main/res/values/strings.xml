@@ -24,6 +24,8 @@
     <string name="text">14sp</string>
     <string name="big_text">18sp</string>
 
+    <string name="recipe_information">%1$s • %2$s liker • %3$s</string>
+
     <!-- Drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -278,4 +280,30 @@
     <string name="string_username">Brukernavn</string>
     <string name="string_gender">Kjønn</string>
     <string name="string_this_page_cannot_load_at_this_moment">Oisann! Denne siden kan ikke lastes for øyeblikket</string>
+    <string name="html_welcome_back_message"><![CDATA[<small>Velkommen tilbake,</small><br><b>]]></string>
+    <string name="string_take_picture">Ta bilde</string>
+    <string name="string_choose_picture">Velg bilde</string>
+    <string name="string_cancel">Avbryt</string>
+    <string name="string_add_photo">Legg til bilde</string>
+    <string name="error_number_must_be_bigger_than_zero">Oisann! Tallet må være større enn null!</string>
+    <string name="error_number_cannot_be_that_big">Oisann! Tallet kan ikke være så stort!</string>
+    <string name="error_its_empty_here">Oisann! Her var det tomt!</string>
+    <string name="error_something_went_wrong">Oisann! Her gikk det galt!</string>
+    <string name="string_this_recipe_is_unreadable">Denne oppskriften er uleselig. Huff!</string>
+    <string name="error_could_not_upload_recipe">Oisann! Kunne ikke laste opp oppskriften!</string>
+    <string name="string_recipe_is_stored">Oppskriften er lagret!</string>
+    <string name="string_go_to_recipe">Gå til oppskrift</string>
+    <string name="string_go_to_startpage">Gå til startsiden</string>
+    <string name="string_delete">Slett</string>
+    <string name="string_are_you_sure_you_want_to_delete_this_recipe">Er du sikker på at du vil slette denne oppskriften?</string>
+    <string name="string_delete_recipe">Slett oppskrift</string>
+    <string name="string_could_not_load_recipe">Kunne ikke laste oppskrift!</string>
+    <string name="string_add_picture">Legg til bilde</string>
+    <string name="string_add_title">Legg til tittel</string>
+    <string name="string_add_info">Legg til info</string>
+    <string name="string_add_ingredients">Legg til ingredienser</string>
+    <string name="string_add_step">Legg til steg</string>
+    <string name="string_choose_category">Velg kategori</string>
+    <string name="string_add_time">Legg til tid</string>
+    <string name="string_add_portions">Legg til porsjoner</string>
 </resources>

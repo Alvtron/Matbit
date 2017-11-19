@@ -23,7 +23,7 @@ public class Recipe {
     private String id;
     private RecipeData data;
 
-    public Recipe() {}
+    public Recipe() { }
 
     @Override
     public String toString() {
@@ -93,26 +93,30 @@ public class Recipe {
         return true;
     }
 
-    public void createNewRecipe(final User user, final String title, final int time, final int portions, final String category, final String info, final ArrayList<Step> steps, final ArrayList<Ingredient> ingredients) {
-        data = new RecipeData();
-        data.setTitle(title);
-        data.setUser(user.getId());
-        data.setUser_nickname(user.getData().getNickname());
+    public void prepareNewRecipe(final User AUTHOR) {
+        if (!hasData())
+            data = new RecipeData();
+        if (!hasTitle())
+            return;
+        if (!hasTime())
+            return;
+        if (!hasPortions())
+            return;
+        if (!hasCategory())
+            return;
+        if (!hasInfo())
+            return;
+        if (!hasSteps())
+            return;
+        if (!hasIngredients())
+            return;
+        data.setUser(AUTHOR.getId());
+        data.setUser_nickname(AUTHOR.getData().getNickname());
         data.setDatetime_created(DateUtility.nowString());
         data.setDatetime_updated(DateUtility.nowString());
-        data.setTime(time);
-        data.setPortions(portions);
         data.setViews(0);
-        data.setCategory(category);
         data.setThumbs_up(0);
         data.setThumbs_down(0);
-        data.setInfo(info);
-        data.setRatings(new HashMap<String, Rating>());
-        data.setComments(new HashMap<String, Comment>());
-        for (Step step : steps)
-            data.addStep(step);
-        for (Ingredient ingredient : ingredients)
-            data.addIngredient(ingredient);
     }
 
     public void setId(String id) {
@@ -743,14 +747,19 @@ public class Recipe {
     public static final Comparator<Recipe> RATING_COMPARATOR_ASC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
-            return Integer.compare(a.getData().getRatings().size(), b.getData().getRatings().size());
-        }
+            return Integer.compare(
+                    a.getData().getThumbs_up() - a.getData().getThumbs_down(),
+                    b.getData().getThumbs_up() - b.getData().getThumbs_down()
+            );        }
     };
 
     public static final Comparator<Recipe> RATING_COMPARATOR_DESC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
-            return Integer.compare(b.getData().getRatings().size(), a.getData().getRatings().size());
+            return Integer.compare(
+                    b.getData().getThumbs_up() - b.getData().getThumbs_down(),
+                    a.getData().getThumbs_up() - a.getData().getThumbs_down()
+            );
         }
     };
 

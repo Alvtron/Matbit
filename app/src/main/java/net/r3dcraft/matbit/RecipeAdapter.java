@@ -61,7 +61,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         }
     });
 
-    private static Context context;
+    private Context context;
     private Comparator<Recipe> comparator;
 
     public RecipeAdapter(Context context, Comparator<Recipe> comparator) {
@@ -116,26 +116,31 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 from(viewGroup.getContext()).
                 inflate(R.layout.activity_search_item, viewGroup, false);
 
-        return new RecipeViewHolder(itemView);
+        return new RecipeViewHolder(itemView, context);
+    }
+
+    public void clear() {
+        sortedRecipeList.clear();
+        notifyDataSetChanged();
     }
 
     public static class RecipeViewHolder extends RecyclerView.ViewHolder {
         protected Recipe recipe;
-        protected ImageView vRecipePhoto;
-        protected ImageView vUserPhoto;
-        protected TextView vRecipeInfo;
-        protected TextView vRecipeTitle;
+        private ImageView vRecipePhoto;
+        private ImageView vUserPhoto;
+        private TextView vRecipeInfo;
+        private TextView vRecipeTitle;
 
-        public RecipeViewHolder(View view) {
+        public RecipeViewHolder(final View view, final Context context) {
             super(view);
-            vRecipePhoto = (ImageView) view.findViewById(R.id.search_item_recipe_photo);
-            vUserPhoto = (ImageView) view.findViewById(R.id.search_item_user_photo);
-            vRecipeTitle = (TextView)  view.findViewById(R.id.search_item_recipe_title);
-            vRecipeInfo = (TextView)  view.findViewById(R.id.search_item_recipe_info);
+            vRecipePhoto = view.findViewById(R.id.search_item_recipe_photo);
+            vUserPhoto = view.findViewById(R.id.search_item_user_photo);
+            vRecipeTitle = view.findViewById(R.id.search_item_recipe_title);
+            vRecipeInfo = view.findViewById(R.id.search_item_recipe_info);
 
             vRecipePhoto.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    MatbitDatabase.gotToRecipe(context, recipe);
+                    MatbitDatabase.goToRecipe(context, recipe);
                 }
             });
 
@@ -147,7 +152,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    MatbitDatabase.gotToRecipe(context, recipe);
+                    MatbitDatabase.goToRecipe(context, recipe);
                 }
             });
         }
@@ -163,10 +168,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         MatbitDatabase.user(RECIPE.getData().getUser()).addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                recipeViewHolder.vRecipeInfo.setText(
-                        dataSnapshot.child("nickname").getValue(String.class)
-                                + " • " + RECIPE.getThumbsUp()
-                                + " liked • " + RECIPE.getTimeToText()
+                recipeViewHolder.vRecipeInfo.setText(String.format(
+                        context.getResources().getString(R.string.recipe_information),
+                        dataSnapshot.child("nickname").getValue(String.class),
+                        RECIPE.getThumbsUp(), RECIPE.getTimeToText())
                 );
             }
 

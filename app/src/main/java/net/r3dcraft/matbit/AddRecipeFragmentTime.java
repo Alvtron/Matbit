@@ -1,6 +1,9 @@
 package net.r3dcraft.matbit;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -19,41 +22,35 @@ import java.util.List;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
+ *
+ * This is one of the fragments initialized in the AddRecipePagerAdapter. This collects a time-string
+ * and stores it in the adapter.
  */
 
 public class AddRecipeFragmentTime extends Fragment {
     private static final String TAG = "AddRecipeFragmentTime";
     private Context context;
-    private View view;
-    private View header;
-    private View bottomNavigation;
     private ViewPager viewPager;
     private AddRecipePagerAdapter pagerAdapter;
-    private TextView txt_page_title;
-    private ImageView btn_cancel;
-    private ImageView btn_back;
-    private ImageView btn_next;
-
-    private Spinner spinnerTimeHour;
-    private Spinner spinnerTimeMinutes;
-    private List<Integer> timeValues;
-    private ArrayAdapter<Integer> hourAdapter;
-    private ArrayAdapter<Integer> minutesAdapter;
+    private int hours, minutes;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        context = getActivity();
-        view = inflater.inflate(R.layout.fragment_add_recipe_time, container, false);
-        header = (View) view.findViewById(R.id.activity_add_recipe_header_time);
-        bottomNavigation = (View) view.findViewById(R.id.activity_add_recipe_bottom_navigator_time);
 
-        viewPager = (ViewPager) getActivity().findViewById(R.id.activity_add_recipe_viewpager);
+        // Default layout initialization -----------------------------------------------------------
+
+        context = getActivity();
+        View view = inflater.inflate(R.layout.fragment_add_recipe_time, container, false);
+        View header = view.findViewById(R.id.activity_add_recipe_header_time);
+        View bottomNavigation = view.findViewById(R.id.activity_add_recipe_bottom_navigator_time);
+
+        viewPager = getActivity().findViewById(R.id.activity_add_recipe_viewpager);
         pagerAdapter = (AddRecipePagerAdapter) viewPager.getAdapter();
-        txt_page_title = (TextView) header.findViewById(R.id.fragment_add_recipe_txt_page_title);
-        txt_page_title.setText(pagerAdapter.ADD_TIME_TITLE);
-        btn_cancel = (ImageView) header.findViewById(R.id.fragment_add_recipe_btn_cancel);
-        btn_back = (ImageView) bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_back);
-        btn_next = (ImageView) bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_next);
+        TextView txt_page_title = header.findViewById(R.id.fragment_add_recipe_txt_page_title);
+        txt_page_title.setText(AddRecipePagerAdapter.ADD_TIME_TITLE);
+        ImageView btn_cancel = header.findViewById(R.id.fragment_add_recipe_btn_cancel);
+        ImageView btn_back = bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_back);
+        ImageView btn_next = bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_next);
 
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,37 +73,74 @@ public class AddRecipeFragmentTime extends Fragment {
             }
         });
 
+        ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+            btn_delete.setVisibility(View.GONE);
+        }
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show dialog box for next step
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.string_delete_recipe)
+                        .setCancelable(false)
+                        .setMessage(R.string.string_are_you_sure_you_want_to_delete_this_recipe)
+                        .setIcon(R.drawable.icon_delete_black_24dp)
+                        .setPositiveButton(R.string.string_delete, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                MatbitDatabase.deleteRecipe(pagerAdapter.getRecipe().getId());
+                                startActivity(new Intent(getActivity(), MainActivity.class));
+                                getActivity().finish();
+                            }
+
+                        })
+                        .setNegativeButton(getResources().getString(R.string.string_cancel), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.show();
+            }
+        });
+
         // -----------------------------------------------------------------------------------------
 
-        timeValues = new ArrayList<Integer>();
+        List<Integer> timeValues = new ArrayList<Integer>();
         for (int i = 0; i <= 60; i++) {
             timeValues.add(i);
         }
 
-        spinnerTimeHour = (Spinner) view.findViewById(R.id.activity_add_recipe_time_hours);
-        hourAdapter = new ArrayAdapter<Integer>(context, android.R.layout.simple_spinner_item, timeValues);
+        hours = pagerAdapter.getRecipe().getData().getTime() / 60;
+        minutes = pagerAdapter.getRecipe().getData().getTime() % 60;
+
+        // Hour spinner
+        Spinner spinnerTimeHour = view.findViewById(R.id.activity_add_recipe_time_hours);
+        ArrayAdapter<Integer> hourAdapter = new ArrayAdapter<Integer>(context, android.R.layout.simple_spinner_item, timeValues);
         hourAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTimeHour.setAdapter(hourAdapter);
-        spinnerTimeHour.setSelection(hourAdapter.getPosition(pagerAdapter.getHour()));
+        spinnerTimeHour.setSelection(hourAdapter.getPosition(hours));
 
         spinnerTimeHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                pagerAdapter.setHour((int)parent.getItemAtPosition(position));
+                hours = (int)parent.getItemAtPosition(position);
+                pagerAdapter.getRecipe().getData().setTime(hours * 60 + minutes);
             }
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
 
-        spinnerTimeMinutes = (Spinner) view.findViewById(R.id.activity_add_recipe_time_minutes);
-        minutesAdapter = new ArrayAdapter<Integer>(context, android.R.layout.simple_spinner_item, timeValues);
+        // Minute spinner
+        Spinner spinnerTimeMinutes = view.findViewById(R.id.activity_add_recipe_time_minutes);
+        ArrayAdapter<Integer> minutesAdapter = new ArrayAdapter<Integer>(context, android.R.layout.simple_spinner_item, timeValues);
         minutesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTimeMinutes.setAdapter(minutesAdapter);
-        spinnerTimeMinutes.setSelection(minutesAdapter.getPosition(pagerAdapter.getHour()));
+        spinnerTimeMinutes.setSelection(minutesAdapter.getPosition(minutes));
 
         spinnerTimeMinutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                pagerAdapter.setMinutes((int)parent.getItemAtPosition(position));
+                minutes = (int)parent.getItemAtPosition(position);
+                pagerAdapter.getRecipe().getData().setTime(hours * 60 + minutes);
             }
             public void onNothingSelected(AdapterView<?> parent) {
 

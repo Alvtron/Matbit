@@ -32,8 +32,6 @@ public class CreateRecipeActivity extends AppCompatActivity {
     private static final String TAG = "CreateRecipeActivity";
     private CreateRecipePagerAdapter createRecipePagerAdapter;
     private ViewPager viewPager;
-    private Context context;
-    private Bundle bundle;
     private String recipeID;
     private Recipe recipe;
 
@@ -43,9 +41,9 @@ public class CreateRecipeActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_create_recipe);
-        context = this;
+        Context context = this;
 
-        bundle = getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
         recipeID = bundle.getString("recipeID");
         if (recipeID == null || recipeID.trim().equals("")) {
             Toast.makeText(context, "Oppskriften er uleselig. Prøv igjen neste gang!", Toast.LENGTH_SHORT).show();
@@ -53,6 +51,8 @@ public class CreateRecipeActivity extends AppCompatActivity {
         }
 
         viewPager = (ViewPager) findViewById(R.id.activity_create_recipe_viewpager);
+
+        // Disable swipe; left and right.
         viewPager.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

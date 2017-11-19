@@ -4,9 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,8 +26,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Random;
-
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017
  */
@@ -35,20 +33,9 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static String TAG = "MainActivity";
     private Context context;
-    private Toolbar toolbar;
-    private ImageView featured_recipe_photo;
     private NewsFeedAdapter newsFeedAdapter;
-    private LinearLayoutManager llm;
     private DrawerLayout drawer;
-    private ActionBarDrawerToggle toggle;
     private NavigationView navigationView;
-    private View header;
-    private ImageView user_photo;
-    private TextView user_name;
-    private TextView user_email;
-    private BottomNavigationView bottomNavigationView;
-    private RecyclerView mRecyclerView;
-    private ConstraintLayout navigation_drawer_header_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +43,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         context = this;
 
-        toolbar = (Toolbar) findViewById(R.id.activity_main_content_toolbar);
+        Toolbar toolbar = findViewById(R.id.activity_main_content_toolbar);
         setSupportActionBar(toolbar);
 
         // Feed
-        mRecyclerView = (RecyclerView)findViewById(R.id.activity_main_content_recycler_view);
+        RecyclerView mRecyclerView = findViewById(R.id.activity_main_content_recycler_view);
         mRecyclerView.setHasFixedSize(true);
-        llm = new LinearLayoutManager(this);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
@@ -70,18 +57,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mRecyclerView.setAdapter(newsFeedAdapter);
 
         // Navigation bar
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toggle = new ActionBarDrawerToggle(
+        drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        navigationView = (NavigationView) findViewById(R.id.activity_main_navigation_view);
+        navigationView = findViewById(R.id.activity_main_navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
-        header = navigationView.getHeaderView(0);
-        user_photo = (ImageView) header.findViewById(R.id.activity_main_drawer_user_photo);
-        user_name = (TextView) header.findViewById(R.id.activity_main_drawer_user_name);
-        user_email = (TextView) header.findViewById(R.id.activity_main_drawer_user_email);
-        navigation_drawer_header_layout = (ConstraintLayout) header.findViewById(R.id.activity_main_drawer_header_layout);
+        View drawer_header = navigationView.getHeaderView(0);
+        ImageView user_photo = drawer_header.findViewById(R.id.activity_main_drawer_user_photo);
+        TextView user_name = drawer_header.findViewById(R.id.activity_main_drawer_user_name);
+        TextView user_email = drawer_header.findViewById(R.id.activity_main_drawer_user_email);
+        TextView log_in_message = drawer_header.findViewById(R.id.activity_main_drawer_log_in_message);
+        ImageView down_arrow = drawer_header.findViewById(R.id.activity_main_drawer_icon_arrow);
+        ConstraintLayout navigation_drawer_header_layout = drawer_header.findViewById(R.id.activity_main_drawer_header_layout);
         navigation_drawer_header_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,34 +78,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        View try_luck = (View) findViewById(R.id.navigation_luck);
-        try_luck.setOnClickListener(new View.OnClickListener() {
+        if (MatbitDatabase.hasUser()) {
+            down_arrow.setVisibility(View.INVISIBLE);
+            log_in_message.setVisibility(View.GONE);
+            user_name.setVisibility(View.VISIBLE);
+            user_email.setVisibility(View.VISIBLE);
+            user_photo.setVisibility(View.VISIBLE);
+            user_name.setText(MatbitDatabase.getCurrentUserDisplayName());
+            user_email.setText(MatbitDatabase.getCurrentUserEmail());
+            MatbitDatabase.currentUserPictureToImageView(context, user_photo);
+        }
+
+        // Bottom navigation buttons
+        View view_random_recipe = findViewById(R.id.activity_main_bottom_navigation_view_random_recipe);
+        view_random_recipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MatbitDatabase.RECIPES().addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Random random = new Random();
-                        int index = random.nextInt((int) dataSnapshot.getChildrenCount());
-                        int count = 0;
-                        for (DataSnapshot recipeSnapshot : dataSnapshot.getChildren()) {
-                            if (count++ == index) {
-                                Recipe recipe = new Recipe(recipeSnapshot, true);
-                                MatbitDatabase.gotToRecipe(context, recipe);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                MatbitDatabase.goToRandomRecipe(context);
             }
         });
 
-        View btn_add_recipe = (View) findViewById(R.id.navigation_add);
-        btn_add_recipe.setOnClickListener(new View.OnClickListener() {
+        View view_add_recipe = (View) findViewById(R.id.activity_main_bottom_navigation_view_add_recipe);
+        view_add_recipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (MatbitDatabase.hasUser()) {
@@ -139,17 +122,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        View btn_search_recipe = (View) findViewById(R.id.navigation_search);
-        btn_search_recipe.setOnClickListener(new View.OnClickListener() {
+        View view_search_recipe = (View) findViewById(R.id.activity_main_bottom_navigation_view_search_recipe);
+        view_search_recipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(context, SearchActivity.class));
             }
         });
-
-        user_name.setText(MatbitDatabase.getCurrentUserDisplayName());
-        user_email.setText(MatbitDatabase.getCurrentUserEmail());
-        MatbitDatabase.currentUserPictureToImageView(context, user_photo);
 
         MatbitDatabase.RECIPES().addListenerForSingleValueEvent(new ValueEventListener() {
 

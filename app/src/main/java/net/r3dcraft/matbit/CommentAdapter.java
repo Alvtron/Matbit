@@ -23,10 +23,11 @@ import java.util.List;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 26.10.2017.
+ *
+ *
  */
 
 class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
-
     private final static String TAG = "CommentAdapter";
 
     private final SortedList<Comment> sortedCommentList = new SortedList<>(Comment.class, new SortedList.Callback<Comment>() {

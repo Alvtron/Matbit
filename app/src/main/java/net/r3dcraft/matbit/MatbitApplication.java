@@ -1,6 +1,8 @@
 package net.r3dcraft.matbit;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.res.Resources;
 
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -9,9 +11,17 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 
 public class MatbitApplication extends Application {
+
+    protected static MatbitApplication instance;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         FirebaseDatabase.getInstance().setPersistenceEnabled(false);
+    }
+
+    public static Resources resources() {
+        return instance.getResources();
     }
 }

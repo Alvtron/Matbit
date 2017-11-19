@@ -14,12 +14,15 @@ import android.support.v7.app.AlertDialog;
 /**
  * Created by Shreya Kotak on 12.05.16.
  * Modified by Thomas Angeland, student at Ostfold University College, on 25.10.2017.
+ * Sources: http://www.theappguruz.com/blog/android-take-photo-camera-gallery-code-sample
+ *
+ * This manages permissions when this app requests to read external storage.
  */
-public class CameraUtility {
-    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
+public class PermissionUtility {
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 153;
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static boolean checkPermission(final Context context)
+    public static boolean checkExternalStoragePermission(final Context context)
     {
         int currentAPIVersion = Build.VERSION.SDK_INT;
         if(currentAPIVersion >= android.os.Build.VERSION_CODES.M)

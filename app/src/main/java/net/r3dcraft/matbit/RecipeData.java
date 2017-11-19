@@ -47,10 +47,10 @@ public class RecipeData {
         views = -1;
         thumbs_up = -1;
         thumbs_down = -1;
-        ratings = new HashMap<String, Rating>();
-        comments = new HashMap<String, Comment>();
-        steps = new HashMap<String, Step>();
-        ingredients = new HashMap<String, Ingredient>();
+        ratings = new HashMap<>();
+        comments = new HashMap<>();
+        steps = new HashMap<>();
+        ingredients = new HashMap<>();
     }
 
     public String getTitle() {

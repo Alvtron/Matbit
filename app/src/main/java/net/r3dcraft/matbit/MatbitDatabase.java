@@ -2,7 +2,9 @@ package net.r3dcraft.matbit;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ImageView;
@@ -10,8 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +26,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Random;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 21.10.2017.
@@ -100,7 +109,7 @@ public final class MatbitDatabase {
 
     // USER DATABASE -----------------------------------------------------------------------------
 
-    public final static DatabaseReference USERS () {
+    public static DatabaseReference USERS () {
         if (!hasDatabase()) return null;
         return USER_DATA;
     }
@@ -189,7 +198,33 @@ public final class MatbitDatabase {
 
     // RECIPE DATABASE -----------------------------------------------------------------------------
 
-    public final static DatabaseReference RECIPES () {
+    public static String newRecipeKey(){
+        return RECIPE_DATA.push().getKey();
+    }
+
+    public static boolean deleteRecipe (final String RECIPE_ID) {
+        if (!hasDatabase()) return false;
+
+        recipe(RECIPE_ID).removeValue();
+        getUserRecipes(getCurrentUserUID()).child(RECIPE_ID).removeValue();
+        getUserNumRecipes(getCurrentUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.child("num_recipes").exists()) {
+                    final int num_recipes = dataSnapshot.getValue(Integer.class);
+                    getUserNumRecipes(getCurrentUserUID()).setValue(num_recipes - 1);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return true;
+    }
+
+    public static DatabaseReference RECIPES () {
         if (!hasDatabase()) return null;
         return RECIPE_DATA;
     }
@@ -294,6 +329,23 @@ public final class MatbitDatabase {
         return uid;
     }
 
+    public static boolean uploadNewRecipe(final RecipeData RECIPE_DATA, final String KEY) {
+        if (!hasAuth()) return false;
+        if (!hasDatabase()) return false;
+
+        if (RECIPE_DATA == null) {
+            Log.d(TAG, "uploadNewRecipe: RECIPE_DATA is not initialized (is null)");
+            return false;
+        }
+
+        MatbitDatabase.RECIPE_DATA.child(KEY).setValue(RECIPE_DATA);
+        recipeRatings(KEY).setValue(RECIPE_DATA.getRatings());
+        recipeComments(KEY).setValue(RECIPE_DATA.getComments());
+        recipeSteps(KEY).setValue(RECIPE_DATA.getSteps());
+        recipeIngredients(KEY).setValue(RECIPE_DATA.getIngredients());
+        return true;
+    }
+
     public static boolean uploadNewUser(final UserData USER_DATA) {
         if (!hasAuth()) return false;
         if (!hasDatabase()) return false;
@@ -378,7 +430,7 @@ public final class MatbitDatabase {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 Log.d(TAG, "userPictureToImageView: Could not load user photo");
-                IMAGE_VIEW.setImageResource(R.drawable.icon_profile);
+                IMAGE_VIEW.setImageResource(R.drawable.icon_profile_black_24dp);
             }
         });
         return true;
@@ -484,37 +536,58 @@ public final class MatbitDatabase {
         return true;
     }
 
-    public static boolean gotToRecipe(final Context CONTEXT, Recipe recipe) {
+    public static void goToRecipe(final Context CONTEXT, Recipe recipe) {
         if (recipe == null || recipe.getId() == null || recipe.getId().equals("")) {
             Toast.makeText(CONTEXT, "Denne oppskriften har feil addresse.", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "gotToRecipe: Recipe is not initialized or recipe id is not initialized");
-            return false;
+            Log.e(TAG, "goToRecipe: Recipe is not initialized or recipe id is not initialized");
+            return;
         } else if (CONTEXT == null) {
             Toast.makeText(CONTEXT, "Oi! Her skjedde det noe galt.", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "gotToRecipe: CONTEXT is not initialized");
-            return false;
+            Log.e(TAG, "goToRecipe: CONTEXT is not initialized");
+            return;
         }
         recipe.addView();
         Intent intent = new Intent(CONTEXT, RecipeActivity.class);
         intent.putExtra("recipeID", recipe.getId());
         intent.putExtra("authorID", recipe.getData().getUser());
         CONTEXT.startActivity(intent);
-        return true;
     }
 
-    public static boolean goToUser(final Context CONTEXT, final String USER_UID) {
+    public static void goToRandomRecipe(final Context CONTEXT) {
+        MatbitDatabase.RECIPES().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Random random = new Random();
+                int index = random.nextInt((int) dataSnapshot.getChildrenCount());
+                int count = 0;
+                for (DataSnapshot recipeSnapshot : dataSnapshot.getChildren()) {
+                    if (count++ == index) {
+                        Recipe recipe = new Recipe(recipeSnapshot, true);
+                        goToRecipe(CONTEXT, recipe);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public static void goToUser(final Context CONTEXT, final String USER_UID) {
         if (USER_UID == null || USER_UID.equals("")) {
             Toast.makeText(CONTEXT, "Beklager, men denne brukeren er ikke hjemme i dag.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "goToUser: USER_UID is not initialized");
-            return false;
+            return;
         } else if (CONTEXT == null) {
             Toast.makeText(CONTEXT, "Oi! Her skjedde det noe galt.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "goToUser: CONTEXT is not initialized");
-            return false;
+            return;
         }
         Intent intent = new Intent(CONTEXT, UserActivity.class);
         intent.putExtra("userID", USER_UID);
         CONTEXT.startActivity(intent);
-        return true;
+        return;
     }
 }

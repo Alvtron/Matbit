@@ -39,10 +39,6 @@ public class CreateRecipeFragment extends Fragment {
     private String recipeID;
 
     private ViewPager viewPager;
-    private TextView txt_step_nr;
-    private TextView txt_step;
-    private ImageButton btn_close;
-    private ImageButton btn_back;
     private Button btn_action_button;
 
     private CountDownTimer countDownTimer;
@@ -84,12 +80,12 @@ public class CreateRecipeFragment extends Fragment {
             getActivity().registerReceiver(broadcastReceiver, new IntentFilter(TimerService.BROADCAST_ACTION));
         }
 
-        viewPager = (ViewPager) getActivity().findViewById(R.id.activity_create_recipe_viewpager);
-        txt_step_nr = (TextView) rootView.findViewById(R.id.fragment_create_recipe_step_nr_txt);
-        txt_step = (TextView) rootView.findViewById(R.id.fragment_create_recipe_step_txt);
-        btn_close = (ImageButton) rootView.findViewById(R.id.fragment_create_recipe_step_close_btn);
-        btn_back = (ImageButton) rootView.findViewById(R.id.fragment_create_recipe_step_back_btn);
-        btn_action_button = (Button) rootView.findViewById(R.id.fragment_create_recipe_action_btn);
+        viewPager = getActivity().findViewById(R.id.activity_create_recipe_viewpager);
+        TextView txt_step_nr = rootView.findViewById(R.id.fragment_create_recipe_step_nr_txt);
+        TextView txt_step = rootView.findViewById(R.id.fragment_create_recipe_step_txt);
+        ImageButton btn_close = rootView.findViewById(R.id.fragment_create_recipe_step_close_btn);
+        ImageButton btn_back = rootView.findViewById(R.id.fragment_create_recipe_step_back_btn);
+        btn_action_button = rootView.findViewById(R.id.fragment_create_recipe_action_btn);
 
         txt_step_nr.setText("Steg " + (step_nr + 1));
         txt_step.setText(step_string);

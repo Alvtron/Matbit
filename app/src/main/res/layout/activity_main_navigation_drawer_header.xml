@@ -3,55 +3,75 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main_drawer_header_layout"
     android:layout_width="match_parent"
-    android:layout_height="94dp"
-    android:paddingTop="24dp"
+    android:layout_height="wrap_content"
+    android:paddingTop="34dp"
     android:background="@color/colorAccent"
-    android:gravity="bottom"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:paddingBottom="8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/activity_main_drawer_user_photo"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/icon_profile"
         android:layout_marginStart="@dimen/activity_vertical_margin"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icon_profile_color_primary_24dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/activity_main_drawer_text_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:orientation="vertical"
-        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@id/activity_main_drawer_user_photo"
         app:layout_constraintTop_toTopOf="@id/activity_main_drawer_user_photo"
-        app:layout_constraintStart_toEndOf="@id/activity_main_drawer_user_photo">
+        app:layout_constraintStart_toEndOf="@id/activity_main_drawer_user_photo"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/activity_main_drawer_user_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:visibility="gone"
+            android:minLines="1"
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/activity_main_drawer_user_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey_300"
+            android:textSize="12sp"
+            android:visibility="gone"
+            android:minLines="1"
+            android:maxLines="1"/>
 
     </LinearLayout>
 
-    <android.support.v7.widget.AppCompatImageView
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/activity_main_drawer_log_in_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:text="@string/string_log_in"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_main_drawer_icon_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_main_drawer_icon_arrow" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/activity_main_drawer_icon_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/activity_vertical_margin"
         android:background="@color/transparent"
         android:tint="@color/white"
-        app:srcCompat="@drawable/icon_keyboard_arrow_down_black_24dp"
-        android:layout_marginEnd="@dimen/activity_vertical_margin"
-        app:layout_constraintTop_toTopOf="@id/activity_main_drawer_text_layout"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/icon_keyboard_arrow_down_black_24dp" />
 
 </android.support.constraint.ConstraintLayout>

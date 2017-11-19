@@ -33,7 +33,7 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_user);
         context = this;
 
         bundle = getIntent().getExtras();
@@ -43,39 +43,45 @@ public class UserActivity extends AppCompatActivity {
             finish();
         }
 
-        toolbar = (Toolbar) findViewById(R.id.activity_user_profile_toolbar);
+        toolbar = findViewById(R.id.activity_user_profile_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        img_profile_photo = (ImageView) findViewById(R.id.activity_user_profile_photo);
-        txt_nickname = (TextView) findViewById(R.id.activity_user_nickname);
-        txt_recipe_count = (TextView) findViewById(R.id.activity_user_txt_recipes_count);
-        txt_follower_count = (TextView) findViewById(R.id.activity_user_txt_follower_count);
-        txt_bio = (TextView) findViewById(R.id.activity_user_txt_bio);
+        img_profile_photo = findViewById(R.id.activity_user_profile_photo);
+        txt_nickname = findViewById(R.id.activity_user_nickname);
+        txt_recipe_count = findViewById(R.id.activity_user_txt_recipes_count);
+        txt_follower_count = findViewById(R.id.activity_user_txt_follower_count);
+        txt_bio = findViewById(R.id.activity_user_txt_bio);
     }
 
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        MatbitDatabase.user(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                user = new User(dataSnapshot);
-                txt_nickname.setText(user.getData().getNickname());
-                txt_recipe_count.setText(Integer.toString(user.getData().getNum_recipes()));
-                txt_follower_count.setText(Integer.toString(user.getData().getNum_followers()));
-                txt_bio.setText(user.getData().getBio());
+            MatbitDatabase.user(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    user = new User(dataSnapshot);
+                    txt_nickname.setText(user.getData().getNickname());
+                    txt_recipe_count.setText(String.valueOf(user.getData().getNum_recipes()));
+                    txt_follower_count.setText(String.valueOf(user.getData().getNum_followers()));
+                    txt_bio.setText(user.getData().getBio());
 
-                MatbitDatabase.userPictureToImageView(user.getId(), context, img_profile_photo);
-            }
+                    MatbitDatabase.userPictureToImageView(user.getId(), context, img_profile_photo);
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadUser:onCancelled", databaseError.toException());
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "loadUser:onCancelled", databaseError.toException());
+                }
+            });
     }
 
     @Override

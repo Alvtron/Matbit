@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -23,41 +24,41 @@ import java.io.IOException;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
+ *
+ * This is one of the fragments initialized in the AddRecipePagerAdapter. This collects a photo in
+ * a byte array and stores it in the adapter.
  */
 
 public class AddRecipeFragmentPhoto extends Fragment {
     private static final String TAG = "AddRecipeFragmentPhoto";
     private Context context;
-    private View view;
-    private View header;
-    private View bottomNavigation;
     private ViewPager viewPager;
     private AddRecipePagerAdapter pagerAdapter;
-    private TextView txt_page_title;
-    private ImageView btn_cancel;
-    private ImageView btn_next;
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1553;
     private static final int SELECT_IMAGE_ACTIVITY_REQUEST_CODE = 1554;
-    private String userChoosenTask;
-    private Bitmap bitmap;
-    byte[] byteArray;
-    private ImageView img_recipe_image;
+    private String userChosenTask;
+
+    ByteArrayOutputStream stream;
+    private ImageView img_recipe_photo;
     private ImageView img_image_select;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        context = getActivity();
-        view = inflater.inflate(R.layout.fragment_add_recipe_photo, container, false);
-        header = (View) view.findViewById(R.id.activity_add_recipe_header_photo);
-        bottomNavigation = (View) view.findViewById(R.id.activity_add_recipe_bottom_navigator_photo);
 
-        viewPager = (ViewPager) getActivity().findViewById(R.id.activity_add_recipe_viewpager);
+        // Default layout initialization -----------------------------------------------------------
+
+        context = getActivity();
+        View view = inflater.inflate(R.layout.fragment_add_recipe_photo, container, false);
+        View header = view.findViewById(R.id.activity_add_recipe_header_photo);
+        View bottomNavigation = view.findViewById(R.id.activity_add_recipe_bottom_navigator_photo);
+
+        viewPager = getActivity().findViewById(R.id.activity_add_recipe_viewpager);
         pagerAdapter = (AddRecipePagerAdapter) viewPager.getAdapter();
-        txt_page_title = (TextView) header.findViewById(R.id.fragment_add_recipe_txt_page_title);
+        TextView txt_page_title = header.findViewById(R.id.fragment_add_recipe_txt_page_title);
         txt_page_title.setText(pagerAdapter.ADD_PHOTO_TITLE);
-        btn_cancel = (ImageView) header.findViewById(R.id.fragment_add_recipe_btn_cancel);
-        btn_next = (ImageView) bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_next);
+        ImageView btn_cancel = header.findViewById(R.id.fragment_add_recipe_btn_cancel);
+        ImageView btn_next = bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_next);
         bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_back).setVisibility(View.INVISIBLE);
 
         btn_cancel.setOnClickListener(new View.OnClickListener() {
@@ -74,11 +75,41 @@ public class AddRecipeFragmentPhoto extends Fragment {
             }
         });
 
+        ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+            btn_delete.setVisibility(View.GONE);
+        }
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show dialog box for next step
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.string_delete_recipe)
+                        .setCancelable(false)
+                        .setMessage(R.string.string_are_you_sure_you_want_to_delete_this_recipe)
+                        .setIcon(R.drawable.icon_delete_black_24dp)
+                        .setPositiveButton(R.string.string_delete, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                MatbitDatabase.deleteRecipe(pagerAdapter.getRecipe().getId());
+                                startActivity(new Intent(getActivity(), MainActivity.class));
+                                getActivity().finish();
+                            }
+
+                        })
+                        .setNegativeButton(getResources().getString(R.string.string_cancel), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.show();
+            }
+        });
+
         // -----------------------------------------------------------------------------------------
 
-        img_recipe_image = (ImageView) view.findViewById(R.id.activity_add_recipe_image_img);
-        img_image_select = (ImageView) view.findViewById(R.id.activity_add_recipe_image_select);
-        img_recipe_image.setOnClickListener(new View.OnClickListener() {
+        img_recipe_photo = view.findViewById(R.id.activity_add_recipe_image_img);
+        img_image_select = view.findViewById(R.id.activity_add_recipe_image_select);
+        img_recipe_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectImage();
@@ -90,27 +121,33 @@ public class AddRecipeFragmentPhoto extends Fragment {
                 selectImage();
             }
         });
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (bitmap != null) {
+        if (stream != null)
+            pagerAdapter.setRecipePhoto(stream.toByteArray());
+        if (pagerAdapter.getRecipePhoto() != null) {
             img_image_select.setVisibility(View.INVISIBLE);
-            img_recipe_image.setImageBitmap(bitmap);
-            pagerAdapter.setRecipePhoto(byteArray);
+            img_recipe_photo.setImageBitmap(BitmapFactory.decodeByteArray(
+                    pagerAdapter.getRecipePhoto(),
+                    0,
+                    pagerAdapter.getRecipePhoto().length)
+            );
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case CameraUtility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+            case PermissionUtility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(userChoosenTask.equals("Take Photo"))
+                    if(userChosenTask.equals(getString(R.string.string_take_picture)))
                         cameraIntent();
-                    else if(userChoosenTask.equals("Choose from Library"))
+                    else if(userChosenTask.equals(getString(R.string.string_choose_picture)))
                         galleryIntent();
                 }
                 break;
@@ -118,24 +155,28 @@ public class AddRecipeFragmentPhoto extends Fragment {
     }
 
     private void selectImage() {
-        final CharSequence[] items = { "Ta bilde", "Velg bilde", "Avbryt" };
+        final CharSequence[] items = {
+                getString(R.string.string_take_picture),
+                getString(R.string.string_choose_picture),
+                getString(R.string.string_cancel)
+        };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Add Photo!");
+        builder.setTitle(R.string.string_add_photo);
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                boolean result = CameraUtility.checkPermission(context);
+                boolean result = PermissionUtility.checkExternalStoragePermission(context);
 
-                if (items[item].equals("Ta bilde")) {
-                    userChoosenTask ="Ta bilde";
+                if (items[item].equals(getString(R.string.string_take_picture))) {
+                    userChosenTask = getString(R.string.string_take_picture);
                     if(result)
                         cameraIntent();
-                } else if (items[item].equals("Velg bilde")) {
-                    userChoosenTask ="Velg bilde";
+                } else if (items[item].equals(getString(R.string.string_choose_picture))) {
+                    userChosenTask = getString(R.string.string_choose_picture);
                     if(result)
                         galleryIntent();
-                } else if (items[item].equals("Avbryt")) {
+                } else if (items[item].equals(getString(R.string.string_cancel))) {
                     dialog.dismiss();
                 }
             }
@@ -149,7 +190,7 @@ public class AddRecipeFragmentPhoto extends Fragment {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         Fragment frag = AddRecipeFragmentPhoto.this;
-        frag.startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_IMAGE_ACTIVITY_REQUEST_CODE);
+        frag.startActivityForResult(Intent.createChooser(intent, getString(R.string.string_choose_picture)), SELECT_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
     private void cameraIntent()
@@ -164,7 +205,11 @@ public class AddRecipeFragmentPhoto extends Fragment {
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null)
-                adjustBitmap((Bitmap) data.getExtras().get("data"));
+                try {
+                    adjustBitmap((Bitmap) data.getExtras().get("data"));
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
         }
 
         else if (requestCode == SELECT_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -192,12 +237,12 @@ public class AddRecipeFragmentPhoto extends Fragment {
             width = (int) (height * bitmapRatio);
         }
 
-        bitmap = Bitmap.createScaledBitmap(source_image, width, height, true);
+        Bitmap bitmap_recipe_photo = Bitmap.createScaledBitmap(source_image, width, height, true);
+        stream = new ByteArrayOutputStream();
+        bitmap_recipe_photo.compress(Bitmap.CompressFormat.PNG, 50, stream);
+    }
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
-        byteArray = stream.toByteArray();
-
-        bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+    public ImageView getImg_recipe_photo() {
+        return img_recipe_photo;
     }
 }

@@ -49,7 +49,7 @@ public class SignInActivity extends BaseActivity implements
         View.OnClickListener {
 
     private static final String TAG = "SignInActivity";
-    private static final int RC_SIGN_IN = 9001;
+    private static final int RC_SIGN_IN = 1337;
 
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
@@ -79,7 +79,7 @@ public class SignInActivity extends BaseActivity implements
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
@@ -109,7 +109,7 @@ public class SignInActivity extends BaseActivity implements
         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
             FirebaseUser user = firebaseAuth.getCurrentUser();
             if (user != null) {
-                mStatusTextView.setText(Html.fromHtml("<small>Velkommen tilbake,</small><br><b>" + MatbitDatabase.getCurrentUserDisplayName() + "</b>"));
+                mStatusTextView.setText(Html.fromHtml(getString(R.string.html_welcome_back_message) + MatbitDatabase.getCurrentUserDisplayName() + "</b>"));
                 findViewById(R.id.activity_signin_btn_sign_out).setVisibility(View.VISIBLE);
                 findViewById(R.id.activity_signin_btn_continue).setVisibility(View.VISIBLE);
                 findViewById(R.id.activity_signin_btn_sign_in).setVisibility(View.GONE);

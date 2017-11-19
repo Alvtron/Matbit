@@ -1,6 +1,7 @@
 package net.r3dcraft.matbit;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,7 +24,6 @@ public class RecipeActivity extends AppCompatActivity {
     private RecipeTabAdapter recipeTabAdapter;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private Recipe recipe;
     private String recipeID;
     private String authorID;
     private Bundle bundle;
@@ -38,12 +38,12 @@ public class RecipeActivity extends AppCompatActivity {
         recipeID = bundle.getString("recipeID");
         authorID = bundle.getString("authorID");
         if (recipeID == null || recipeID.trim().equals("")) {
-            Toast.makeText(context, "Denne oppskriften er uleselig. Huff!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.string_this_recipe_is_unreadable, Toast.LENGTH_SHORT).show();
             finish();
         }
 
         // Set up toolbar
-        toolbar = (Toolbar) findViewById(R.id.activity_recipe_toolbar);
+        toolbar = findViewById(R.id.activity_recipe_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -51,10 +51,10 @@ public class RecipeActivity extends AppCompatActivity {
         recipeTabAdapter = new RecipeTabAdapter(getSupportFragmentManager(), bundle);
 
         // Set up the ViewPager with the sections adapter.
-        viewPager = (ViewPager) findViewById(R.id.activity_main_container);
+        viewPager = findViewById(R.id.activity_main_container);
         viewPager.setAdapter(recipeTabAdapter);
 
-        tabLayout = (TabLayout) findViewById(R.id.activity_recipe_tabs);
+        tabLayout = findViewById(R.id.activity_recipe_tabs);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(0).setIcon(R.drawable.icon_info_white_24dp);
         tabLayout.getTabAt(1).setIcon(R.drawable.icon_ingredients_white_24dp);
@@ -80,7 +80,9 @@ public class RecipeActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.activity_recipe_action_edit) {
-            Toast.makeText(context, "[Ikke ferdig]", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(context, AddRecipeActivity.class);
+            intent.putExtra("recipeID", recipeID);
+            startActivity(intent);
             return true;
         }
 

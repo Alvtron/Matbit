@@ -1,6 +1,9 @@
 package net.r3dcraft.matbit;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,41 +25,39 @@ import java.util.List;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
+ *
+ * This is one of the fragments initialized in the AddRecipePagerAdapter. This collects a array of
+ * Step objects and stores it in the adapter.
  */
 
 public class AddRecipeFragmentSteps extends Fragment {
     private static final String TAG = "AddRecipeFragmentSteps";
     private Context context;
-    private View view;
-    private View header;
-    private View bottomNavigation;
     private ViewPager viewPager;
     private AddRecipePagerAdapter pagerAdapter;
-    private TextView txt_page_title;
-    private ImageView btn_cancel;
-    private ImageView btn_back;
-    private ImageView btn_next;
 
     private EditText editStep;
     private Button btnAddStep;
-
     private StepAdapter stepAdapter;
     private ListView listViewSteps;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        context = getActivity();
-        view = inflater.inflate(R.layout.fragment_add_recipe_steps, container, false);
-        header = (View) view.findViewById(R.id.activity_add_recipe_header_steps);
-        bottomNavigation = (View) view.findViewById(R.id.activity_add_recipe_bottom_navigator_steps);
 
-        viewPager = (ViewPager) getActivity().findViewById(R.id.activity_add_recipe_viewpager);
+        // Default layout initialization -----------------------------------------------------------
+
+        context = getActivity();
+        View view = inflater.inflate(R.layout.fragment_add_recipe_steps, container, false);
+        View header = view.findViewById(R.id.activity_add_recipe_header_steps);
+        View bottomNavigation = view.findViewById(R.id.activity_add_recipe_bottom_navigator_steps);
+
+        viewPager = getActivity().findViewById(R.id.activity_add_recipe_viewpager);
         pagerAdapter = (AddRecipePagerAdapter) viewPager.getAdapter();
-        txt_page_title = (TextView) header.findViewById(R.id.fragment_add_recipe_txt_page_title);
-        txt_page_title.setText(pagerAdapter.ADD_STEPS_TITLE);
-        btn_cancel = (ImageView) header.findViewById(R.id.fragment_add_recipe_btn_cancel);
-        btn_back = (ImageView) bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_back);
-        btn_next = (ImageView) bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_next);
+        TextView txt_page_title = header.findViewById(R.id.fragment_add_recipe_txt_page_title);
+        txt_page_title.setText(AddRecipePagerAdapter.ADD_STEPS_TITLE);
+        ImageView btn_cancel = header.findViewById(R.id.fragment_add_recipe_btn_cancel);
+        ImageView btn_back = bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_back);
+        ImageView btn_next = bottomNavigation.findViewById(R.id.fragment_add_recipe_btn_next);
 
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,23 +80,59 @@ public class AddRecipeFragmentSteps extends Fragment {
             }
         });
 
+        ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+            btn_delete.setVisibility(View.GONE);
+        }
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show dialog box for next step
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.string_delete_recipe)
+                        .setCancelable(false)
+                        .setMessage(R.string.string_are_you_sure_you_want_to_delete_this_recipe)
+                        .setIcon(R.drawable.icon_delete_black_24dp)
+                        .setPositiveButton(R.string.string_delete, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                MatbitDatabase.deleteRecipe(pagerAdapter.getRecipe().getId());
+                                startActivity(new Intent(getActivity(), MainActivity.class));
+                                getActivity().finish();
+                            }
+
+                        })
+                        .setNegativeButton(getResources().getString(R.string.string_cancel), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.show();
+            }
+        });
+
         // -----------------------------------------------------------------------------------------
 
-        editStep = (EditText) view.findViewById(R.id.activity_add_recipe_step);
+        editStep = view.findViewById(R.id.activity_add_recipe_step);
 
-        stepAdapter = new StepAdapter(context, pagerAdapter.getSteps());
+        stepAdapter = new StepAdapter(context, new ArrayList<Step>());
+
+        for (Step step : pagerAdapter.getRecipe().getData().getSteps().values())
+            stepAdapter.addStep(step);
+
         stepAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
                 super.onChanged();
-                pagerAdapter.setSteps(stepAdapter.getStepList());
+                pagerAdapter.getRecipe().getData().getSteps().clear();
+                for (Step step : stepAdapter.getStepList())
+                    pagerAdapter.getRecipe().getData().addStep(step);
             }
         });
 
-        listViewSteps = (ListView) view.findViewById(R.id.activity_add_recipe_listview_steps);
+        listViewSteps = view.findViewById(R.id.activity_add_recipe_listview_steps);
         listViewSteps.setAdapter(stepAdapter);
 
-        btnAddStep = (Button) view.findViewById(R.id.activity_add_recipe_btn_step);
+        btnAddStep = view.findViewById(R.id.activity_add_recipe_btn_step);
         btnAddStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

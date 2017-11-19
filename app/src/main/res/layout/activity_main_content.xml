@@ -32,6 +32,7 @@
         android:gravity="center"
         android:paddingStart="@dimen/activity_horizontal_margin"
         android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:elevation="@dimen/bottom_navigation_elevation"
         android:orientation="horizontal"
         android:background="?android:attr/windowBackground"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +41,7 @@
 
         <!-- Views details -->
         <LinearLayout
-            android:id="@+id/navigation_luck"
+            android:id="@+id/activity_main_bottom_navigation_view_random_recipe"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -64,7 +65,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/navigation_add"
+            android:id="@+id/activity_main_bottom_navigation_view_add_recipe"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -88,7 +89,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/navigation_search"
+            android:id="@+id/activity_main_bottom_navigation_view_search_recipe"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
