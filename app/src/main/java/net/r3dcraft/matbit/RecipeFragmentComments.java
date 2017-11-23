@@ -33,20 +33,17 @@ public class RecipeFragmentComments extends Fragment {
     private Recipe recipe;
     private CommentAdapter commentAdaptert;
     private EditText editText_comment;
-    private Button btn_comment;
     private RecyclerView recyclerView;
-    private TextView comment_message;
-    private TextInputLayout textInputLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootViewInfo = inflater.inflate(R.layout.fragment_recipe_comments, container, false);
         context = getActivity();
-        recipeID = getArguments().getString("recipeID");
-        editText_comment = (EditText) rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_edittext);
-        comment_message = (TextView) rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_message);
-        btn_comment = (Button) rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_button);
-        textInputLayout = (TextInputLayout) rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_txt_layout);
+        recipeID = getArguments().getString(getResources().getString(R.string.key_recipe_id));
+        editText_comment = rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_edittext);
+        TextView comment_message = rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_message);
+        Button btn_comment = rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_button);
+        TextInputLayout textInputLayout = rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_txt_layout);
 
         if (MatbitDatabase.hasUser()) {
             comment_message.setVisibility(View.GONE);
@@ -54,7 +51,7 @@ public class RecipeFragmentComments extends Fragment {
             textInputLayout.setVisibility(View.VISIBLE);
         }
 
-        recyclerView = (RecyclerView)rootViewInfo.findViewById(R.id.fragment_recipe_comments_recycler_view);
+        recyclerView = rootViewInfo.findViewById(R.id.fragment_recipe_comments_recycler_view);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);

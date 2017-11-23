@@ -2,7 +2,6 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/search_item_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardElevation="0dp">
@@ -11,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/search_item_recipe_photo"
             android:layout_width="0dp"
             android:layout_height="150dp"
@@ -33,7 +32,7 @@
             card_view:layout_constraintTop_toBottomOf="@+id/search_item_recipe_photo"
             android:layout_marginStart="16dp" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/search_item_recipe_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -48,7 +47,7 @@
             android:layout_marginStart="72dp"
             android:layout_marginEnd="16dp" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/search_item_recipe_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

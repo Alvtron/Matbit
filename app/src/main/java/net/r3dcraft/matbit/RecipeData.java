@@ -12,6 +12,14 @@ import java.util.Map;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 21.10.2017.
+ *
+ * The RecipeData class is a data structure class that represents a recipe block in the Firebase
+ * Database. Any changes made here will have an impact on the data structure in the database.
+ *
+ * Since Google Firebase uses clever ClassWrapping, this class can be use directly with both writing
+ * and storing recipe-data from the database, except of ratings, comments, steps
+ * and ingredients. I have not yet implemented a ClassWrapper for these, so they need to be uploaded
+ * and downloaded separately.
  */
 
 public class RecipeData {

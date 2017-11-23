@@ -2,7 +2,6 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/feed_item_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardElevation="0dp"
@@ -12,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Thumbnail -->
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/feed_item_thumbnail"
             android:layout_width="40dp"
@@ -19,16 +19,15 @@
             android:scaleType="centerCrop"
             card_view:layout_constraintLeft_toLeftOf="parent"
             android:src="@color/grey_500"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="10dp"
             android:layout_marginStart="16dp"
             card_view:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <!-- Title -->
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/feed_item_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="6 nye følgere!"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:minLines="1"
@@ -40,11 +39,11 @@
             card_view:layout_constraintRight_toRightOf="parent"
             card_view:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <!-- Subtitle -->
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/feed_item_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="6t"
             android:textColor="@color/grey_500"
             android:textSize="12sp"
             android:minLines="1"
@@ -55,7 +54,8 @@
             card_view:layout_constraintRight_toRightOf="parent"
             card_view:layout_constraintTop_toBottomOf="@id/feed_item_title" />
 
-        <TextView
+        <!-- Main text -->
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/feed_item_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -70,6 +70,7 @@
             card_view:layout_constraintTop_toBottomOf="@+id/feed_item_thumbnail"
             card_view:layout_constraintRight_toRightOf="parent" />
 
+        <!-- Optional photo -->
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/feed_item_featured_image"
             android:layout_width="match_parent"
@@ -80,6 +81,7 @@
             card_view:layout_constraintTop_toBottomOf="@+id/feed_item_text"
             card_view:layout_constraintRight_toRightOf="parent" />
 
+        <!-- Separator line -->
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"

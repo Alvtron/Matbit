@@ -5,27 +5,8 @@
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/icon_profile_black_24dp"
-            android:title="Min profil"
+            android:title="@string/string_my_profile"
             android:visible="false"/>
-        <item
-            android:id="@+id/nav_feed"
-            android:icon="@drawable/icon_feed"
-            android:title="Aktivitetslogg"
-            android:visible="false"/>
-        <item
-            android:id="@+id/nav_find_user"
-            android:icon="@drawable/icon_users"
-            android:title="Finn bruker" />
-    </group>
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/icon_settings"
-            android:title="Instillinger" />
-        <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/icon_info_black_24dp"
-            android:title="Om Matbit" />
     </group>
 
 </menu>

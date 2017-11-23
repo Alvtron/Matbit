@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,31 +43,31 @@ public class RecipeFragmentInfo extends Fragment {
     private ImageView img_user_photo;
     private TextView txt_username;
     private TextView txt_info;
-    private LinearLayout layout_follow;
+    private LinearLayoutCompat layout_follow;
     private TextView txt_follow;
     private ImageView icon_follow;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootViewInfo = inflater.inflate(R.layout.fragment_recipe_info, container, false);
-        recipeID = getArguments().getString("recipeID");
-        authorID = getArguments().getString("authorID");
+        recipeID = getArguments().getString(getResources().getString(R.string.key_recipe_id));
+        authorID = getArguments().getString(getResources().getString(R.string.key_user_id));
         context = getActivity();
-        img_recipe_photo = (ImageView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_recipe_photo_img);
-        txt_title = (TextView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_recipe_title_txt);
-        txt_thumbs_up = (TextView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_thumbs_up_txt);
-        txt_thumbs_down = (TextView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_thumbs_down_txt);
-        icon_thumbs_up = (ImageView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_thumbs_up_icon);
-        icon_thumbs_down = (ImageView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_thumbs_down_icon);
-        txt_time = (TextView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_time_txt);
-        txt_views = (TextView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_views_txt);
-        img_user_photo = (ImageView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_user_img);
-        txt_username = (TextView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_user_txt);
-        txt_info = (TextView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_info_txt);
-        btn_create = (Button) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_create_btn);
-        layout_follow =(LinearLayout) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_follow_layout);
-        txt_follow = (TextView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_follow_txt);
-        icon_follow = (ImageView) rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_follow_icon);
+        img_recipe_photo = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_recipe_photo_img);
+        txt_title = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_recipe_title_txt);
+        txt_thumbs_up = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_thumbs_up_txt);
+        txt_thumbs_down = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_thumbs_down_txt);
+        icon_thumbs_up = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_thumbs_up_icon);
+        icon_thumbs_down = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_thumbs_down_icon);
+        txt_time = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_time_txt);
+        txt_views = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_views_txt);
+        img_user_photo = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_user_img);
+        txt_username = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_user_txt);
+        txt_info = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_info_txt);
+        btn_create = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_create_btn);
+        layout_follow = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_follow_layout);
+        txt_follow = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_follow_txt);
+        icon_follow = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_follow_icon);
 
         return rootViewInfo;
     }
@@ -128,7 +129,7 @@ public class RecipeFragmentInfo extends Fragment {
             if (recipe.getId() != null) {
                 Intent intent = new Intent(context, CreateRecipeActivity.class);
 
-                intent.putExtra("recipeID", recipe.getId());
+                intent.putExtra(getResources().getString(R.string.key_recipe_id), recipe.getId());
                 context.startActivity(intent);
             }
             else

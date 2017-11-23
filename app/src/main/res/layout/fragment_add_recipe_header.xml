@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="20dp">
 
+    <!-- Close button -->
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/fragment_add_recipe_btn_cancel"
         android:layout_width="wrap_content"
@@ -17,7 +18,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <TextView
+    <!-- Page title -->
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/fragment_add_recipe_txt_page_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +31,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
+    <!-- Trash button -->
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/fragment_add_recipe_btn_delete"
         android:layout_width="wrap_content"

@@ -10,7 +10,7 @@
         android:paddingBottom="64dp">
 
         <!-- Recipe photo -->
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/activity_recipe_fragment_info_recipe_photo_img"
             android:layout_width="0dp"
             android:layout_height="@dimen/recipe_photo_height"
@@ -18,13 +18,13 @@
             android:scaleType="centerCrop"
             android:background="@color/grey_300"
             android:foreground="@drawable/shape_gradient"
-            android:contentDescription="@string/contentDescription_recipe_photo"
+            android:contentDescription="@string/description_recipe_photo"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <!-- Recipe title -->
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/activity_recipe_fragment_info_recipe_title_txt"
             android:layout_width="0dp"
             android:layout_height="66dp"
@@ -43,7 +43,7 @@
 
         <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
-        <LinearLayout
+        <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:orientation="horizontal"
@@ -56,21 +56,19 @@
             app:layout_constraintBottom_toTopOf="@id/activity_recipe_fragment_info_view_1">
 
             <!-- Views details -->
-            <LinearLayout
-                android:id="@+id/activity_recipe_fragment_info_views_layout"
+            <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:layout_weight="1">
                 <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/activity_recipe_fragment_info_views_icon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     app:srcCompat="@drawable/icon_eye_black_24dp"
                     app:tint="@color/grey_500"/>
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/activity_recipe_fragment_info_views_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -78,11 +76,10 @@
                     android:textColor="@color/grey_500"
                     android:minLines="1"
                     android:maxLines="1"/>
-            </LinearLayout>
+            </android.support.v7.widget.LinearLayoutCompat>
 
             <!-- Thumbs up details -->
-            <LinearLayout
-                android:id="@+id/activity_recipe_fragment_info_thumb_up_layout"
+            <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -96,7 +93,7 @@
                     app:srcCompat="@drawable/icon_thumb_up_black_24dp"
                     app:tint="@color/grey_500"/>
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/activity_recipe_fragment_info_thumbs_up_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -104,11 +101,10 @@
                     android:textColor="@color/grey_500"
                     android:minLines="1"
                     android:maxLines="1" />
-            </LinearLayout>
+            </android.support.v7.widget.LinearLayoutCompat>
 
             <!-- Thumbs down details -->
-            <LinearLayout
-                android:id="@+id/activity_recipe_fragment_info_thumb_down_layout"
+            <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -121,7 +117,7 @@
                     app:srcCompat="@drawable/icon_thumb_down_black_24dp"
                     app:tint="@color/grey_500"/>
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/activity_recipe_fragment_info_thumbs_down_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -129,24 +125,22 @@
                     android:textColor="@color/grey_500"
                     android:minLines="1"
                     android:maxLines="1" />
-            </LinearLayout>
+            </android.support.v7.widget.LinearLayoutCompat>
 
             <!-- Time details -->
-            <LinearLayout
-                android:id="@+id/activity_recipe_fragment_info_time_layout"
+            <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:layout_weight="1">
                 <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/activity_recipe_fragment_info_icon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     app:srcCompat="@drawable/icon_time_black_24dp"
                     app:tint="@color/grey_500"/>
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/activity_recipe_fragment_info_time_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -154,7 +148,7 @@
                     android:textColor="@color/grey_500"
                     android:minLines="1"
                     android:maxLines="1" />
-            </LinearLayout>
+            </android.support.v7.widget.LinearLayoutCompat>
 
             <!-- Create recipe button -->
             <Button style="@style/Widget.AppCompat.Button.Colored"
@@ -165,7 +159,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:text="@string/string_create_dish"
                 android:textColor="@color/white"/>
-        </LinearLayout>
+        </android.support.v7.widget.LinearLayoutCompat>
 
         <!-- Separator -->
         <View
@@ -199,7 +193,7 @@
                 android:layout_gravity="center_vertical|start"
                 android:src="@color/grey_300"/>
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/activity_recipe_fragment_info_user_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -209,7 +203,7 @@
                 android:layout_marginStart="8dp"
                 android:textColor="@color/colorPrimary"/>
 
-            <LinearLayout
+            <android.support.v7.widget.LinearLayoutCompat
                 android:id="@+id/activity_recipe_fragment_info_follow_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -223,7 +217,7 @@
                     app:srcCompat="@drawable/icon_add_circle_black_24dp"
                     app:tint="@color/colorPrimary"/>
 
-                <TextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/activity_recipe_fragment_info_follow_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -231,7 +225,7 @@
                     android:text="@string/string_follow"
                     android:textSize="12sp"
                     android:textColor="@color/colorPrimary" />
-            </LinearLayout>
+            </android.support.v7.widget.LinearLayoutCompat>
         </GridLayout>
 
         <!-- Separator -->
@@ -248,7 +242,7 @@
         <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
         <!-- Recipe info -->
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/activity_recipe_fragment_info_info_txt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

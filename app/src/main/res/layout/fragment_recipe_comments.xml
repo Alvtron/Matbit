@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/fragment_recipe_comments_write_comment_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
                 android:maxLength="500" />
         </android.support.design.widget.TextInputLayout>
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/fragment_recipe_comments_write_comment_button"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"

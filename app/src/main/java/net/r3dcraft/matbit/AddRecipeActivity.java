@@ -28,6 +28,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     private User user;
     private ViewPager viewPager;
     private AddRecipePagerAdapter addRecipePagerAdapter;
+    private String recipe_id;
     Bundle bundle = new Bundle();
 
     @Override
@@ -39,6 +40,8 @@ public class AddRecipeActivity extends AppCompatActivity {
         context = this;
 
         bundle = getIntent().getExtras();
+        if (bundle != null)
+            recipe_id = bundle.getString(getResources().getString(R.string.key_recipe_id));
 
         viewPager = findViewById(R.id.activity_add_recipe_viewpager);
     }
@@ -61,8 +64,8 @@ public class AddRecipeActivity extends AppCompatActivity {
                         viewPager.setAdapter(addRecipePagerAdapter);
                     }
                     // If there is a bundled recipe ID, retrieve the recipe from the database
-                    else if (bundle.getString("recipeID") != null) {
-                        MatbitDatabase.recipe(bundle.getString("recipeID")).addListenerForSingleValueEvent(new ValueEventListener() {
+                    else if (recipe_id != null) {
+                        MatbitDatabase.recipe(recipe_id).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 final Recipe RECIPE = new Recipe(dataSnapshot);

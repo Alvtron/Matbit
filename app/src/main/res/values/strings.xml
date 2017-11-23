@@ -1,43 +1,19 @@
 <resources>
+
+    <!-- Titles -->
     <string name="app_name">Matbit</string>
     <string name="title_activity_main">Matbit</string>
     <string name="title_activity_search">Søk</string>
     <string name="title_activity_recipe">Oppskrift</string>
     <string name="title_activity_add_recipe">Ny oppskrift</string>
-    <string name="title_activity_settings">Innstillinger</string>
     <string name="title_activity_profile">Profil</string>
-    <string name="title_activity_tabbed">TabbedActivity</string>
+    <string name="title_activity_edit_profile">Rediger profil</string>
     <string name="title_try_luck">Prøv lykken</string>
     <string name="title_add_recipe">Opprett</string>
     <string name="title_search">Søk</string>
+    <string name="title_activity_create_recipe">Lag Oppskrift</string>
 
-    <string name="matbit_web_client_id">711713948309-lc63eoi3j85jk2csloqb1qh4hejnj5c8.apps.googleusercontent.com</string>
-    <string name="matbit_browser_key">AIzaSyD3j7AUY1LnemAfELwhRuWdrZ3kkjQT2eA</string>
-    <string name="matbit_server_key">AIzaSyCqRbPLneDBcZOW6L4MSBfBGybq5vWFNBg</string>
-    <string name="matbit_android_key">AIzaSyAxlcaTqHS_O-kH-NE1YP63ySnU-JN99TA</string>
-
-    <string name="dialog_fire_missiles">Fire missile?</string>
-    <string name="fire">Fire</string>
-    <string name="cancel">cancel</string>
-
-    <string name="small_text">12sp</string>
-    <string name="text">14sp</string>
-    <string name="big_text">18sp</string>
-
-    <string name="recipe_information">%1$s • %2$s liker • %3$s</string>
-
-    <!-- Drawer -->
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string-array name="navigation_items">
-        <item>Min profil</item>
-        <item>Aktivitetslogg</item>
-        <item>Finn bruker</item>
-        <item>Instillinger</item>
-        <item>Om Matbit</item>
-        <item>Logg ut</item>
-    </string-array>
+    <!-- Arrays -->
 
     <string-array name="filters">
         <item>Nyeste</item>
@@ -92,180 +68,51 @@
         <item>stilk</item>
     </string-array>
 
-    <string name="action_settings">Settings</string>
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
+    <!-- Keys -->
+    <string name="key_recipe_id">recipe_id</string>
+    <string name="key_user_id">user_id</string>
 
-    <string name="dummy_section_text">Section %1d is just a dummy section.</string>
+    <!-- Formatted -->
+    <string name="format_recipe_information">%1$s • %2$s liker • %3$s • %4$s</string>
+    <string name="format_hours_minutes">%1$d : %2$d</string>
+    <string name="format_create_recipe_total_time_display">Du brukte %1$d minutter og %2$d sekunder på denne retten.</string>
+    <string name="format_feed_views_and_likes">Med %1$d visninger og %2$s likes!</string>
+    <string name="format_feed_new_followers">Du har %1$d nye følgere!</string>
+    <string name="format_feed_posted_by">%1$s <![CDATA[- <i><font color=\'#9E9E9E\'> postet av]]> %2$s <![CDATA[</font></i>]]></string>
+    <string name="format_step_nr">Steg %1$d</string>
 
-    <!-- Strings related to Settings -->
+    <!-- Drawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
+    <!-- Descriptions -->
+    <string name="description_recipe_photo">Oppskrift foto</string>
 
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
+    <!-- Errors -->
+    <string name="error_could_not_upload_photo">Kunne ikke laste opp bilde.</string>
+    <string name="error_could_not_upload_recipe">Oisann! Kunne ikke laste opp oppskriften!</string>
+    <string name="error_number_must_be_bigger_than_zero">Oisann! Tallet må være større enn null!</string>
+    <string name="error_number_cannot_be_that_big">Oisann! Tallet kan ikke være så stort!</string>
+    <string name="error_its_empty_here">Oisann! Her var det tomt!</string>
+    <string name="error_something_went_wrong">Oisann! Her gikk det galt!</string>
 
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
+    <!-- HTML -->
+    <string name="html_welcome_back_message"><![CDATA[<small>Velkommen tilbake,</small><br><b>]]></string>
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
-
-    <!-- Example settings for Comment & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-
-    <string-array name="list_preference_entries">
-        <item>Entry 1</item>
-        <item>Entry 2</item>
-        <item>Entry 3</item>
-    </string-array>
-
-    <string-array name="list_preference_entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string-array name="multi_select_list_preference_default_value" />
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-    <string name="pref_title_vibrate">Vibrate</string>
-
-    <!-- Google sign-in -->
-    <string name="label_google_sign_in">Firebase + Google Sign In</string>
-    <string name="desc_google_sign_in">Use a Google Sign In credential to authenticate with Firebase.</string>
-
-    <string name="label_facebook_login">Firebase + Facebook Login</string>
-    <string name="desc_facebook_login">Use a Facebook Login credential to authenticate with Firebase.</string>
-
-    <string name="label_twitter_login">Firebase + Twitter Login</string>
-    <string name="desc_twitter_login">Use a Twitter Login credential to authenticate with Firebase.</string>
-
-    <string name="label_emailpassword">Email/Password Authentication</string>
-    <string name="desc_emailpassword">Use an email and password to authenticate with Firebase.</string>
-
-    <string name="label_phone_auth">Phone Number Authentication</string>
-    <string name="desc_phone_auth">Use a phone number to authenticate with Firebase.</string>
-
-    <string name="label_anonymous_auth">Anonymous Authentication</string>
-    <string name="desc_anonymous_auth">Sign in anonymously and then later upgrade to a full Firebase Auth user.</string>
-
-    <string name="label_custom_auth">Custom Authentication</string>
-    <string name="desc_custom_auth">Use a custom token signed by your own server to authenticate with Firebase.</string>
-
-    <string name="label_firebase_ui">FirebaseUI Auth</string>
-    <string name="desc_firebase_ui">Use the FirebaseUI-Android library to authenticate with Firebase.</string>
-
-    <string name="hint_user_id">User ID</string>
-    <string name="get_custom_token">Get Token</string>
-    <string name="sign_in">Sign In</string>
-    <string name="create_account">Create Account</string>
-    <string name="sign_out">Sign Out</string>
-    <string name="verify_email">Verify Email</string>
-    <string name="disconnect">Disconnect</string>
-    <string name="loading">Loading…</string>
-    <string name="custom_token">Custom Token</string>
-    <string name="signed_in">Signed In</string>
-    <string name="signed_out">Signed Out</string>
-    <string name="token_null">Token: null</string>
-    <string name="hint_email">Email</string>
-    <string name="hint_password">Password</string>
-    <string name="desc_firebase_lockup">Firebase logo and name</string>
-    <string name="auth_failed">Authentication failed</string>
-    <string name="start_phone_auth">Start</string>
-    <string name="verify_phone_auth">Verify</string>
-    <string name="resend_phone_auth">Resend</string>
-    <string name="hint_phone_number">Phone Number</string>
-    <string name="hint_verification_code">Verification Code</string>
-    <string name="status_code_sent">Code Sent</string>
-    <string name="status_verification_failed">Verification failed</string>
-    <string name="status_verification_succeeded">Verification succeeded</string>
-    <string name="status_sign_in_failed">Sign-in failed</string>
-    <string name="instant_validation">(instant validation)</string>
-
-    <string name="firebase_status_fmt">Firebase User: %s</string>
-    <string name="firebase_user_management">Firebase User Management</string>
-
-    <string name="google_status_fmt">Google User: %s</string>
-    <string name="google_title_text">Google Sign In</string>
-
-    <string name="facebook_status_fmt">Facebook User: %s</string>
-    <string name="facebook_title_text">Facebook Login</string>
-
-    <string name="emailpassword_status_fmt">Email User: %1$s (verified: %2$b)</string>
-    <string name="emailpassword_title_text">Email and Password</string>
-
-    <string name="phone_title_text">Phone Number</string>
-
-    <string name="twitter_status_fmt">Twitter User: %s</string>
-    <string name="twitter_title_text">Twitter Login</string>
-
-    <string name="firebaseui_status_fmt">Firebase User: %s</string>
-    <string name="firebaseui_title_text">FirebaseUI Auth</string>
-
-    <string name="id_fmt">User ID: %s</string>
-    <string name="email_fmt">Email: %s</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="recipe_title">Title</string>
-    <string name="recipe_info">Info</string>
+    <!-- Strings-->
+    <string name="string_loading">Laster…</string>
     <string name="string_anonymous">Anonym</string>
-    <string name="placeholder_time">00:00</string>
-    <string name="placeholder_views">0000</string>
-    <string name="placeholder_rating">75%</string>
-    <string name="placeholder_recipe_info">Informasjon...</string>
     <string name="string_follow">Følg</string>
     <string name="string_create_dish">Lag rett</string>
-    <string name="contentDescription_recipe_photo">Recipe photo</string>
     <string name="string_recipes">Oppskrifter</string>
     <string name="string_followers">Følgere</string>
     <string name="string_edit">Rediger</string>
     <string name="string_write_comment">Skriv kommentar</string>
     <string name="string_publish">Publiser</string>
-    <string name="title_activity_signin">Innlogging</string>
     <string name="string_welcome_back">Velkommen tilbake!</string>
     <string name="string_sign_out">Logg ut</string>
     <string name="string_sign_in">Logg inn</string>
-    <string name="string_disconnect">Koble fra</string>
     <string name="string_go_to_frontpage">Gå til forside</string>
-
-    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
-    <string name="title_activity_create_recipe">Lag Oppskrift</string>
     <string name="string_btn_next">NESTE</string>
     <string name="string_btn_finished">FERDIG</string>
     <string name="string_btn_save">LAGRE</string>
@@ -280,21 +127,14 @@
     <string name="string_username">Brukernavn</string>
     <string name="string_gender">Kjønn</string>
     <string name="string_this_page_cannot_load_at_this_moment">Oisann! Denne siden kan ikke lastes for øyeblikket</string>
-    <string name="html_welcome_back_message"><![CDATA[<small>Velkommen tilbake,</small><br><b>]]></string>
     <string name="string_take_picture">Ta bilde</string>
     <string name="string_choose_picture">Velg bilde</string>
     <string name="string_cancel">Avbryt</string>
     <string name="string_add_photo">Legg til bilde</string>
-    <string name="error_number_must_be_bigger_than_zero">Oisann! Tallet må være større enn null!</string>
-    <string name="error_number_cannot_be_that_big">Oisann! Tallet kan ikke være så stort!</string>
-    <string name="error_its_empty_here">Oisann! Her var det tomt!</string>
-    <string name="error_something_went_wrong">Oisann! Her gikk det galt!</string>
     <string name="string_this_recipe_is_unreadable">Denne oppskriften er uleselig. Huff!</string>
-    <string name="error_could_not_upload_recipe">Oisann! Kunne ikke laste opp oppskriften!</string>
     <string name="string_recipe_is_stored">Oppskriften er lagret!</string>
     <string name="string_go_to_recipe">Gå til oppskrift</string>
     <string name="string_go_to_startpage">Gå til startsiden</string>
-    <string name="string_delete">Slett</string>
     <string name="string_are_you_sure_you_want_to_delete_this_recipe">Er du sikker på at du vil slette denne oppskriften?</string>
     <string name="string_delete_recipe">Slett oppskrift</string>
     <string name="string_could_not_load_recipe">Kunne ikke laste oppskrift!</string>
@@ -306,4 +146,35 @@
     <string name="string_choose_category">Velg kategori</string>
     <string name="string_add_time">Legg til tid</string>
     <string name="string_add_portions">Legg til porsjoner</string>
+    <string name="string_change_comment">Endre kommentar</string>
+    <string name="string_save">Lagre</string>
+    <string name="string_sorry_this_user_is_not_home_today">Beklager, men denne brukeren er ikke hjemme i dag.</string>
+    <string name="string_do_not_save">Ikke lagre</string>
+    <string name="string_ok">Ok</string>
+    <string name="string_day">dag</string>
+    <string name="string_days">dager</string>
+    <string name="string_and">og</string>
+    <string name="string_hour">time</string>
+    <string name="string_hours">timer</string>
+    <string name="string_minute">minutt</string>
+    <string name="string_minutes">minutter</string>
+    <string name="string_second">sekund</string>
+    <string name="string_seconds">sekunder</string>
+    <string name="string_do_you_want_to_delete_this_ingredient">Vil du slette ingrediensen?</string>
+    <string name="string_delete">Slett</string>
+    <string name="string_this_weeks_recipe">Denne ukas oppskrift!</string>
+    <string name="string_most_liked_recipe">Mest likte oppskrift!</string>
+    <string name="string_new_recipe">Ny oppskrift!</string>
+    <string name="string_you_have_new_followers">Du har nye følgere!</string>
+    <string name="string_ago">siden</string>
+    <string name="string_most_popular_recipe">Mest populære oppskrift</string>
+    <string name="string_category">Kategori</string>
+    <string name="symbol_semicolon">:</string>
+    <string name="stringn_activity_log">Aktivitetslogg</string>
+    <string name="string_my_profile">Min profil</string>
+    <string name="string_settings">Instillinger</string>
+    <string name="string_about_matbit">Om Matbit</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="string_step">Steg</string>
+
 </resources>

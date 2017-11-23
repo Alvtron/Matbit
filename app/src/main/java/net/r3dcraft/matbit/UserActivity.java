@@ -22,7 +22,7 @@ public class UserActivity extends AppCompatActivity {
     private Bundle bundle;
     private String userID;
     private User user;
-    Toolbar toolbar;
+    private Toolbar toolbar;
 
     private ImageView img_profile_photo;
     private TextView txt_nickname;
@@ -37,9 +37,9 @@ public class UserActivity extends AppCompatActivity {
         context = this;
 
         bundle = getIntent().getExtras();
-        userID = bundle.getString("userID");
+        userID = bundle.getString(getResources().getString(R.string.key_user_id));
         if (userID == null || userID.trim() == "") {
-            Toast.makeText(context, "Denne brukeren er ikke hjemme i dag.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.string_sorry_this_user_is_not_home_today, Toast.LENGTH_SHORT).show();
             finish();
         }
 

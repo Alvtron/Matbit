@@ -1,7 +1,6 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_layout"
     android:padding="16dp"
     android:background="@color/colorPrimary"
     android:layout_width="match_parent"
@@ -22,7 +21,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/activity_signin_txt_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,7 +36,7 @@
         app:layout_constraintTop_toBottomOf="@+id/activity_signin_img_logo" />
     </android.support.constraint.ConstraintLayout>
 
-    <Button style="@style/Widget.AppCompat.Button.Colored"
+    <android.support.v7.widget.AppCompatButton style="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/activity_signin_btn_sign_in"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -47,7 +46,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button style="@style/Widget.AppCompat.Button.Colored"
+    <android.support.v7.widget.AppCompatButton style="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/activity_signin_btn_sign_out"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -56,7 +55,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <Button style="@style/Widget.AppCompat.Button.Colored"
+    <android.support.v7.widget.AppCompatButton style="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/activity_signin_btn_continue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

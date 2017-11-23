@@ -10,7 +10,9 @@ import android.widget.ImageView;
 import java.io.ByteArrayOutputStream;
 
 /**
- * Created by unibl on 18.11.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 18.11.2017.
+ *
+ * This utility keeps useful functions for layout-programming.
  */
 
 public final class LayoutUtility {
@@ -38,18 +40,5 @@ public final class LayoutUtility {
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         return px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-    }
-
-    public static Bitmap imageViewToBitmap (final ImageView imageView) {
-        imageView.buildDrawingCache();
-        return imageView.getDrawingCache();
-    }
-
-    public static byte[] imageViewToByteArray (final ImageView imageView) {
-        imageView.buildDrawingCache();
-        Bitmap bitmap = imageView.getDrawingCache();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        return stream.toByteArray();
     }
 }

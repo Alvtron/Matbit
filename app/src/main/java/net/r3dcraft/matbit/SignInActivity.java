@@ -16,6 +16,7 @@
 
 package net.r3dcraft.matbit;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -49,6 +50,7 @@ public class SignInActivity extends BaseActivity implements
         View.OnClickListener {
 
     private static final String TAG = "SignInActivity";
+    private Context context;
     private static final int RC_SIGN_IN = 1337;
 
     private GoogleApiClient mGoogleApiClient;
@@ -63,6 +65,8 @@ public class SignInActivity extends BaseActivity implements
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_signin);
+
+        context = this;
 
         // Views
         mStatusTextView = findViewById(R.id.activity_signin_txt_status);
@@ -186,8 +190,9 @@ public class SignInActivity extends BaseActivity implements
         } else if (i == R.id.activity_signin_btn_sign_out) {
             signOut();
         } else if (i == R.id.activity_signin_btn_continue) {
-            if (MatbitDatabase.getCurrentUser() != null)
-                MatbitDatabase.uploadNewUserIfNew();
+            if (MatbitDatabase.getCurrentUser() != null) {
+                MatbitDatabase.handleNewUserIfNew(context);
+            }
             startActivity(new Intent(this, MainActivity.class));
         }
     }

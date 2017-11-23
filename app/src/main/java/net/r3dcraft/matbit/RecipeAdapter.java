@@ -169,9 +169,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipeViewHolder.vRecipeInfo.setText(String.format(
-                        context.getResources().getString(R.string.recipe_information),
+                        context.getResources().getString(R.string.format_recipe_information),
                         dataSnapshot.child("nickname").getValue(String.class),
-                        RECIPE.getThumbsUp(), RECIPE.getTimeToText())
+                        RECIPE.getThumbsUp(), RECIPE.getTimeToText(), RECIPE.getData().getCategory())
                 );
             }
 

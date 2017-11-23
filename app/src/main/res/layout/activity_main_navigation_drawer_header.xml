@@ -4,54 +4,59 @@
     android:id="@+id/activity_main_drawer_header_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="34dp"
     android:background="@color/colorAccent"
+    android:paddingTop="8dp"
     android:paddingBottom="8dp">
 
+    <!-- Profile photo -->
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/activity_main_drawer_user_photo"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="@dimen/activity_vertical_margin"
         android:scaleType="centerCrop"
-        android:src="@drawable/icon_profile_color_primary_24dp"
         android:visibility="gone"
+        android:src="@color/grey_500"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/activity_main_drawer_text_layout"
+    <!-- User name and e-mail -->
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/activity_main_drawer_user_info_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@id/activity_main_drawer_user_photo"
         app:layout_constraintTop_toTopOf="@id/activity_main_drawer_user_photo"
         app:layout_constraintStart_toEndOf="@id/activity_main_drawer_user_photo"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toStartOf="@id/activity_main_drawer_icon_arrow">
 
-        <TextView
+        <!-- Username -->
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/activity_main_drawer_user_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:visibility="gone"
-            android:minLines="1"
-            android:maxLines="1" />
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:visibility="gone" />
 
-        <TextView
+        <!-- E-mail -->
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/activity_main_drawer_user_email"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/grey_300"
             android:textSize="12sp"
-            android:visibility="gone"
-            android:minLines="1"
-            android:maxLines="1"/>
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:visibility="gone" />
 
-    </LinearLayout>
+    </android.support.v7.widget.LinearLayoutCompat>
 
+    <!-- Log in message (if user is offline) -->
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/activity_main_drawer_log_in_message"
         android:layout_width="wrap_content"
@@ -59,10 +64,11 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:text="@string/string_log_in"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_main_drawer_icon_arrow"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_main_drawer_icon_arrow"
         app:layout_constraintTop_toTopOf="@+id/activity_main_drawer_icon_arrow" />
 
+    <!-- Arrow icon -->
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/activity_main_drawer_icon_arrow"
         android:layout_width="wrap_content"
@@ -70,8 +76,9 @@
         android:layout_marginEnd="@dimen/activity_vertical_margin"
         android:background="@color/transparent"
         android:tint="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/activity_main_drawer_user_info_layout"
+        app:layout_constraintBottom_toBottomOf="@id/activity_main_drawer_user_info_layout"
         app:srcCompat="@drawable/icon_keyboard_arrow_down_black_24dp" />
 
 </android.support.constraint.ConstraintLayout>

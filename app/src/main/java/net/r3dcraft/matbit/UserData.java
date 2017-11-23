@@ -8,6 +8,12 @@ import java.util.Map;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 22.10.2017.
+ *
+ * The UserData class is a data structure class that represents a user block in the Firebase
+ * Database. Any changes made here will have an impact on the data structure in the database.
+ *
+ * Since Google Firebase uses clever ClassWrapping, this class can be use directly with both writing
+ * and storing user-data from the database.
  */
 
 public class UserData {
@@ -35,10 +41,10 @@ public class UserData {
         exp = -1;
         num_followers = -1;
         num_recipes = -1;
-        following = new HashMap<String, String>();
-        followers = new HashMap<String, String>();
-        recipes = new HashMap<String, String>();
-        favorites = new HashMap<String, String>();
+        following = new HashMap<>();
+        followers = new HashMap<>();
+        recipes = new HashMap<>();
+        favorites = new HashMap<>();
     }
 
     public UserData(String nickname, String gender, String birthday, String signUpDate, String lastLoginDate, String bio, int exp, int num_followers, int num_recipes, Map<String, String> following, Map<String, String> followers, Map<String, String> recipes, Map<String, String> favorites) {

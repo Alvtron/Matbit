@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/activity_horizontal_margin">
 
+    <!-- Header -->
     <include
         layout="@layout/fragment_add_recipe_header"
         android:id="@+id/activity_add_recipe_header_info"
@@ -14,8 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- User Input: Recipe information -->
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/activity_add_recipe_input_layout_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -35,6 +36,7 @@
             android:maxLength="500" />
     </android.support.design.widget.TextInputLayout>
 
+    <!-- Bottom navigation -->
     <include
         layout="@layout/fragment_add_recipe_bottom_navigator"
         android:id="@+id/activity_add_recipe_bottom_navigator_info"

@@ -14,7 +14,7 @@
         android:theme="@style/MatbitTheme"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
-    <Spinner style="@android:style/Widget.Spinner"
+    <android.support.v7.widget.AppCompatSpinner style="@android:style/Widget.Spinner"
         android:id="@+id/activity_search_filter_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
         android:elevation="2dp"
         android:spinnerMode="dialog"/>
 
-    <Spinner style="@android:style/Widget.Spinner"
+    <android.support.v7.widget.AppCompatSpinner style="@android:style/Widget.Spinner"
         android:id="@+id/activity_search_category_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

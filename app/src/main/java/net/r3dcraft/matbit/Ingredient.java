@@ -2,6 +2,12 @@ package net.r3dcraft.matbit;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 21.10.2017.
+ *
+ * The Ingredient class is a data structure class that represents a ingredient block in the Firebase
+ * Database. Any changes made here will have an impact on the data structure in the database.
+ *
+ * Since Google Firebase uses clever ClassWrapping, this class can be use directly with both writing
+ * and storing ingredient-data from the database.
  */
 
 public class Ingredient {
@@ -10,6 +16,9 @@ public class Ingredient {
     private double amount;
     private String measurement;
 
+    /**
+     * Ingredient default constructor
+     */
     public Ingredient() {
         this.course = new String();
         this.name = new String();
@@ -17,6 +26,13 @@ public class Ingredient {
         this.measurement = new String();
     }
 
+    /**
+     * Ingredient constructor.
+     * @param course - Which course (ex. main, sauce, optional, etc...)
+     * @param name - Name of ingredient
+     * @param amount - The amount of [measurement units]
+     * @param measurement - Measurement (ex. dl, ltr, g, kg, etc...)
+     */
     public Ingredient(String course, String name, double amount, String measurement) {
         this.course = course;
         this.name = name;

@@ -37,13 +37,13 @@ public class RecipeFragmentIngredients extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootViewInfo = inflater.inflate(R.layout.fragment_recipe_ingredients, container, false);
-        ingredients = new ArrayList<Ingredient>();
+        ingredients = new ArrayList<>();
         context = getActivity();
-        recipeID = getArguments().getString("recipeID");
-        txt_portions = (TextView) rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_portions);
-        seekBar = (SeekBar) rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_seekBar);
+        recipeID = getArguments().getString(getResources().getString(R.string.key_recipe_id));
+        txt_portions = rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_portions);
+        seekBar = rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_seekBar);
         seekBar.setMax(11);
-        listview = (ListView) rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_listview);
+        listview = rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_listview);
 
         return rootViewInfo;
     }
@@ -76,7 +76,7 @@ public class RecipeFragmentIngredients extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 if (ingredientRecipeAdapter != null) {
-                    for (Ingredient ingredient : ingredientRecipeAdapter.getData())
+                    for (Ingredient ingredient : ingredientRecipeAdapter.getIngredients())
                         ingredient.setAmount((ingredient.getAmount() / portions) * (progresValue + 1));
                     portions = progresValue + 1;
                     txt_portions.setText(Integer.toString(portions) + " porsjoner");

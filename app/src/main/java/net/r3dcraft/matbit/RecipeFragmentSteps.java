@@ -25,20 +25,16 @@ public class RecipeFragmentSteps extends Fragment {
     private Context context;
     private String recipeID;
     private Recipe recipe;
-    private ArrayList<String> steps;
-    private ArrayAdapter<String> adapter;
     private ListView myListView;
 
     private StepAdapter stepAdapter;
-    private ListView listViewSteps;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootViewInfo = inflater.inflate(R.layout.fragment_recipe_steps, container, false);
-        steps = new ArrayList<String>();
-        recipeID = getArguments().getString("recipeID");
+        recipeID = getArguments().getString(getResources().getString(R.string.key_recipe_id));
         context = getActivity();
-        myListView = (ListView) rootViewInfo.findViewById(R.id.fragment_recipe_steps);
+        myListView = rootViewInfo.findViewById(R.id.fragment_recipe_steps);
 
         return rootViewInfo;
     }

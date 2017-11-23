@@ -475,12 +475,7 @@ public final class MatbitDatabase {
     }
 
     public static void currentUserPictureToImageView(final Context CONTEXT, final ImageView IMAGE_VIEW) {
-        if (!hasAuth()) return;
-        if (!hasUser()) return;
-        if (!hasStorage()) return;
-
-        IMAGE_VIEW.setImageResource(R.color.grey_100);
-        Glide.with(CONTEXT).load(USER.getPhotoUrl()).into(IMAGE_VIEW);
+        userPictureToImageView(getCurrentUserUID(), CONTEXT, IMAGE_VIEW);
     }
 
     public static boolean userNicknameToTextView(final String USER_UID, final TextView TEXT_VIEW) {
@@ -507,30 +502,38 @@ public final class MatbitDatabase {
         return true;
     }
 
-    public static boolean uploadNewUserIfNew() {
+    public static boolean handleNewUserIfNew(final Context CONTEXT) {
         if (!hasAuth()) return false;
         if (!hasUser()) return false;
         if (!hasDatabase()) return false;
 
         final String USER_UID = USER.getUid();
         final Uri PHOTO_URL = USER.getPhotoUrl();
+
         if (USER_UID.equals("") || PHOTO_URL.equals(""))
             return false;
+
         USER_DATA.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(USER_UID)) {
-                    Log.d(TAG, "uploadNewUserIfNew: User " + USER_UID + " already exists");
-                }
+                    Log.d(TAG, "handleNewUserIfNew: User " + USER_UID + " already exists");
+                    DataSnapshot nickname_snapshot = dataSnapshot.child(USER_UID).child("nickname");
+                        if (!nickname_snapshot.exists()) {
+                            CONTEXT.startActivity(new Intent(CONTEXT, UserEditActivity.class));
+                        }
+                        else if (nickname_snapshot.getValue(String.class).trim().equals(""))
+                            CONTEXT.startActivity(new Intent(CONTEXT, UserEditActivity.class));
+                    }
                 else {
-                    Log.d(TAG, "uploadNewUserIfNew: Uploading new empty user to database at: " + USER_UID);
+                    Log.d(TAG, "handleNewUserIfNew: Uploading new empty user to database at: " + USER_UID);
                     new UploadUserPhoto().execute(PHOTO_URL);
                     uploadNewUser(UserExamples.NEW_USER_TEMPLATE());
                 }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "uploadNewUserIfNew: onCancelled", databaseError.toException());
+                Log.w(TAG, "handleNewUserIfNew: onCancelled", databaseError.toException());
             }
         });
         return true;
@@ -548,8 +551,8 @@ public final class MatbitDatabase {
         }
         recipe.addView();
         Intent intent = new Intent(CONTEXT, RecipeActivity.class);
-        intent.putExtra("recipeID", recipe.getId());
-        intent.putExtra("authorID", recipe.getData().getUser());
+        intent.putExtra(CONTEXT.getString(R.string.key_recipe_id), recipe.getId());
+        intent.putExtra(CONTEXT.getString(R.string.key_user_id), recipe.getData().getUser());
         CONTEXT.startActivity(intent);
     }
 
@@ -577,7 +580,7 @@ public final class MatbitDatabase {
 
     public static void goToUser(final Context CONTEXT, final String USER_UID) {
         if (USER_UID == null || USER_UID.equals("")) {
-            Toast.makeText(CONTEXT, "Beklager, men denne brukeren er ikke hjemme i dag.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CONTEXT, R.string.string_sorry_this_user_is_not_home_today, Toast.LENGTH_SHORT).show();
             Log.e(TAG, "goToUser: USER_UID is not initialized");
             return;
         } else if (CONTEXT == null) {
@@ -586,7 +589,7 @@ public final class MatbitDatabase {
             return;
         }
         Intent intent = new Intent(CONTEXT, UserActivity.class);
-        intent.putExtra("userID", USER_UID);
+        intent.putExtra(CONTEXT.getString(R.string.key_user_id), USER_UID);
         CONTEXT.startActivity(intent);
         return;
     }

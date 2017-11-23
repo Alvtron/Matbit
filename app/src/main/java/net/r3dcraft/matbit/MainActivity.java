@@ -28,6 +28,13 @@ import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017
+ *
+ * MainActivity is the front page of this App. It connects every navigational path in the user can
+ * take. It includes a navigation drawer and bottom navigation at the bottom.
+ *
+ * MainActivity is inspired by Facebook's and Twitter's wall, and features a RecyclerList with
+ * dynamic content in the form of NewsFeed items. These Newsfeed items contains a thumbnail, a
+ * title, a subtitle, main-body and an optional photo.
  */
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -43,20 +50,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         context = this;
 
+        // Initialize toolbar
         Toolbar toolbar = findViewById(R.id.activity_main_content_toolbar);
         setSupportActionBar(toolbar);
 
-        // Feed
+        // Setup RecyclerView Feed
         RecyclerView mRecyclerView = findViewById(R.id.activity_main_content_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
+        // Setup NewsFeedAdapter
         newsFeedAdapter = new NewsFeedAdapter(context, NewsFeed.DATE_COMPARATOR_DESC);
         mRecyclerView.setAdapter(newsFeedAdapter);
 
-        // Navigation bar
+        // Setup NavigationView
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -78,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        // Adjust layout design if there is a user logged in
         if (MatbitDatabase.hasUser()) {
-            down_arrow.setVisibility(View.INVISIBLE);
             log_in_message.setVisibility(View.GONE);
             user_name.setVisibility(View.VISIBLE);
             user_email.setVisibility(View.VISIBLE);
@@ -89,46 +98,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             MatbitDatabase.currentUserPictureToImageView(context, user_photo);
         }
 
-        // Bottom navigation buttons
-        View view_random_recipe = findViewById(R.id.activity_main_bottom_navigation_view_random_recipe);
-        view_random_recipe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MatbitDatabase.goToRandomRecipe(context);
-            }
-        });
-
-        View view_add_recipe = (View) findViewById(R.id.activity_main_bottom_navigation_view_add_recipe);
-        view_add_recipe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (MatbitDatabase.hasUser()) {
-                    startActivity(new Intent(context, AddRecipeActivity.class));
-                }
-                else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage(R.string.string_you_must_log_in_to_publish_dish);
-                    builder.setPositiveButton(R.string.string_log_in, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            startActivity(new Intent(context, SignInActivity.class));
-                        }
-                    });
-                    builder.setNegativeButton(R.string.string_dont_log_in, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                        }
-                    });
-                    builder.show();
-                }
-            }
-        });
-
-        View view_search_recipe = (View) findViewById(R.id.activity_main_bottom_navigation_view_search_recipe);
-        view_search_recipe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context, SearchActivity.class));
-            }
-        });
+        // Setup bottom navigation
+        setupBottomNavigation();
 
         MatbitDatabase.RECIPES().addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -137,12 +108,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 newsFeedAdapter.empty();
                 NewsFeed recipe_of_the_week = new NewsFeed(context);
                 NewsFeed most_liked_recipe = new NewsFeed(context);
+                NewsFeed most_popular_recipe = new NewsFeed(context);
                 NewsFeed newest_recipe = new NewsFeed(context);
 
                 if (recipe_of_the_week.recipeOfTheWeek(dataSnapshot))
                     newsFeedAdapter.add(recipe_of_the_week);
                 if (most_liked_recipe.mostLikedRecipe(dataSnapshot))
                     newsFeedAdapter.add(most_liked_recipe);
+                if (most_popular_recipe.mostPopularRecipe(dataSnapshot))
+                    newsFeedAdapter.add(most_popular_recipe);
                 if (newest_recipe.newestRecipe(dataSnapshot))
                     newsFeedAdapter.add(newest_recipe);
             }
@@ -170,15 +144,61 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * Initialize bottom navigation and set onclick listeners
+     */
+    private void setupBottomNavigation() {
+        // Random recipe button
+        View view_random_recipe = findViewById(R.id.activity_main_bottom_navigation_view_random_recipe);
+        view_random_recipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MatbitDatabase.goToRandomRecipe(context);
+            }
+        });
+
+        // Add new recipe button
+        View view_add_recipe = findViewById(R.id.activity_main_bottom_navigation_view_add_recipe);
+        view_add_recipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MatbitDatabase.hasUser()) {
+                    startActivity(new Intent(context, AddRecipeActivity.class));
+                }
+                else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage(R.string.string_you_must_log_in_to_publish_dish);
+                    builder.setPositiveButton(R.string.string_log_in, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startActivity(new Intent(context, SignInActivity.class));
+                        }
+                    });
+                    builder.setNegativeButton(R.string.string_dont_log_in, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+                    builder.show();
+                }
+            }
+        });
+
+        // Search recipe button
+        View view_search_recipe = findViewById(R.id.activity_main_bottom_navigation_view_search_recipe);
+        view_search_recipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(context, SearchActivity.class));
+            }
+        });
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
         MenuItem profile = navigationView.getMenu().findItem(R.id.nav_profile);
-        MenuItem feed = navigationView.getMenu().findItem(R.id.nav_feed);
 
         if(MatbitDatabase.hasUser()) {
             profile.setVisible(true);
-            feed.setVisible(true);
         }
 
         return super.onPrepareOptionsMenu(menu);
@@ -199,17 +219,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_profile) {
             MatbitDatabase.goToUser(context, MatbitDatabase.getCurrentUserUID());
-        } else if (id == R.id.nav_feed) {
-            startActivity(new Intent(context, FeedActivity.class));
-        } else if (id == R.id.nav_find_user) {
-            startActivity(new Intent(context, FindUserActivity.class));
-        } else if (id == R.id.nav_settings) {
-            ;
-        } else if (id == R.id.nav_about) {
-
         }
 
         drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return false;
     }
 }

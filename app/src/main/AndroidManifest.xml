@@ -38,16 +38,12 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".FeedActivity"
-            android:label="Feed"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".FindUserActivity"
-            android:label="Find user"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".UserActivity"
             android:label="@string/title_activity_profile"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UserEditActivity"
+            android:label="@string/title_activity_edit_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RecipeActivity"
@@ -77,7 +73,6 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".UserEditActivity"></activity>
     </application>
 
 </manifest>

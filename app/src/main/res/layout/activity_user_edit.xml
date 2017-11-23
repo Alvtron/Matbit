@@ -1,93 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="net.r3dcraft.matbit.UserEditActivity">
-    <android.support.constraint.ConstraintLayout
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/activity_edit_user_profile_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/MatbitTheme"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
-        <!-- Nickname -->
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/activity_edit_user_nickname_layout"
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_edit_user_profile_toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin">
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/activity_edit_user_nickname_edit_text"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/activity_edit_user_profile_photo"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="30dp"
+                android:scaleType="centerCrop"
+                android:src="@color/default_grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Nickname -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/activity_edit_user_nickname_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/string_username"
-                android:maxLength="100"
-                android:maxLines="1"
-                android:layout_marginBottom="16dp"
-                app:backgroundTint="@color/colorPrimary" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginTop="30dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/activity_edit_user_profile_photo">
 
-        <!-- Bio -->
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/activity_edit_user_bio_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/activity_edit_user_nickname_layout">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/activity_edit_user_nickname_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/string_username"
+                    android:maxLength="100"
+                    android:maxLines="1"
+                    android:layout_marginBottom="16dp"
+                    app:backgroundTint="@color/colorPrimary" />
+            </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/activity_edit_user_bio_edit_text"
+            <!-- Bio -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/activity_edit_user_bio_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/string_bio"
-                android:inputType="textMultiLine"
-                android:maxLength="500"
-                android:maxLines="15"
-                android:layout_marginBottom="16dp"
-                app:backgroundTint="@color/colorPrimary" />
-        </android.support.design.widget.TextInputLayout>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/activity_edit_user_nickname_layout">
 
-        <!-- Gender -->
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/activity_edit_user_gender_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/activity_edit_user_bio_layout">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/activity_edit_user_bio_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/string_bio"
+                    android:inputType="textMultiLine"
+                    android:maxLength="500"
+                    android:maxLines="15"
+                    android:layout_marginBottom="16dp"
+                    app:backgroundTint="@color/colorPrimary" />
+            </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/activity_edit_user_gender_edit_text"
+            <!-- Gender -->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/activity_edit_user_gender_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/string_gender"
-                android:inputType="textMultiLine"
-                android:maxLength="500"
-                android:maxLines="15"
-                android:layout_marginBottom="16dp"
-                app:backgroundTint="@color/colorPrimary" />
-        </android.support.design.widget.TextInputLayout>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/activity_edit_user_bio_layout">
 
-        <!-- Save button -->
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/activity_edit_user_btn_action"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="160dp"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_height="wrap_content"
-            android:text="@string/string_btn_save"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/activity_edit_user_gender_layout" />
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/activity_edit_user_gender_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/string_gender"
+                    android:inputType="textMultiLine"
+                    android:maxLength="500"
+                    android:maxLines="15"
+                    android:layout_marginBottom="16dp"
+                    app:backgroundTint="@color/colorPrimary" />
+            </android.support.design.widget.TextInputLayout>
 
-    </android.support.constraint.ConstraintLayout>
-</ScrollView>
+            <!-- Save button -->
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/activity_edit_user_btn_action"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="160dp"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_height="wrap_content"
+                android:text="@string/string_btn_save"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/activity_edit_user_gender_layout" />
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

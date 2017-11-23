@@ -8,7 +8,7 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 15.11.2017.
  *
- * Followed this tutorial:
+ * Source tutorial:
  * https://www.codementor.io/flame3/send-push-notifications-to-android-with-firebase-du10860kb
  */
 
@@ -17,7 +17,7 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
 
     @Override
     public void onTokenRefresh() {
-        // Get updated InstanceID token.
+        // Get the updated InstanceID token
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Refreshed token: " + refreshedToken);
 

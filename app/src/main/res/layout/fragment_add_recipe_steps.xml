@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/activity_horizontal_margin">
 
+    <!-- Header -->
     <include
         layout="@layout/fragment_add_recipe_header"
         android:id="@+id/activity_add_recipe_header_steps"
@@ -14,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <LinearLayout
+    <!-- User Input: Recipe steps -->
+    <android.support.v7.widget.LinearLayoutCompat
         android:id="@+id/activity_add_recipe_layout_step"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +27,6 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/activity_add_recipe_input_layout_step"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -40,14 +41,14 @@
                 android:maxLength="500" />
         </android.support.design.widget.TextInputLayout>
 
-        <Button style="@style/Widget.AppCompat.Button.Colored"
+        <android.support.v7.widget.AppCompatButton style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/activity_add_recipe_btn_step"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:text="+"/>
-    </LinearLayout>
+    </android.support.v7.widget.LinearLayoutCompat>
 
-    <ListView
+    <android.support.v7.widget.ListViewCompat
         android:id="@+id/activity_add_recipe_listview_steps"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -56,6 +57,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_add_recipe_layout_step" />
 
+    <!-- Bottom navigation -->
     <include
         layout="@layout/fragment_add_recipe_bottom_navigator"
         android:id="@+id/activity_add_recipe_bottom_navigator_steps"

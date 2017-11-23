@@ -35,8 +35,8 @@ public class RecipeActivity extends AppCompatActivity {
         context = RecipeActivity.this;
 
         bundle = getIntent().getExtras();
-        recipeID = bundle.getString("recipeID");
-        authorID = bundle.getString("authorID");
+        recipeID = bundle.getString(getResources().getString(R.string.key_recipe_id));
+        authorID = bundle.getString(getResources().getString(R.string.key_user_id));
         if (recipeID == null || recipeID.trim().equals("")) {
             Toast.makeText(context, R.string.string_this_recipe_is_unreadable, Toast.LENGTH_SHORT).show();
             finish();
@@ -81,7 +81,7 @@ public class RecipeActivity extends AppCompatActivity {
 
         if (id == R.id.activity_recipe_action_edit) {
             Intent intent = new Intent(context, AddRecipeActivity.class);
-            intent.putExtra("recipeID", recipeID);
+            intent.putExtra(getResources().getString(R.string.key_recipe_id), recipeID);
             startActivity(intent);
             return true;
         }

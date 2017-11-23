@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/activity_horizontal_margin">
 
+    <!-- Header -->
     <include
         layout="@layout/fragment_add_recipe_header"
         android:id="@+id/activity_add_recipe_header_photo"
@@ -14,6 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- User Input: Recipe photo -->
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/recipe_photo_height"
@@ -23,6 +25,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Recipe photo -->
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/activity_add_recipe_image_img"
             android:layout_width="match_parent"
@@ -34,6 +37,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
+        <!-- Add photo button -->
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/activity_add_recipe_image_select"
             android:layout_width="50dp"
@@ -46,6 +50,7 @@
             app:layout_constraintTop_toTopOf="parent"/>
     </android.support.constraint.ConstraintLayout>
 
+    <!-- Bottom navigation -->
     <include
         layout="@layout/fragment_add_recipe_bottom_navigator"
         android:id="@+id/activity_add_recipe_bottom_navigator_photo"
