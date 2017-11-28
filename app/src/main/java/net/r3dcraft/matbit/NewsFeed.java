@@ -16,17 +16,12 @@ import java.util.Map;
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 17.10.2017.
  *
- *
+ * The NewsFeed class holds data to be displayed in the NewsFeed item layout that populates the
+ * recycler list in MainActivity.
  */
 
 public class NewsFeed {
     private static final String TAG = "NewsFeed";
-    private static final String RECIPE_OF_THE_WEEK = MatbitApplication.resources().getString(R.string.string_this_weeks_recipe);
-    private static final String MOST_LIKED_RECIPE = MatbitApplication.resources().getString(R.string.string_most_liked_recipe);
-    private static final String MOST_POPULAR_RECIPE = MatbitApplication.resources().getString(R.string.string_most_popular_recipe);
-    private static final String LATEST_RECIPE = MatbitApplication.resources().getString(R.string.string_new_recipe);
-    private static final String NEW_FOLLOWERS = MatbitApplication.resources().getString(R.string.string_you_have_new_followers);
-    private Context context;
     private StorageReference storage_reference_thumbnail = null;
     private StorageReference storage_reference_featured_image = null;
     private String title = "";
@@ -35,222 +30,25 @@ public class NewsFeed {
     private Intent action;
     private DateTime date = null;
 
-    NewsFeed(Context context){
-        this.context = context;
-    }
+    NewsFeed(){}
 
-    boolean recipeOfTheWeek(final DataSnapshot DATA_SNAPSHOT){
-        Recipe recipe = new Recipe();
-
-        for (DataSnapshot recipesSnapshot : DATA_SNAPSHOT.getChildren()) {
-
-            Recipe this_recipe = new Recipe(recipesSnapshot);
-
-            boolean isMorePopular = false;
-            boolean sevenDaysOld = false;
-
-            DateTime date_created = DateUtility.stringToDate(this_recipe.getData().getDatetime_created());
-            if (date_created != null)
-                sevenDaysOld = Days.daysBetween(date_created, DateTime.now()).getDays() <= 7;
-
-            if (recipe.hasData()) {
-                isMorePopular = this_recipe.getData().getThumbs_up() * 3 + this_recipe.getData().getViews()
-                        > recipe.getData().getThumbs_up() * 3 + recipe.getData().getViews();
-            }
-
-            if ((!recipe.hasData() && sevenDaysOld) || (isMorePopular && sevenDaysOld)) {
-                recipe = this_recipe;
-
-                title = RECIPE_OF_THE_WEEK;
-                text = String.format(
-                        MatbitApplication.resources().getString(R.string.format_feed_posted_by),
-                        recipe.getData().getInfo(),
-                        recipe.getData().getUser_nickname()
-                );
-                subtitle = String.format(
-                        MatbitApplication.resources().getString(R.string.format_feed_views_and_likes),
-                        recipe.getData().getViews(),
-                        recipe.getThumbsUp()
-                );
-                storage_reference_thumbnail = MatbitDatabase.getRecipePhoto(recipe.getId());
-                storage_reference_featured_image = MatbitDatabase.getRecipePhoto(recipe.getId());
-
-                action = new Intent(context, RecipeActivity.class);
-                action.putExtra(MatbitApplication.resources().getString(R.string.key_recipe_id), recipe.getId());
-                action.putExtra(MatbitApplication.resources().getString(R.string.key_user_id), recipe.getData().getUser());
-            }
-        }
-
-        date = new DateTime();
-        return recipe.hasData();
-    }
-
-    boolean mostLikedRecipe(final DataSnapshot DATA_SNAPSHOT){
-        Recipe recipe = new Recipe();
-
-        for (DataSnapshot recipesSnapshot : DATA_SNAPSHOT.getChildren()) {
-
-            Recipe this_recipe = new Recipe(recipesSnapshot);
-
-            boolean mostLiked = false;
-
-            if (recipe.hasData())
-                mostLiked = this_recipe.getData().getThumbs_up() > recipe.getData().getThumbs_up();
-
-            if (!recipe.hasData() || mostLiked) {
-                recipe = this_recipe;
-                title = MOST_LIKED_RECIPE;
-                text = String.format(
-                        MatbitApplication.resources().getString(R.string.format_feed_posted_by),
-                        recipe.getData().getInfo(),
-                        recipe.getData().getUser_nickname()
-                );
-                subtitle = String.format(
-                        MatbitApplication.resources().getString(R.string.format_feed_views_and_likes),
-                        recipe.getData().getViews(),
-                        recipe.getThumbsUp()
-                );
-                storage_reference_thumbnail = MatbitDatabase.getRecipePhoto(recipe.getId());
-                storage_reference_featured_image = MatbitDatabase.getRecipePhoto(recipe.getId());
-
-                action = new Intent(context, RecipeActivity.class);
-                action.putExtra(MatbitApplication.resources().getString(R.string.key_recipe_id), recipe.getId());
-                action.putExtra(MatbitApplication.resources().getString(R.string.key_user_id), recipe.getData().getUser());
-            }
-        }
-
-        date = new DateTime();
-
-        return recipe.hasData();
-    }
-
-    boolean mostPopularRecipe(final DataSnapshot DATA_SNAPSHOT){
-        Recipe recipe = new Recipe();
-
-        for (DataSnapshot recipesSnapshot : DATA_SNAPSHOT.getChildren()) {
-
-            Recipe this_recipe = new Recipe(recipesSnapshot);
-
-            boolean morePopular = false;
-
-            if (recipe.hasData())
-                morePopular = this_recipe.getData().getThumbs_up() * 5 + this_recipe.getData().getViews()
-                        > recipe.getData().getThumbs_up() * 5 + recipe.getData().getViews();
-
-            if (!recipe.hasData() || morePopular) {
-                recipe = this_recipe;
-                title = MOST_POPULAR_RECIPE;
-                text = String.format(
-                        MatbitApplication.resources().getString(R.string.format_feed_posted_by),
-                        recipe.getData().getInfo(),
-                        recipe.getData().getUser_nickname()
-                );
-
-                subtitle = String.format(
-                        MatbitApplication.resources().getString(R.string.format_feed_views_and_likes),
-                        recipe.getData().getViews(),
-                        recipe.getThumbsUp()
-                );
-                storage_reference_thumbnail = MatbitDatabase.getRecipePhoto(recipe.getId());
-                storage_reference_featured_image = MatbitDatabase.getRecipePhoto(recipe.getId());
-
-                action = new Intent(context, RecipeActivity.class);
-                action.putExtra(MatbitApplication.resources().getString(R.string.key_recipe_id), recipe.getId());
-                action.putExtra(MatbitApplication.resources().getString(R.string.key_user_id), recipe.getData().getUser());
-            }
-        }
-
-        date = new DateTime();
-
-        return recipe.hasData();
-    }
-
-    boolean newestRecipe(final DataSnapshot DATA_SNAPSHOT){
-        Recipe recipe = new Recipe();
-
-        for (DataSnapshot recipesSnapshot : DATA_SNAPSHOT.getChildren()) {
-            Recipe this_recipe = new Recipe(recipesSnapshot);
-
-            boolean isNewer = false;
-
-            if (recipe.hasData()) {
-                DateTime recipe_date = DateUtility.stringToDate(recipe.getData().getDatetime_created());
-                DateTime this_date = DateUtility.stringToDate(this_recipe.getData().getDatetime_created());
-                if (recipe_date != null && this_date != null)
-                    isNewer = this_date.isAfter(recipe_date);
-            }
-
-            if (!recipe.hasData() || isNewer){
-                recipe = this_recipe;
-
-                title = LATEST_RECIPE;
-                text = String.format(
-                        MatbitApplication.resources().getString(R.string.format_feed_posted_by),
-                        recipe.getData().getInfo(),
-                        recipe.getData().getUser_nickname()
-                );
-                subtitle = String.format(
-                        MatbitApplication.resources().getString(R.string.format_feed_views_and_likes),
-                        recipe.getData().getViews(),
-                        recipe.getThumbsUp()
-                );
-                storage_reference_thumbnail = MatbitDatabase.getRecipePhoto(recipe.getId());
-                storage_reference_featured_image = MatbitDatabase.getRecipePhoto(recipe.getId());
-
-                action = new Intent(context, RecipeActivity.class);
-                action.putExtra(MatbitApplication.resources().getString(R.string.key_recipe_id), recipe.getId());
-                action.putExtra(MatbitApplication.resources().getString(R.string.key_user_id), recipe.getData().getUser());
-            }
-        }
-
-        date = new DateTime();
-
-        return recipe.hasData();
-    }
-
-    boolean newFollowers(final DataSnapshot DATA_SNAPSHOT){
-        User user = new User(DATA_SNAPSHOT);
-        ArrayList<String> newFollowers = new ArrayList<String>();
-        DateTime newest_date = null;
-
-        for (Map.Entry<String, String> ratingSet : user.getData().getFollowers().entrySet()) {
-            String user_id = ratingSet.getKey();
-            DateTime date = DateUtility.stringToDate(ratingSet.getValue()) ;
-
-            if (Days.daysBetween(date, DateTime.now()).getDays() <= 7) {
-                newFollowers.add(user_id);
-                if (newest_date == null || date.isAfter(newest_date))
-                    newest_date = date;
-            }
-        }
-        if (!newFollowers.isEmpty()) {
-            title = NEW_FOLLOWERS;
-            text = String.format(
-                    MatbitApplication.resources().getString(R.string.format_feed_new_followers),
-                    newFollowers.size()
-            );
-            subtitle = DateUtility.dateToPeriod(newest_date) + " "
-                    + MatbitApplication.resources().getString(R.string.string_ago);
-
-            storage_reference_thumbnail = MatbitDatabase.getUserPhoto(user.getId());
-
-            action = new Intent(context, UserActivity.class);
-            action.putExtra(MatbitApplication.resources().getString(R.string.key_user_id), MatbitDatabase.getCurrentUserUID());
-
-            date = newest_date;
-            return true;
-        }
-        else return false;
-    }
-
+    /**
+     * @return News feed title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * @return News feed text
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * Compare NewsFeed objects by dates, oldest first
+     */
     static final Comparator<NewsFeed> DATE_COMPARATOR_ASC = new Comparator<NewsFeed>() {
         @Override
         public int compare(NewsFeed a, NewsFeed b) {
@@ -261,6 +59,9 @@ public class NewsFeed {
         }
     };
 
+    /**
+     * Compare NewsFeed objects by dates, newest first
+     */
     static final Comparator<NewsFeed> DATE_COMPARATOR_DESC = new Comparator<NewsFeed>() {
         @Override
         public int compare(NewsFeed a, NewsFeed b) {
@@ -271,23 +72,94 @@ public class NewsFeed {
         }
     };
 
+    /**
+     * @return news feed thumbnail photo storage reference
+     */
     StorageReference getStorage_reference_thumbnail() {
         return storage_reference_thumbnail;
     }
 
+    /**
+     * @return news feed featured photo storage reference
+     */
     StorageReference getStorage_reference_featured_image() {
         return storage_reference_featured_image;
     }
 
+    /**
+     * @return news feed action intent
+     */
     Intent getAction() {
         return action;
     }
 
+    /**
+     * @return news feed date
+     */
     DateTime getDate() {
         return date;
     }
 
+    /**
+     * @return news feed subtitle
+     */
     String getSubtitle() {
         return subtitle;
+    }
+
+    /**
+     *
+     * @param storage_reference_thumbnail news feed thumbnail photo storage reference
+     */
+    public void setStorage_reference_thumbnail(StorageReference storage_reference_thumbnail) {
+        this.storage_reference_thumbnail = storage_reference_thumbnail;
+    }
+
+    /**
+     *
+     * @param storage_reference_featured_image news feed featured photo storage reference
+     */
+    public void setStorage_reference_featured_image(StorageReference storage_reference_featured_image) {
+        this.storage_reference_featured_image = storage_reference_featured_image;
+    }
+
+    /**
+     *
+     * @param title news feed title
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     *
+     * @param subtitle news feed subtitle
+     */
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
+    }
+
+    /**
+     *
+     * @param text news feed text
+     */
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    /**
+     *
+     * @param action news feed action (intent)
+     */
+    public void setAction(Intent action) {
+        this.action = action;
+    }
+
+    /**
+     *
+     * @param date news feed date
+     */
+    public void setDate(DateTime date) {
+        this.date = date;
     }
 }

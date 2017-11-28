@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "711713948309-p0jj4061ugjkrm6thfuiistkvc9q8eic.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.r3dcraft.matbit",
+            "certificate_hash": "d7011bc5965495ac6961e03ac659346237c391b6"
+          }
+        },
+        {
+          "client_id": "711713948309-f11bqkfvl425hfupsm0nmil3j126vk02.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.r3dcraft.matbit",
+            "certificate_hash": "14789762d0cdd1064e07a4db3dd97d00f7e8aad6"
+          }
+        },
+        {
           "client_id": "711713948309-ml9ng65sjmu52dse3je7ub7o8n8h3e8q.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

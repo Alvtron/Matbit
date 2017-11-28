@@ -183,7 +183,6 @@ class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHold
 
     /**
      * A CommentViewHolder class that holds and sets a comment layout.
-     *
      */
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
         public String USER_UID; // User ID (not yet implemented)

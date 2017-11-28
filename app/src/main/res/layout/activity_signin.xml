@@ -5,21 +5,18 @@
     android:background="@color/colorPrimary"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/activity_signin_btn_sign_in">
+    >
+
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/activity_signin_img_logo"
         android:layout_width="300dp"
-        android:layout_height="200dp"
-        app:srcCompat="@drawable/logo_matbit_white_4096dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="52dp"
+        android:scaleType="centerCrop"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo_matbit_white_4096dp" />
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/activity_signin_txt_status"
@@ -30,40 +27,49 @@
         android:text="@string/string_welcome_back"
         android:textColor="@color/white"
         android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/activity_signin_button_layout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_signin_img_logo" />
-    </android.support.constraint.ConstraintLayout>
 
-    <android.support.v7.widget.AppCompatButton style="@style/Widget.AppCompat.Button.Colored"
-        android:id="@+id/activity_signin_btn_sign_in"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/string_sign_in"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/activity_signin_btn_sign_out"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <android.support.v7.widget.AppCompatButton style="@style/Widget.AppCompat.Button.Colored"
-        android:id="@+id/activity_signin_btn_sign_out"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/string_sign_out"
-        app:layout_constraintBottom_toTopOf="@+id/activity_signin_btn_continue"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
-    <android.support.v7.widget.AppCompatButton style="@style/Widget.AppCompat.Button.Colored"
-        android:id="@+id/activity_signin_btn_continue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/string_go_to_frontpage"
+    <LinearLayout
+        android:id="@+id/activity_signin_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:orientation="vertical">
+        <android.support.v7.widget.AppCompatButton style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/activity_signin_btn_sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/string_sign_in"
+            android:visibility="visible" />
+        <android.support.v7.widget.AppCompatButton style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/activity_signin_btn_sign_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/string_sign_out"
+            android:visibility="gone" />
+        <android.support.v7.widget.AppCompatButton style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/activity_signin_btn_continue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/string_go_to_frontpage"/>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/activity_signin_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@id/activity_signin_button_layout"
+        app:layout_constraintStart_toStartOf="@id/activity_signin_button_layout"
+        app:layout_constraintEnd_toEndOf="@id/activity_signin_button_layout"
+        app:layout_constraintBottom_toBottomOf="@id/activity_signin_button_layout"/>
 
     <!--tools:visibility="gone"-->
 </android.support.constraint.ConstraintLayout>

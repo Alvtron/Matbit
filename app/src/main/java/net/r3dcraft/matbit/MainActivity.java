@@ -21,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,8 +30,8 @@ import com.google.firebase.database.ValueEventListener;
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017
  *
- * MainActivity is the front page of this App. It connects every navigational path in the user can
- * take. It includes a navigation drawer and bottom navigation at the bottom.
+ * MainActivity is the front page of this App. It connects every navigational path that the user can
+ * take. For navigation it includes a navigation drawer and 3 buttons at the bottom.
  *
  * MainActivity is inspired by Facebook's and Twitter's wall, and features a RecyclerList with
  * dynamic content in the form of NewsFeed items. These Newsfeed items contains a thumbnail, a
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NewsFeedAdapter newsFeedAdapter;
     private DrawerLayout drawer;
     private NavigationView navigationView;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +53,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         context = this;
 
         // Initialize toolbar
-        Toolbar toolbar = findViewById(R.id.activity_main_content_toolbar);
+        toolbar = findViewById(R.id.activity_main_content_toolbar);
         setSupportActionBar(toolbar);
 
-        // Setup RecyclerView Feed
+        // Setup RecyclerView
         RecyclerView mRecyclerView = findViewById(R.id.activity_main_content_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -66,6 +68,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mRecyclerView.setAdapter(newsFeedAdapter);
 
         // Setup NavigationView
+        setupNavigationView();
+
+        // Setup bottom navigation
+        setupBottomNavigation();
+
+        // Create NewsFeed objects and add them to RecyclerList
+        loadNewsFeedItems();
+    }
+
+    /**
+     * Initialize navigation drawer and add information about current logged in user, if any.
+     */
+    private void setupNavigationView() {
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -74,11 +89,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.activity_main_navigation_view);
         navigationView.setNavigationItemSelectedListener(this);
         View drawer_header = navigationView.getHeaderView(0);
+        // User profile shown in the navigation drawer
         ImageView user_photo = drawer_header.findViewById(R.id.activity_main_drawer_user_photo);
         TextView user_name = drawer_header.findViewById(R.id.activity_main_drawer_user_name);
         TextView user_email = drawer_header.findViewById(R.id.activity_main_drawer_user_email);
         TextView log_in_message = drawer_header.findViewById(R.id.activity_main_drawer_log_in_message);
-        ImageView down_arrow = drawer_header.findViewById(R.id.activity_main_drawer_icon_arrow);
+        // User profile layout in navigation drawer. If clicked, go to SignInActivity.
         ConstraintLayout navigation_drawer_header_layout = drawer_header.findViewById(R.id.activity_main_drawer_header_layout);
         navigation_drawer_header_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(context, SignInActivity.class));
             }
         });
-
         // Adjust layout design if there is a user logged in
         if (MatbitDatabase.hasUser()) {
             log_in_message.setVisibility(View.GONE);
@@ -96,51 +111,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             user_name.setText(MatbitDatabase.getCurrentUserDisplayName());
             user_email.setText(MatbitDatabase.getCurrentUserEmail());
             MatbitDatabase.currentUserPictureToImageView(context, user_photo);
-        }
-
-        // Setup bottom navigation
-        setupBottomNavigation();
-
-        MatbitDatabase.RECIPES().addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot){
-                newsFeedAdapter.empty();
-                NewsFeed recipe_of_the_week = new NewsFeed(context);
-                NewsFeed most_liked_recipe = new NewsFeed(context);
-                NewsFeed most_popular_recipe = new NewsFeed(context);
-                NewsFeed newest_recipe = new NewsFeed(context);
-
-                if (recipe_of_the_week.recipeOfTheWeek(dataSnapshot))
-                    newsFeedAdapter.add(recipe_of_the_week);
-                if (most_liked_recipe.mostLikedRecipe(dataSnapshot))
-                    newsFeedAdapter.add(most_liked_recipe);
-                if (most_popular_recipe.mostPopularRecipe(dataSnapshot))
-                    newsFeedAdapter.add(most_popular_recipe);
-                if (newest_recipe.newestRecipe(dataSnapshot))
-                    newsFeedAdapter.add(newest_recipe);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadRecipes: onCancelled", databaseError.toException());
-            }
-        });
-
-        if (MatbitDatabase.hasUser()) {
-            MatbitDatabase.user(MatbitDatabase.getCurrentUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    NewsFeed new_followers = new NewsFeed(context);
-                    if (new_followers.newFollowers(dataSnapshot))
-                        newsFeedAdapter.add(new_followers);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.w(TAG, "loadUsers: onCancelled", databaseError.toException());
-                }
-            });
         }
     }
 
@@ -192,6 +162,64 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    /**
+     * Initialize NewsFeed item with a NewsFeedBuilder and add these to the RecyclerList
+     */
+    private void loadNewsFeedItems() {
+        newsFeedAdapter.empty();
+
+        // If user is logged in, load user from database and create/add NewsFeed object.
+        if (MatbitDatabase.hasUser()) {
+            MatbitDatabase.user(MatbitDatabase.getCurrentUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    NewsFeedBuilder newsFeedBuilder = new NewsFeedBuilder(context);
+                    newsFeedBuilder.setUser(dataSnapshot);
+                    NewsFeed new_followers = newsFeedBuilder.newFollowers();
+                    if (new_followers != null)
+                        newsFeedAdapter.add(new_followers);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "loadUsers: onCancelled", databaseError.toException());
+                }
+            });
+        }
+
+        // Load all recipes from database
+        MatbitDatabase.RECIPES().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot){
+                NewsFeedBuilder newsFeedBuilder = new NewsFeedBuilder(context);
+                newsFeedBuilder.setRecipes(dataSnapshot);
+                NewsFeed recipe_of_the_week = newsFeedBuilder.recipeOfTheWeek();
+                NewsFeed most_liked_recipe = newsFeedBuilder.mostLikedRecipe();
+                NewsFeed most_popular_recipe = newsFeedBuilder.mostPopularRecipe();
+                NewsFeed newest_recipe = newsFeedBuilder.newestRecipe();
+
+                if (recipe_of_the_week != null)
+                    newsFeedAdapter.add(recipe_of_the_week);
+                if (most_liked_recipe != null)
+                    newsFeedAdapter.add(most_liked_recipe);
+                if (most_popular_recipe != null)
+                    newsFeedAdapter.add(most_popular_recipe);
+                if (newest_recipe != null)
+                    newsFeedAdapter.add(newest_recipe);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadRecipes: onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    /**
+     * Prepare navigation drawer. Show user profile if user is logged in.
+     * @param menu
+     * @return prepared menu for navigation drawer
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
@@ -204,6 +232,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onPrepareOptionsMenu(menu);
     }
 
+    /**
+     * Decide what to happen when user clicks top left toolbar icon.
+     */
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -213,10 +244,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * Decide what to happen when user clicks on items in navigation drawer.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        // User clicked user profile. Go to current users profile.
         if (id == R.id.nav_profile) {
             MatbitDatabase.goToUser(context, MatbitDatabase.getCurrentUserUID());
         }

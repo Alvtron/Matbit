@@ -13,10 +13,12 @@ import android.support.v7.app.AlertDialog;
 
 /**
  * Created by Shreya Kotak on 12.05.16.
- * Modified by Thomas Angeland, student at Ostfold University College, on 25.10.2017.
+ * Modified by Thomas Angeland, student at Ostfold University College, 25.10.2017.
  * Sources: http://www.theappguruz.com/blog/android-take-photo-camera-gallery-code-sample
  *
- * This manages permissions when this app requests to read external storage.
+ * This manages permissions when this app requests to read external storage. I claim no authorship
+ * over this file: PermissionUtility.java. I would also like to thank Shreya Kotak for
+ * providing it on TheAppGurus.com.
  */
 public class PermissionUtility {
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 153;

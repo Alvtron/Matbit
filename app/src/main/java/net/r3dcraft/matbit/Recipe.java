@@ -15,41 +15,81 @@ import java.util.Map;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017.
+ *
+ * The Recipe Class represents a recipe in the Matbit Database. It is meant to be used when loading
+ * recipes from the database. It stores the recipe's unique ID/key as a String and the data on that
+ * key as a RecipeObject.
+ *
+ * This class also includes a bunch of functions:
+ * Functions for checking if the recipe has data.
+ * Functions for adding thumbs up, thumbs down, views.
+ * Functions for uploading specific data if this recipe to the database, or everything.
+ *
+ * This class also has comparators for comparing recipes in various ways. These are extensively used
+ * in the SearchActivity.
  */
 
 public class Recipe {
-    public enum THUMB { UP, DOWN, NOTHING }
     private static final String TAG = "Recipe";
-    private String id;
-    private RecipeData data;
 
+    private String id; // recipe ID/key from database
+    private RecipeData data; // data at recipe in database
+
+    // Thumb enums for adding thumbs up or thumbs down to this recipe
+    public enum THUMB { UP, DOWN, NOTHING }
+
+    /**
+     * Default constructor
+     */
     public Recipe() { }
 
+    // this recipe is represented with it's ID/key
     @Override
     public String toString() {
         return id;
     }
 
+    /**
+     * Create a Recipe object with a snapshot of a specific recipe in Matbit Database
+     * @param DATA_SNAPSHOT data snapshot of a recipe in Matbit Database
+     */
     public Recipe(final DataSnapshot DATA_SNAPSHOT) {
         downloadData(DATA_SNAPSHOT);
     }
 
+    /**
+     * Create a Recipe object with a snapshot of a specific recipe in Matbit Database. Decided
+     * whether to make it minimal: specific data won't be stored (ratings, ingredients, steps). This
+     * option is used when recipes is stored as objects in lists. This makes loading andn listing
+     * recipes with this option more efficient.
+     * @param DATA_SNAPSHOT data snapshot of a recipe in Matbit Database
+     */
     public Recipe(final DataSnapshot DATA_SNAPSHOT, final boolean minimal) {
-        if (minimal)
-            downloadDataMinimal(DATA_SNAPSHOT);
-        else
-            downloadData(DATA_SNAPSHOT);
+        if (minimal) downloadDataMinimal(DATA_SNAPSHOT);
+        else downloadData(DATA_SNAPSHOT);
     }
 
+    /**
+     * Create a new recipe by providing a ID/key and a RecipeData object.
+     * @param id ID/key string
+     * @param recipeData recipe data
+     */
     public Recipe(String id, RecipeData recipeData) {
         this.id = id;
         this.data = recipeData;
     }
 
+    /**
+     * Print this Recipe object to log.
+     */
     public void printRecipeToLog(){
         printRecipeToLog(this);
     }
 
+    /**
+     * Print a specified Recipe object to log.
+     * @param recipe the recipe to be printed.
+     */
     public static void printRecipeToLog(final Recipe recipe){
         Log.d(TAG, "RECIPE  INFORMATION PRINT:");
         Log.d(TAG, "ID: " + recipe.getId());
@@ -71,28 +111,38 @@ public class Recipe {
         Log.d(TAG, "ingredients: " + Integer.toString(recipe.getData().getIngredients().size()));
     }
 
-    public boolean downloadData(final DataSnapshot DATA_SNAPSHOT) {;
+    /**
+     * Load recipe from a snapshot of the specific recipe stored in Matbit Database.
+     * @param DATA_SNAPSHOT data snapshot of the specific recipe
+     */
+    public void downloadData(final DataSnapshot DATA_SNAPSHOT) {;
         this.id = DATA_SNAPSHOT.getKey();
         if (id == null || id.equals("")) {
             Log.e(TAG, "downloadData: Unable to download recipe from Firebase");
-            return false;
+            return;
         }
         this.data = DATA_SNAPSHOT.getValue(RecipeData.class);
         downloadRatings(DATA_SNAPSHOT);
         downloadComments(DATA_SNAPSHOT);
         downloadSteps(DATA_SNAPSHOT);
         downloadIngredients(DATA_SNAPSHOT);
-        return true;
     }
 
-    public boolean downloadDataMinimal(final DataSnapshot DATA_SNAPSHOT) {;
+    /**
+     * Load recipe from a snapshot of the specific recipe stored in Matbit Database.
+     * @param DATA_SNAPSHOT data snapshot of the specific recipe
+     */
+    public void downloadDataMinimal(final DataSnapshot DATA_SNAPSHOT) {;
         this.id = DATA_SNAPSHOT.getKey();
         if (id == null || id.equals(""))
-            return false;
+            return;
         this.data = DATA_SNAPSHOT.getValue(RecipeData.class);
-        return true;
     }
 
+    /**
+     * Prepares a new recipe to be created and uploaded to Matbit Database
+     * @param AUTHOR The author as a User Object
+     */
     public void prepareNewRecipe(final User AUTHOR) {
         if (!hasData())
             data = new RecipeData();
@@ -119,34 +169,41 @@ public class Recipe {
         data.setThumbs_down(0);
     }
 
+    /**
+     * Set recipe ID/key
+     * @param id Recipe ID/key
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * @return recipe ID/key string
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Set recipe data
+     * @param data recipe data
+     */
     public void setData(RecipeData data) {
         this.data = data;
     }
 
+    /**
+     * Get recipe data.
+     * @return Recipe Data object
+     */
     public RecipeData getData() {
         return data;
     }
 
-    public int getRatingAverage() {
-        if (!hasData() || !hasRatings())
-            return 0;
-
-        double total = 0;
-        for (Rating rating : data.getRatings().values())
-            if (rating.getThumbsUp()) total++;
-        BigDecimal average = new BigDecimal(100 * (total / (double) data.getRatings().size()));
-        average = average.setScale(0, RoundingMode.HALF_UP);
-        return average.intValue();
-    }
-
+    /**
+     * Get number of thumbs up as a shortened string (ex. 1234 --> 1.234k)
+     * @return thumbs up as string
+     */
     public String getThumbsUp() {
         if (!hasData() || !hasThumbsUp())
             return null;
@@ -154,6 +211,10 @@ public class Recipe {
         return StringUtility.shortNumber(data.getThumbs_up());
     }
 
+    /**
+     * Get number of thumbs down as a shortened string (ex. 1234 --> 1.23k)
+     * @return thumbs down as string
+     */
     public String getThumbsDown() {
         if (!hasData() || !hasThumbsUp())
             return null;
@@ -161,22 +222,27 @@ public class Recipe {
         return StringUtility.shortNumber(data.getThumbs_down());
     }
 
-    // ADD & REMOVE --------------------------------------------------------------------------------------
+    // ADD & REMOVE --------------------------------------------------------------------------------
 
-    public boolean addView() {
-        if (hasViews()) {
-            data.setViews(data.getViews() + 1);
-            uploadViews();
-            return true;
-        }
-        else {
+    /**
+     *
+     * @return
+     */
+    public void addView() {
+        if (!hasViews()) {
             Log.e(TAG, "addView: Can't add views to uninitialized views");
-            return false;
+            return;
         }
+        data.setViews(data.getViews() + 1);
+        uploadViews();
     }
 
+    /**
+     * Add new rating by specifying what kind of rating you are adding. Use Recipe.THUMB.
+     * @param thumb Recipe.THUMB type
+     */
     public void addRating(final THUMB thumb) {
-        if (thumb == THUMB.NOTHING)
+        if (thumb == null || thumb == THUMB.NOTHING)
             return;
 
         removeUserRating();
@@ -479,7 +545,7 @@ public class Recipe {
     }
 
     public void downloadTime (DataSnapshot DATA_SNAPSHOT) {
-        data.setTime(DATA_SNAPSHOT.child("step_time").getValue(Integer.class));
+        data.setTime(DATA_SNAPSHOT.child("time").getValue(Integer.class));
     }
 
     public void downloadPortions (DataSnapshot DATA_SNAPSHOT) {
@@ -774,7 +840,8 @@ public class Recipe {
     public static final Comparator<Recipe> DATE_COMPARATOR_DESC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
-            return Integer.compare(b.getData().getTime(), a.getData().getTime());
+            return DateUtility.stringToDate(b.getData().getDatetime_created())
+                    .compareTo(DateUtility.stringToDate(a.getData().getDatetime_created()));
         }
     };
 

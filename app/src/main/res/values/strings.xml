@@ -1,5 +1,10 @@
 <resources>
 
+    <string name="android_key">AIzaSyAxlcaTqHS_O-kH-NE1YP63ySnU-JN99TA</string>
+    <string name="server_key">AIzaSyCqRbPLneDBcZOW6L4MSBfBGybq5vWFNBg</string>
+    <string name="browser_key">AIzaSyD3j7AUY1LnemAfELwhRuWdrZ3kkjQT2eA</string>
+    <string name="web_client_id">711713948309-lc63eoi3j85jk2csloqb1qh4hejnj5c8.apps.googleusercontent.com</string>
+
     <!-- Titles -->
     <string name="app_name">Matbit</string>
     <string name="title_activity_main">Matbit</string>
@@ -14,7 +19,6 @@
     <string name="title_activity_create_recipe">Lag Oppskrift</string>
 
     <!-- Arrays -->
-
     <string-array name="filters">
         <item>Nyeste</item>
         <item>Mest sett</item>
@@ -176,5 +180,7 @@
     <string name="string_about_matbit">Om Matbit</string>
     <string name="title_activity_settings">Settings</string>
     <string name="string_step">Steg</string>
+    <string name="string_google_sign_in_failed_try_again_later">Google innlogging feilet. Prøv igjen senere.</string>
+    <string name="string_this_recipe_has_the_wrong_address">Denne oppskriften har feil addresse.</string>
 
 </resources>

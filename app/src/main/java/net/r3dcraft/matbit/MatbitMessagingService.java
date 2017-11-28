@@ -8,7 +8,9 @@ import com.google.firebase.messaging.RemoteMessage;
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 15.11.2017.
  *
- * Followed this tutorial:
+ * This is used to receive notifications sent by me from Google Firebase.
+ *
+ * I created this by following this tutorial:
  * https://www.codementor.io/flame3/send-push-notifications-to-android-with-firebase-du10860kb
  */
 
