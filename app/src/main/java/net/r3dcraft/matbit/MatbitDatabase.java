@@ -42,16 +42,31 @@ import java.util.Random;
  */
 
 public final class MatbitDatabase {
-    private static final String TAG = "MatbitDatabase";
-    private static final FirebaseAuth AUTH = FirebaseAuth.getInstance();
-    private static final FirebaseUser USER = AUTH.getCurrentUser();
-    private static final FirebaseStorage STORAGE = FirebaseStorage.getInstance();
-    private static final StorageReference RECIPE_PHOTOS = STORAGE.getReference("recipe_photos");
-    private static final StorageReference USER_PHOTOS = STORAGE.getReference("user_photos");
-    private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
-    private static final DatabaseReference DATABASE_ROOT = DATABASE.getReference();
-    private static final DatabaseReference RECIPE_DATA = DATABASE_ROOT.child("recipes");
-    private static final DatabaseReference USER_DATA = DATABASE_ROOT.child("users");
+    private static String TAG = "MatbitDatabase";
+    private static FirebaseAuth AUTH = FirebaseAuth.getInstance();
+    private static FirebaseUser USER = AUTH.getCurrentUser();
+    private static FirebaseStorage STORAGE = FirebaseStorage.getInstance();
+    private static StorageReference RECIPE_PHOTOS = STORAGE.getReference("recipe_photos");
+    private static StorageReference USER_PHOTOS = STORAGE.getReference("user_photos");
+    private static FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
+    private static DatabaseReference DATABASE_ROOT = DATABASE.getReference();
+    private static DatabaseReference RECIPE_DATA = DATABASE_ROOT.child("recipes");
+    private static DatabaseReference USER_DATA = DATABASE_ROOT.child("users");
+
+    /**
+     *  Refresh auth, user, database and storage references.
+     */
+    public static void refresh() {
+        AUTH = FirebaseAuth.getInstance();
+        USER = AUTH.getCurrentUser();
+        STORAGE = FirebaseStorage.getInstance();
+        RECIPE_PHOTOS = STORAGE.getReference("recipe_photos");
+        USER_PHOTOS = STORAGE.getReference("user_photos");
+        DATABASE = FirebaseDatabase.getInstance();
+        DATABASE_ROOT = DATABASE.getReference();
+        RECIPE_DATA = DATABASE_ROOT.child("recipes");
+        USER_DATA = DATABASE_ROOT.child("users");
+    }
 
     /**
      * Check if FirebaseAuth is connected.
@@ -89,6 +104,14 @@ public final class MatbitDatabase {
         return true;
     }
 
+    /**
+     * @return Matbit Database FirebasAuth.
+     */
+    public static FirebaseAuth getAuth() {
+        if (!hasAuth()) return null;
+        return AUTH;
+    }
+
     // STORAGE -------------------------------------------------------------------------------------
 
     /**
@@ -110,6 +133,15 @@ public final class MatbitDatabase {
     }
 
     // CURRENT USER --------------------------------------------------------------------------------
+    /**
+     * @return UID of current user, if user is logged in
+     */
+    public static FirebaseUser getCurrentUser() {
+        if (!hasAuth()) return null;
+        if (!hasUser()) return null;
+        return USER;
+    }
+
     /**
      * @return UID of current user, if user is logged in
      */
@@ -195,7 +227,7 @@ public final class MatbitDatabase {
     /**
      * @return database reference to current user, if logged in
      */
-    public static DatabaseReference getCurrentUser() {
+    public static DatabaseReference getUser() {
         if (!hasAuth()) return null;
         if (!hasUser()) return null;
         if (!hasDatabase()) return null;
@@ -355,7 +387,7 @@ public final class MatbitDatabase {
             return;
         }
 
-        if (KEY.trim().equals("")) {
+        if (KEY.isEmpty()) {
             Log.d(TAG, "uploadNewRecipe: KEY is empty");
             return;
         }
@@ -543,7 +575,7 @@ public final class MatbitDatabase {
     public static void recipePictureToImageView(final String RECIPE_UID, final Context CONTEXT, final ImageView IMAGE_VIEW) {
         if (!hasAuth()) return;
 
-        if (RECIPE_UID == null || RECIPE_UID.trim().equals("")) {
+        if (RECIPE_UID == null || RECIPE_UID.isEmpty()) {
             Log.d(TAG, "recipePictureToImageView: RECIPE_UID is not initialized (is null)");
             return;
         } else if (CONTEXT == null) {
@@ -587,7 +619,7 @@ public final class MatbitDatabase {
     public static void userPictureToImageView(final String USER_UID, final Context CONTEXT, final ImageView IMAGE_VIEW) {
         if (!hasAuth()) return;
 
-        if (USER_UID == null || USER_UID.trim().equals("")) {
+        if (USER_UID == null || USER_UID.isEmpty()) {
             Log.d(TAG, "userPictureToImageView: USER_UID is not initialized (is null)");
             return;
         } else if (CONTEXT == null) {
@@ -675,7 +707,7 @@ public final class MatbitDatabase {
         if (!hasAuth()) return;
         if (!hasDatabase()) return;
 
-        if (USER_UID == null || USER_UID.trim().equals("")) {
+        if (USER_UID == null || USER_UID.isEmpty()) {
             Log.d(TAG, "userNicknameToTextView: USER_UID is not initialized (is null)");
             return;
         } else if (TEXT_VIEW == null) {
@@ -707,7 +739,7 @@ public final class MatbitDatabase {
         final Uri PHOTO_URL = getCurrentUserPhotoURL();
 
         // Return if UID or photo url is invalid
-        if (USER_UID.equals("") || PHOTO_URL != null) return;
+        if (USER_UID.isEmpty() || PHOTO_URL != null) return;
 
         // Load users from database
         USER_DATA.addListenerForSingleValueEvent(new ValueEventListener()  {
@@ -719,7 +751,7 @@ public final class MatbitDatabase {
                         if (!nickname_snapshot.exists()) {
                             CONTEXT.startActivity(new Intent(CONTEXT, UserEditActivity.class));
                         }
-                        else if (nickname_snapshot.getValue(String.class).trim().equals(""))
+                        else if (nickname_snapshot.getValue(String.class).isEmpty())
                             CONTEXT.startActivity(new Intent(CONTEXT, UserEditActivity.class));
                     }
                 else {
@@ -741,7 +773,7 @@ public final class MatbitDatabase {
      * @param recipe recipe to navigate to
      */
     public static void goToRecipe(final Context CONTEXT, Recipe recipe) {
-        if (recipe == null || recipe.getId() == null || recipe.getId().equals("")) {
+        if (recipe == null || recipe.getId() == null || recipe.getId().isEmpty()) {
             Toast.makeText(CONTEXT, R.string.string_this_recipe_has_the_wrong_address, Toast.LENGTH_SHORT).show();
             Log.e(TAG, "goToRecipe: Recipe is not initialized or recipe id is not initialized");
             return;
@@ -791,7 +823,7 @@ public final class MatbitDatabase {
      * @param USER_UID ID/key of user to go to
      */
     public static void goToUser(final Context CONTEXT, final String USER_UID) {
-        if (USER_UID == null || USER_UID.equals("")) {
+        if (USER_UID == null || USER_UID.isEmpty()) {
             Toast.makeText(CONTEXT, R.string.string_sorry_this_user_is_not_home_today, Toast.LENGTH_SHORT).show();
             Log.e(TAG, "goToUser: USER_UID is not initialized");
             return;

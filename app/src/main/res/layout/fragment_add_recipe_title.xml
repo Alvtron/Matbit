@@ -22,9 +22,10 @@
         android:textColor="@color/black"
         android:textSize="14sp"
         android:textAlignment="center"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/activity_add_recipe_bottom_navigator_title"
+        app:layout_constraintTop_toBottomOf="@id/activity_add_recipe_header_title" />
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"

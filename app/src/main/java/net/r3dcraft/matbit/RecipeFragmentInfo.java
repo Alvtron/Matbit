@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +21,11 @@ import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
+ *
+ * This is one of the fragments in RecipeActivity that is created in the view pager. This displays
+ * the recipe information and thumbs up/thumbs down buttons, follow user button and a create-recipe
+ * button.
  */
-
 public class RecipeFragmentInfo extends Fragment {
     private static final String TAG = "RecipeFragmentInfo";
     private Recipe recipe;
@@ -53,6 +55,8 @@ public class RecipeFragmentInfo extends Fragment {
         recipeID = getArguments().getString(getResources().getString(R.string.key_recipe_id));
         authorID = getArguments().getString(getResources().getString(R.string.key_user_id));
         context = getActivity();
+
+        // Initialize all the layout
         img_recipe_photo = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_recipe_photo_img);
         txt_title = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_recipe_title_txt);
         txt_thumbs_up = rootViewInfo.findViewById(R.id.activity_recipe_fragment_info_thumbs_up_txt);
@@ -76,12 +80,14 @@ public class RecipeFragmentInfo extends Fragment {
     public void onStart() {
         super.onStart();
 
+        // If user is logged in and author is this user, remove follow icon.
         if (!MatbitDatabase.hasUser() || authorID.equals(MatbitDatabase.getCurrentUserUID())) {
             layout_follow.setVisibility(View.INVISIBLE);
             icon_follow.setVisibility(View.INVISIBLE);
             txt_follow.setVisibility(View.INVISIBLE);
         }
 
+        // Load recipe photo from Matbit storage
         MatbitDatabase.recipePictureToImageView(recipeID, context, img_recipe_photo);
 
         // Get recipe information
@@ -96,10 +102,10 @@ public class RecipeFragmentInfo extends Fragment {
                 txt_time.setText(recipe.getTimeToText());
                 txt_views.setText(Integer.toString(recipe.getData().getViews()));
 
-                if (recipe.hasUserRated() == Recipe.THUMB.UP) {
+                if (recipe.getCurrentUserRating() == Recipe.THUMB.UP) {
                     icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
                 }
-                else if (recipe.hasUserRated() == Recipe.THUMB.DOWN) {
+                else if (recipe.getCurrentUserRating() == Recipe.THUMB.DOWN) {
                     icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
                 }
 
@@ -112,6 +118,7 @@ public class RecipeFragmentInfo extends Fragment {
             }
         });
 
+        // Load user from database and update follow button if the user follows the author
         MatbitDatabase.user(authorID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -124,6 +131,8 @@ public class RecipeFragmentInfo extends Fragment {
             }
         });
 
+        // Load CreateRecipeFragment which is a full screen window that displays all the steps
+        // fragment by fragment.
         btn_create.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             if (recipe.getId() != null) {
@@ -133,7 +142,7 @@ public class RecipeFragmentInfo extends Fragment {
                 context.startActivity(intent);
             }
             else
-                Toast.makeText(context, "Oisann! Prøv å laste denne siden på nytt!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.error_try_refreshing_this_page, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -143,17 +152,18 @@ public class RecipeFragmentInfo extends Fragment {
             }
         });
 
+        // If user is logged in, add onclick listeners to thumbs up, thumbs down and follow button.
         if (MatbitDatabase.hasUser()) {
             icon_thumbs_up.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     // User has already rated thumbs up --> remove it.
-                    if (recipe.hasUserRated() == Recipe.THUMB.UP) {
+                    if (recipe.getCurrentUserRating() == Recipe.THUMB.UP) {
                         recipe.removeUserRating();
                         txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
                         icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
                     }
                     // User has already rated thumbs down --> remove it and add thumbs up.
-                    else if (recipe.hasUserRated() == Recipe.THUMB.DOWN) {
+                    else if (recipe.getCurrentUserRating() == Recipe.THUMB.DOWN) {
                         recipe.addRating(Recipe.THUMB.UP);
                         txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
                         txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
@@ -162,7 +172,7 @@ public class RecipeFragmentInfo extends Fragment {
 
                     }
                     // User has not rated --> add rating.
-                    else if (recipe.hasUserRated() == Recipe.THUMB.NOTHING) {
+                    else if (recipe.getCurrentUserRating() == Recipe.THUMB.NOTHING) {
                         recipe.addRating(Recipe.THUMB.UP);
                         txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
                         icon_thumbs_up.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -173,13 +183,13 @@ public class RecipeFragmentInfo extends Fragment {
             icon_thumbs_down.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     // User has already rated thumbs down --> remove it.
-                    if (recipe.hasUserRated() == Recipe.THUMB.DOWN) {
+                    if (recipe.getCurrentUserRating() == Recipe.THUMB.DOWN) {
                         recipe.removeUserRating();
                         txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
                         icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.grey_500), android.graphics.PorterDuff.Mode.SRC_IN);
                     }
                     // User has already rated thumbs up --> remove it and add thumbs down.
-                    else if (recipe.hasUserRated() == Recipe.THUMB.UP) {
+                    else if (recipe.getCurrentUserRating() == Recipe.THUMB.UP) {
                         recipe.addRating(Recipe.THUMB.DOWN);
                         txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
                         txt_thumbs_up.setText(Integer.toString(recipe.getData().getThumbs_up()));
@@ -188,7 +198,7 @@ public class RecipeFragmentInfo extends Fragment {
 
                     }
                     // User has not rated --> add rating.
-                    else if (recipe.hasUserRated() == Recipe.THUMB.NOTHING) {
+                    else if (recipe.getCurrentUserRating() == Recipe.THUMB.NOTHING) {
                         recipe.addRating(Recipe.THUMB.DOWN);
                         txt_thumbs_down.setText(Integer.toString(recipe.getData().getThumbs_down()));
                         icon_thumbs_down.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -196,6 +206,7 @@ public class RecipeFragmentInfo extends Fragment {
                 }
             });
 
+            // Handle when user clicks the follow button.
             layout_follow.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if (user.hasFollower(MatbitDatabase.getCurrentUserUID()))
@@ -208,6 +219,7 @@ public class RecipeFragmentInfo extends Fragment {
         }
     }
 
+    // Update the follow button appearance according to if the user follows the author or not.
     private void updateFollowAppearance() {
         if (user.hasFollower(MatbitDatabase.getCurrentUserUID())) {
             txt_follow.setText("Følger");

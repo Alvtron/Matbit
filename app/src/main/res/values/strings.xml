@@ -17,6 +17,10 @@
     <string name="title_add_recipe">Opprett</string>
     <string name="title_search">Søk</string>
     <string name="title_activity_create_recipe">Lag Oppskrift</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_user_recipes">Oppskrifter</string>
+    <string name="title_my_recipes">Mine Oppskrifter</string>
+    <string name="format_user_recipes">%1$s\s Oppskrifter</string>
 
     <!-- Arrays -->
     <string-array name="filters">
@@ -77,6 +81,10 @@
     <string name="key_user_id">user_id</string>
 
     <!-- Formatted -->
+    <string name="format_number">%1$s • %2$s</string>
+    <string name="format_number_number">%1$s • %2$s • %3$s</string>
+    <string name="format_number_number_number">%1$s • %2$s • %3$s • %4$s</string>
+    <string name="format_number_number_number_number">%1$s • %2$s • %3$s • %4$s • %4$s</string>
     <string name="format_recipe_information">%1$s • %2$s liker • %3$s • %4$s</string>
     <string name="format_hours_minutes">%1$d : %2$d</string>
     <string name="format_create_recipe_total_time_display">Du brukte %1$d minutter og %2$d sekunder på denne retten.</string>
@@ -174,13 +182,22 @@
     <string name="string_most_popular_recipe">Mest populære oppskrift</string>
     <string name="string_category">Kategori</string>
     <string name="symbol_semicolon">:</string>
-    <string name="stringn_activity_log">Aktivitetslogg</string>
+    <string name="string_activity_log">Aktivitetslogg</string>
     <string name="string_my_profile">Min profil</string>
     <string name="string_settings">Instillinger</string>
     <string name="string_about_matbit">Om Matbit</string>
-    <string name="title_activity_settings">Settings</string>
     <string name="string_step">Steg</string>
     <string name="string_google_sign_in_failed_try_again_later">Google innlogging feilet. Prøv igjen senere.</string>
     <string name="string_this_recipe_has_the_wrong_address">Denne oppskriften har feil addresse.</string>
+    <string name="error_comment_cant_be_empty">Kommentar kan ikke være tom!</string>
+    <string name="string_comment_is_deleted">Kommentaren er slettet</string>
+    <string name="error_something_went_wrong_comment_not_deleted">Noe gikk galt. Kommentaren slettes ikke.</string>
+    <string name="string_choose_time">Velg tid</string>
+    <string name="error_step_cant_be_longer_than_500_words">Oisann! Steget kan ikke overstige 500 ord!</string>
+    <string name="error_this_is_too_low">Oisann! Dette er for lavt!</string>
+    <string name="error_this_is_too_high">Oisann! Dette er for høyt</string>
+    <string name="error_this_is_not_a_valid_number">Oisann! Dette er ikke et gyldig nummer!</string>
+    <string name="string_do_you_want_to_delete_this_step">Vil du slette steget?</string>
+    <string name="error_try_refreshing_this_page">Oisann! Prøv å laste denne siden på nytt!</string>
 
 </resources>

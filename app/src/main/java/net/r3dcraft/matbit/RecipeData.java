@@ -43,13 +43,13 @@ public class RecipeData {
     @Exclude private Map<String, Ingredient> ingredients;
 
     public RecipeData() {
-        title = new String();
-        user = new String();
-        user_nickname = new String();
-        datetime_created = new String();
-        datetime_updated = new String();
-        info = new String();
-        category = new String();
+        title = "";
+        user = "";
+        user_nickname = "";
+        datetime_created = "";
+        datetime_updated = "";
+        info = "";
+        category = "";
         time = -1;
         portions = -1;
         views = -1;

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.r3dcraft.matbit.UserActivity">
+    tools:context="net.r3dcraft.matbit.UserActivity"
+    android:background="@color/white">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_user_profile_toolbar"
@@ -56,8 +57,7 @@
         android:background="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_profile_activity_banner"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/user_profile_activity_banner" />
 
     <View
         android:id="@+id/activity_user_separator"
@@ -70,67 +70,111 @@
         app:layout_constraintTop_toTopOf="@+id/activity_user_under_banner"
         app:layout_constraintBottom_toBottomOf="@+id/activity_user_under_banner"/>
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/activity_user_txt_recipes_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text=""
-        android:textColor="@color/colorPrimary"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/activity_user_txt_recipes_count_label"
-        app:layout_constraintEnd_toStartOf="@+id/activity_user_separator"
+    <!-- Number of recipes -->
+    <LinearLayout
+        android:id="@+id/activity_user_recipes_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="?android:attr/selectableItemBackground"
+        app:layout_constraintTop_toTopOf="@id/activity_user_separator"
+        app:layout_constraintEnd_toStartOf="@id/activity_user_separator"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/activity_user_under_banner" />
+        app:layout_constraintBottom_toBottomOf="@id/activity_user_separator">
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/activity_user_txt_recipes_count_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/string_recipes"
-        android:textColor="@color/colorPrimary"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_user_under_banner"
-        app:layout_constraintEnd_toStartOf="@+id/activity_user_separator"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/activity_user_txt_recipes_count" />
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/activity_user_txt_recipes_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp" />
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/activity_user_txt_follower_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text=""
-        android:textColor="@color/colorPrimary"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/activity_user_txt_recipes_count_label"
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/activity_user_txt_recipes_count_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/string_recipes"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <!-- Number of followers -->
+    <LinearLayout
+        android:id="@+id/activity_user_followers_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="?android:attr/selectableItemBackground"
+        app:layout_constraintTop_toTopOf="@id/activity_user_separator"
         app:layout_constraintStart_toEndOf="@+id/activity_user_separator"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/activity_user_under_banner" />
+        app:layout_constraintBottom_toBottomOf="@id/activity_user_separator">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/activity_user_txt_follower_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/string_followers"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
+
+    </LinearLayout>
 
     <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/activity_user_bio_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/string_followers"
-        android:textColor="@color/colorPrimary"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_user_under_banner"
-        app:layout_constraintStart_toEndOf="@+id/activity_user_separator"
+        android:textStyle="italic"
+        android:text="@string/string_bio"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/activity_user_txt_follower_count" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_under_banner" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:textColor="@color/colorPrimary"
+        android:background="@color/default_grey"
+        app:layout_constraintEnd_toStartOf="@id/activity_user_bio_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_user_bio_label"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_user_bio_label"/>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:textColor="@color/colorPrimary"
+        android:background="@color/default_grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/activity_user_bio_label"
+        app:layout_constraintTop_toTopOf="@+id/activity_user_bio_label"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_user_bio_label"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/activity_user_txt_bio"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text=""
-        android:textColor="@color/black"
-        android:textSize="14sp"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingStart="@dimen/activity_vertical_margin"
+        android:paddingEnd="@dimen/activity_vertical_margin"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_user_under_banner" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_bio_label" />
+
 
 
 </android.support.constraint.ConstraintLayout>

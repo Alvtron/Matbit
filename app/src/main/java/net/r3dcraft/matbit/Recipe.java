@@ -117,7 +117,7 @@ public class Recipe {
      */
     public void downloadData(final DataSnapshot DATA_SNAPSHOT) {;
         this.id = DATA_SNAPSHOT.getKey();
-        if (id == null || id.equals("")) {
+        if (id == null || id.isEmpty()) {
             Log.e(TAG, "downloadData: Unable to download recipe from Firebase");
             return;
         }
@@ -134,7 +134,7 @@ public class Recipe {
      */
     public void downloadDataMinimal(final DataSnapshot DATA_SNAPSHOT) {;
         this.id = DATA_SNAPSHOT.getKey();
-        if (id == null || id.equals(""))
+        if (id == null || id.isEmpty())
             return;
         this.data = DATA_SNAPSHOT.getValue(RecipeData.class);
     }
@@ -225,8 +225,7 @@ public class Recipe {
     // ADD & REMOVE --------------------------------------------------------------------------------
 
     /**
-     *
-     * @return
+     * Increment recipe views by one and update the database accordingly
      */
     public void addView() {
         if (!hasViews()) {
@@ -263,6 +262,9 @@ public class Recipe {
         }
     }
 
+    /**
+     * Remove recipe rating made by the user.
+     */
     public void removeUserRating() {
         ArrayList<String> keys_to_remove = new ArrayList<String>();
         for (Map.Entry<String, Rating> ratingSet : data.getRatings().entrySet()) {
@@ -285,7 +287,11 @@ public class Recipe {
         }
     }
 
-    public THUMB hasUserRated(){
+    /**
+     * Check to see if user has rated this recipe. Return what the user has rated.
+     * @return THUMB type: UP, DOWN or NOTHING
+     */
+    public THUMB getCurrentUserRating(){
         for (Rating rating : data.getRatings().values())
             if (rating.getUser().equals(MatbitDatabase.getCurrentUserUID())) {
                 if (rating.getThumbsUp())
@@ -296,16 +302,104 @@ public class Recipe {
         return THUMB.NOTHING;
     }
 
-    public void addComment(final String COMMENT) {
-        Comment comment = new Comment(MatbitDatabase.getCurrentUserUID(), COMMENT, DateUtility.nowString(), DateUtility.nowString());
-        MatbitDatabase.recipeComments(id).push().setValue(comment);
+    /**
+     * Add comment to specified recipe and update the database accordingly.
+     * @param RECIPE_UID Recipe ID/KEY
+     * @param USER_NICKNAME user nickname
+     * @param COMMENT_TEXT Comment string
+     * @return successfully added comment
+     */
+    public static boolean addComment(final String RECIPE_UID, final String USER_NICKNAME, final String COMMENT_TEXT) {
+        if (RECIPE_UID == null || RECIPE_UID.isEmpty()) {
+            Log.e(TAG, "addComment: Can't add comment. Recipe key is empty");
+            return false;
+        }
+        if (USER_NICKNAME == null || USER_NICKNAME.isEmpty()) {
+            Log.e(TAG, "addComment: Can't add comment. Comment author nickname is empty");
+            return false;
+        }
+        if (COMMENT_TEXT == null || COMMENT_TEXT.isEmpty()) {
+            Log.e(TAG, "addComment: Can't add comment. Comment text is empty");
+            return false;
+        }
+        Comment comment = new Comment(MatbitDatabase.getCurrentUserUID(), USER_NICKNAME, COMMENT_TEXT, DateUtility.nowString(), DateUtility.nowString());
+        MatbitDatabase.recipeComments(RECIPE_UID).push().setValue(comment);
+        return true;
     }
 
-    public static void changeComment(final String RECIPE_UID, final String COMMENT_UID, final String COMMENT) {
+    /**
+     * Change comment text in the specified recipe and update the database accordingly.
+     * @param RECIPE_UID Recipe ID/KEY
+     * @param COMMENT_UID Comment ID/KEY
+     * @param COMMENT_TEXT Comment string
+     * @return successfully changed comment
+     */
+    public static boolean changeComment(final String RECIPE_UID, final String COMMENT_UID, final String COMMENT_TEXT) {
+        if (RECIPE_UID == null || RECIPE_UID.isEmpty()) {
+            Log.e(TAG, "deleteComment: Can't delete. Recipe key is empty");
+            return false;
+        }
+        if (COMMENT_UID == null || COMMENT_UID.isEmpty()) {
+            Log.e(TAG, "deleteComment: Can't delete. Comment key is empty");
+            return false;
+        }
+        if (COMMENT_TEXT == null || COMMENT_TEXT.isEmpty()) {
+            Log.e(TAG, "deleteComment: Can't delete. Comment text is empty");
+            return false;
+        }
         MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT_UID).child("datetimeUpdated").setValue(DateUtility.nowString());
-        MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT_UID).child("comment").setValue(COMMENT);
+        MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT_UID).child("comment").setValue(COMMENT_TEXT);
+        return true;
     }
 
+    /**
+     * Change comment object in the specified recipe and update the database accordingly.
+     * @param RECIPE_UID Recipe ID/KEY
+     * @param COMMENT_UID Comment ID/KEY
+     * @param COMMENT Comment data
+     * @return successfully updated comment
+     */
+    public static boolean updateComment(final String RECIPE_UID, final String COMMENT_UID, final Comment COMMENT) {
+        if (RECIPE_UID == null || RECIPE_UID.isEmpty()) {
+            Log.e(TAG, "updateComment: Can't update comment. Recipe key is empty");
+            return false;
+        }
+        if (COMMENT_UID == null || COMMENT_UID.isEmpty()) {
+            Log.e(TAG, "updateComment: Can't update comment. Comment key is empty");
+            return false;
+        }
+        if (COMMENT == null) {
+            Log.e(TAG, "updateComment: Can't update comment. Comment is empty");
+            return false;
+        }
+
+        MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT_UID).setValue(COMMENT);
+        return true;
+    }
+
+    /**
+     * Delete comment object in the specified recipe and update the database accordingly.
+     * @param RECIPE_UID Recipe ID
+     * @param COMMENT Comment data
+     * @return successfully deleted comment
+     */
+    public static boolean deleteComment(final String RECIPE_UID, final Comment COMMENT) {
+        if (COMMENT.getKey() == null || COMMENT.getKey().isEmpty()) {
+            Log.e(TAG, "deleteComment: Can't delete. Comment key is invalid");
+            return false;
+        }
+        if (!COMMENT.getUser().equals(MatbitDatabase.getCurrentUserUID())) {
+            Log.e(TAG, "deleteComment: Can't delete. Comment author is not equal to current logged in user");
+            return false;
+        }
+        MatbitDatabase.recipeComments(RECIPE_UID).child(COMMENT.getKey()).removeValue();
+        return true;
+    }
+
+    /**
+     * Return a shortened recipe time as a string. Ex. 123 minutes --> 2t:3m
+     * @return Shortened recipe time string
+     */
     public String getTimeToText() {
         if (hasTime()) {
             String hours = Integer.toString(data.getTime() / 60 % 24);
@@ -315,6 +409,13 @@ public class Recipe {
             return "";
     }
 
+    /**
+     * Change the average time in recipe by adding new time to the old and dividing the result by two.
+     * If the new time is twice as large or half the original time, return -1, indicating that this
+     * time was invalid.
+     * @param TIME new time to be added
+     * @return new average recipe time, if new time is valid
+     */
     public int changeTimeAverage(final int TIME) {
         int recipeTime = getData().getTime();
         // If new TIME is twice as high or half as low as current TIME, discard it
@@ -330,6 +431,9 @@ public class Recipe {
 
     // VALIDATION ----------------------------------------------------------------------------------
 
+    /**
+     * @return Whether recipe has data or not.
+     */
     public boolean hasData() {
         if (data == null) {
             Log.i(TAG, "hasData(): Data not initialized.");
@@ -338,87 +442,71 @@ public class Recipe {
         return true;
     }
 
-    public boolean hasCompleteData() {
-        if (!hasData()) {
-            Log.i(TAG, "hasCompleteData(): data not initialized.");
-            return false;
-        } else if (!hasTitle()) {
-            Log.i(TAG, "hasCompleteData(): title not initialized.");
-            return false;
-        } else if (!hasUser()) {
-            Log.i(TAG, "hasCompleteData(): user not initialized.");
-            return false;
-        } else if (!hasUserNickname()) {
-            Log.i(TAG, "hasCompleteData(): user_nickname not initialized.");
-            return false;
-        } else if (!hasDatetimeCreated()) {
-            Log.i(TAG, "hasCompleteData(): datetime_created not initialized.");
-            return false;
-        } else if (!hasIngredients()) {
-            Log.i(TAG, "hasCompleteData(): ingredients not initialized.");
-            return false;
-        } else if (!hasSteps()) {
-            Log.i(TAG, "hasCompleteData(): steps not initialized.");
-            return false;
-        } else if (!hasTime()) {
-            Log.i(TAG, "hasCompleteData(): step_time not initialized.");
-            return false;
-        } else return true;
-    }
-
+    /**
+     * @return Whether recipe has title or not.
+     */
     public boolean hasTitle() {
-        if (!hasData())
-            return false;
-        if (data.getTitle() == null) {
+        if (!hasData()) return false;
+        if (data.getTitle() == null || data.getTitle().isEmpty()) {
             Log.i(TAG, "hasTitle: data not initialized.");
             return false;
         }
         return true;
     }
 
+    /**
+     * @return Whether recipe has user or not.
+     */
     public boolean hasUser() {
-        if (!hasData())
-            return false;
-        if (data.getUser() == null) {
+        if (!hasData()) return false;
+        if (data.getUser() == null  || data.getUser().isEmpty()) {
             Log.i(TAG, "hasUser: data not initialized.");
             return false;
         }
         return true;
     }
 
+    /**
+     * @return Whether recipe has user nickname or not.
+     */
     public boolean hasUserNickname() {
-        if (!hasData())
-            return false;
-        if (data.getUser_nickname() == null) {
+        if (!hasData()) return false;
+        if (data.getUser_nickname() == null || data.getUser_nickname().isEmpty()) {
             Log.i(TAG, "hasUserNickname: data not initialized.");
             return false;
         }
         return true;
     }
 
+    /**
+     * @return Whether recipe has date/time created or not.
+     */
     public boolean hasDatetimeCreated() {
-        if (!hasData())
-            return false;
-        if (data.getDatetime_created() == null) {
+        if (!hasData()) return false;
+        if (data.getDatetime_created() == null || data.getDatetime_created().isEmpty()) {
             Log.i(TAG, "hasDatetimeCreated: data not initialized.");
             return false;
         }
         return true;
     }
 
+    /**
+     * @return Whether recipe has date/time updated or not.
+     */
     public boolean hasDatetimeUpdated() {
-        if (!hasData())
-            return false;
-        if (data.getDatetime_updated() == null) {
+        if (!hasData()) return false;
+        if (data.getDatetime_updated() == null || data.getDatetime_updated().isEmpty()) {
             Log.i(TAG, "hasDatetimeUpdated: data not initialized.");
             return false;
         }
         return true;
     }
 
+    /**
+     * @return Whether recipe has time or not.
+     */
     public boolean hasTime() {
-        if (!hasData())
-            return false;
+        if (!hasData()) return false;
         if (data.getTime() < 0) {
             Log.i(TAG, "hasTime: data not initialized.");
             return false;
@@ -426,9 +514,11 @@ public class Recipe {
         return true;
     }
 
+    /**
+     * @return Whether recipe has portions or not.
+     */
     public boolean hasPortions() {
-        if (!hasData())
-            return false;
+        if (!hasData()) return false;
         if (data.getPortions() < 0) {
             Log.i(TAG, "hasPortions: data not initialized.");
             return false;
@@ -436,9 +526,11 @@ public class Recipe {
         return true;
     }
 
+    /**
+     * @return Whether recipe has views or not.
+     */
     public boolean hasViews() {
-        if (!hasData())
-            return false;
+        if (!hasData()) return false;
         if (data.getViews() < 0) {
             Log.i(TAG, "hasViews: data not initialized.");
             return false;
@@ -446,29 +538,35 @@ public class Recipe {
         return true;
     }
 
+    /**
+     * @return Whether recipe has info or not.
+     */
     public boolean hasInfo() {
-        if (!hasData())
-            return false;
-        if (data.getInfo() == null) {
+        if (!hasData()) return false;
+        if (data.getInfo() == null || data.getInfo().isEmpty()) {
             Log.i(TAG, "hasInfo: data not initialized.");
             return false;
         }
         return true;
     }
 
+    /**
+     * @return Whether recipe has category or not.
+     */
     public boolean hasCategory() {
-        if (!hasData())
-            return false;
-        if (data.getCategory() == null) {
+        if (!hasData()) return false;
+        if (data.getCategory() == null || data.getCategory().isEmpty()) {
             Log.i(TAG, "hasCategory: data not initialized.");
             return false;
         }
         return true;
     }
 
+    /**
+     * @return Whether recipe has thumbs up or not.
+     */
     public boolean hasThumbsUp() {
-        if (!hasData())
-            return false;
+        if (!hasData()) return false;
         if (data.getThumbs_up() < 0) {
             Log.i(TAG, "hasThumbsUp: data not initialized.");
             return false;
@@ -476,9 +574,11 @@ public class Recipe {
         return true;
     }
 
+    /**
+     * @return Whether recipe has thumbs down or not.
+     */
     public boolean hasThumbsDown() {
-        if (!hasData())
-            return false;
+        if (!hasData()) return false;
         if (data.getThumbs_down() < 0) {
             Log.i(TAG, "hasThumbsDown: data not initialized.");
             return false;
@@ -486,9 +586,11 @@ public class Recipe {
         return true;
     }
 
+    /**
+     * @return Whether recipe has ratings or not.
+     */
     public boolean hasRatings() {
-        if (!hasData())
-            return false;
+        if (!hasData()) return false;
         if (data.getRatings() == null || data.getRatings().size() == 0) {
             Log.i(TAG, "hasRatings: data not initialized.");
             return false;
@@ -496,9 +598,11 @@ public class Recipe {
         return true;
     }
 
+    /**
+     * @return Whether recipe has comments or not.
+     */
     public boolean hasComments() {
-        if (!hasData())
-            return false;
+        if (!hasData()) return false;
         if (data.getComments() == null || data.getComments().size() == 0) {
             Log.i(TAG, "hasComments: data not initialized.");
             return false;
@@ -506,9 +610,11 @@ public class Recipe {
         return true;
     }
 
+    /**
+     * @return Whether recipe has steps or not.
+     */
     public boolean hasSteps() {
-        if (!hasData())
-            return false;
+        if (!hasData()) return false;
         if (data.getSteps() == null || data.getSteps().size() == 0) {
             Log.i(TAG, "hasSteps: data not initialized.");
             return false;
@@ -516,9 +622,11 @@ public class Recipe {
         return true;
     }
 
+    /**
+     * @return Whether recipe has ingredients or not.
+     */
     public boolean hasIngredients() {
-        if (!hasData())
-            return false;
+        if (!hasData()) return false;
         if (data.getIngredients() == null || data.getIngredients().size() == 0) {
             Log.i(TAG, "hasIngredients: data not initialized.");
             return false;
@@ -528,47 +636,102 @@ public class Recipe {
 
     // DOWNLOAD ------------------------------------------------------------------------------------
 
+    /**
+     * Download recipe title to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadTitle(DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         data.setTitle(DATA_SNAPSHOT.child("title").getValue(String.class));
     }
 
+    /**
+     * Download recipe user to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadUser (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         data.setUser(DATA_SNAPSHOT.child("user").getValue(String.class));
     }
 
+    /**
+     * Download recipe date/time created to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadDatetimeCreated (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         data.setDatetime_created(DATA_SNAPSHOT.child("datetime_created").getValue(String.class));
     }
 
+    /**
+     * Download recipe date/time updated to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadDatetimeUpdated (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         data.setDatetime_updated(DATA_SNAPSHOT.child("datetime_updated").getValue(String.class));
     }
 
+    /**
+     * Download recipe time to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadTime (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         data.setTime(DATA_SNAPSHOT.child("time").getValue(Integer.class));
     }
 
+    /**
+     * Download recipe portions to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadPortions (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         data.setPortions(DATA_SNAPSHOT.child("portions").getValue(Integer.class));
     }
 
+    /**
+     * Download recipe views to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadViews (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         data.setViews(DATA_SNAPSHOT.child("views").getValue(Integer.class));
     }
 
+    /**
+     * Download recipe thumbs up to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadThumbsUp (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         data.setThumbs_up(DATA_SNAPSHOT.child("thumbs_up").getValue(Integer.class));
     }
 
+    /**
+     * Download recipe thumbs down to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadThumbsDown (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         data.setThumbs_down(DATA_SNAPSHOT.child("thumbs_down").getValue(Integer.class));
     }
 
+    /**
+     * Download recipe info to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadInfo (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         data.setInfo(DATA_SNAPSHOT.child("info").getValue(String.class));
     }
 
+    /**
+     * Download recipe ratings to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadRatings (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         Map<String, Rating> ratings = new HashMap<String, Rating>();
         for (DataSnapshot ratingsSnapshot : DATA_SNAPSHOT.child("ratings").getChildren()) {
             Rating rating = ratingsSnapshot.getValue(Rating.class);
@@ -577,7 +740,12 @@ public class Recipe {
         data.setRatings(ratings);
     }
 
+    /**
+     * Download recipe comments to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadComments (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         Map<String, Comment> comments = new HashMap<String, Comment>();
         for (DataSnapshot commentSnapshot : DATA_SNAPSHOT.child("comments").getChildren()) {
             Comment comment = commentSnapshot.getValue(Comment.class);
@@ -585,7 +753,13 @@ public class Recipe {
         }
         data.setComments(comments);
     }
+
+    /**
+     * Download recipe steps to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadSteps (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         Map<String, Step> steps = new HashMap<String, Step>();
         for (DataSnapshot stepsSnapshot : DATA_SNAPSHOT.child("steps").getChildren()) {
             Step step = stepsSnapshot.getValue(Step.class);
@@ -594,7 +768,12 @@ public class Recipe {
         data.setSteps(steps);
     }
 
+    /**
+     * Download recipe ingredients to recipe with data snapshot of recipe in database.
+     * @param DATA_SNAPSHOT data snapshot of recipe in database.
+     */
     public void downloadIngredients (DataSnapshot DATA_SNAPSHOT) {
+        if (!hasData()) return;
         Map<String, Ingredient> ingredients = new HashMap<String, Ingredient>();
         for (DataSnapshot ingredientsSnapshot : DATA_SNAPSHOT.child("ingredients").getChildren()) {
             Ingredient ingredient = ingredientsSnapshot.getValue(Ingredient.class);
@@ -605,177 +784,210 @@ public class Recipe {
 
     // UPLOAD --------------------------------------------------------------------------------------
 
+    /**
+     * Upload recipe title to database and return whether this was successful.
+     * @return whether the recipe title was valid.
+     */
     public boolean uploadTitle() {
-        if (hasTitle()) {
-            MatbitDatabase.recipeTitle(id).setValue(getData().getTitle());
-            return true;
-        }
-        else {
+        if (!hasTitle()) {
             Log.e(TAG, "uploadTitle: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeTitle(id).setValue(getData().getTitle());
+        return true;
     }
 
+    /**
+     * Upload recipe user to database and return whether this was successful.
+     * @return whether the recipe user was valid.
+     */
     public boolean uploadUser () {
-        if (hasUser()) {
-            MatbitDatabase.recipeUser(id).setValue(getData().getUser());
-            return true;
-        }
-        else {
+        if (!hasUser()) {
             Log.e(TAG, "uploadUser: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeUser(id).setValue(getData().getUser());
+        return true;
     }
 
+    /**
+     * Upload recipe date/time created to database and return whether this was successful.
+     * @return whether the recipe date/time created was valid.
+     */
     public boolean uploadDatetimeCreated () {
-        if (hasDatetimeCreated()) {
-            MatbitDatabase.recipeDatetimeUpdated(id).setValue(getData().getDatetime_created());
-            return true;
-        }
-        else {
+        if (!hasDatetimeCreated()) {
             Log.e(TAG, "uploadDatetimeCreated: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeDatetimeUpdated(id).setValue(getData().getDatetime_created());
+        return true;
     }
 
+    /**
+     * Upload recipe date/time updated to database and return whether this was successful.
+     * @return whether the recipe date/time updated was valid.
+     */
     public boolean uploadDatetimeUpdated () {
-        if (hasDatetimeUpdated()) {
-            MatbitDatabase.recipeDatetimeUpdated(id).setValue(getData().getDatetime_updated());
-            return true;
-        }
-        else {
+        if (!hasDatetimeUpdated()) {
             Log.e(TAG, "uploadDatetimeUpdated: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeDatetimeUpdated(id).setValue(getData().getDatetime_updated());
+        return true;
     }
 
+    /**
+     * Upload recipe time to database and return whether this was successful.
+     * @return whether the recipe time was valid.
+     */
     public boolean uploadTime () {
-        if (hasTime()) {
-            MatbitDatabase.recipeTime(id).setValue(getData().getTime());
-            return true;
-        }
-        else {
+        if (!hasTime()) {
             Log.e(TAG, "uploadTime: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeTime(id).setValue(getData().getTime());
+        return true;
     }
 
+    /**
+     * Upload recipe portions to database and return whether this was successful.
+     * @return whether the recipe portions was valid.
+     */
     public boolean uploadPortions () {
-        if (hasPortions()) {
-            MatbitDatabase.recipePortions(id).setValue(getData().getPortions());
-            return true;
-        }
-        else {
+        if (!hasPortions()) {
             Log.e(TAG, "uploadPortions: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipePortions(id).setValue(getData().getPortions());
+        return true;
     }
 
+    /**
+     * Upload recipe views to database and return whether this was successful.
+     * @return whether the recipe views was valid.
+     */
     public boolean uploadViews () {
-        if (hasViews()) {
-            MatbitDatabase.recipeViews(id).setValue(getData().getViews());;
-            return true;
-        }
-        else {
+        if (!hasViews()) {
             Log.e(TAG, "uploadViews: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeViews(id).setValue(getData().getViews());;
+        return true;
     }
 
+    /**
+     * Upload recipe info to database and return whether this was successful.
+     * @return whether the recipe info was valid.
+     */
     public boolean uploadInfo () {
-        if (hasInfo()) {
-            MatbitDatabase.recipeInfo(id).setValue(getData().getInfo());;
-            return true;
-        }
-        else {
+        if (!hasInfo()) {
             Log.e(TAG, "uploadInfo: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeInfo(id).setValue(getData().getInfo());;
+        return true;
     }
 
+    /**
+     * Upload recipe thumbs up to database and return whether this was successful.
+     * @return whether the recipe thumbs up was valid.
+     */
     public boolean uploadThumbsUp () {
-        if (hasThumbsUp()) {
-            MatbitDatabase.recipeThumbsUp(id).setValue(getData().getThumbs_up());;
-            return true;
-        }
-        else {
+        if (!hasThumbsUp()) {
             Log.e(TAG, "uploadThumbsUp: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeThumbsUp(id).setValue(getData().getThumbs_up());;
+        return true;
     }
 
+    /**
+     * Upload recipe thumbs down to database and return whether this was successful.
+     * @return whether the recipe thumbs down was valid.
+     */
     public boolean uploadThumbsDown () {
-        if (hasThumbsDown()) {
-            MatbitDatabase.recipeThumbsDown(id).setValue(getData().getThumbs_down());;
-            return true;
-        }
-        else {
+        if (!hasThumbsDown()) {
             Log.e(TAG, "uploadThumbsDown: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeThumbsDown(id).setValue(getData().getThumbs_down());;
+        return true;
     }
 
+    /**
+     * Upload recipe ratings to database and return whether this was successful.
+     * @return whether the recipe ratings was valid.
+     */
     public boolean uploadRatings () {
-        if (hasRatings()) {
-            MatbitDatabase.recipeRatings(id).setValue(getData().getRatings());
-            return true;
-        }
-        else {
+        if (!hasRatings()) {
             Log.e(TAG, "uploadRatings: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeRatings(id).setValue(getData().getRatings());
+        return true;
     }
 
+    /**
+     * Upload recipe comments to database and return whether this was successful.
+     * @return whether the recipe comments was valid.
+     */
     public boolean uploadComments () {
-        if (hasComments()) {
-            MatbitDatabase.recipeComments(id).setValue(getData().getComments());
-            return true;
-        }
-        else {
+        if (!hasComments()) {
             Log.e(TAG, "uploadComments: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeComments(id).setValue(getData().getComments());
+        return true;
     }
 
+    /**
+     * Upload recipe steps to database and return whether this was successful.
+     * @return whether the recipe steps was valid.
+     */
     public boolean uploadSteps () {
         if (hasSteps()) {
-            MatbitDatabase.recipeSteps(id).setValue(getData().getSteps());
-            return true;
-        }
-        else {
             Log.e(TAG, "uploadSteps: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeSteps(id).setValue(getData().getSteps());
+        return true;
     }
 
+    /**
+     * Upload recipe ingredients to database and return whether this was successful.
+     * @return whether the recipe ingredients was valid.
+     */
     public boolean uploadIngredients () {
         if (hasIngredients()) {
-            MatbitDatabase.recipeIngredients(id).setValue(data.getIngredients());
-            return true;
-        }
-        else {
             Log.e(TAG, "uploadIngredients: Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipeIngredients(id).setValue(data.getIngredients());
+        return true;
     }
 
+    /**
+     * Upload recipe to database and return whether this was successful.
+     * @return whether the recipe was valid.
+     */
     public boolean uploadAll() {
-        if (hasData()) {
-            MatbitDatabase.recipe(id).setValue(data);
-            MatbitDatabase.recipeRatings(id).setValue(data.getRatings());
-            MatbitDatabase.recipeComments(id).setValue(data.getComments());
-            MatbitDatabase.recipeSteps(id).setValue(data.getSteps());
-            MatbitDatabase.recipeIngredients(id).setValue(data.getIngredients());
-            return true;
-        }
-        else {
+        if (!hasData()) {
             Log.e(TAG, "uploadAll(): Can't upload empty data");
             return false;
         }
+        MatbitDatabase.recipe(id).setValue(data);
+        MatbitDatabase.recipeRatings(id).setValue(data.getRatings());
+        MatbitDatabase.recipeComments(id).setValue(data.getComments());
+        MatbitDatabase.recipeSteps(id).setValue(data.getSteps());
+        MatbitDatabase.recipeIngredients(id).setValue(data.getIngredients());
+        return true;
     }
 
     // STATIC METHODS ------------------------------------------------------------------------------
 
+    /**
+     * Comparator for comparing recipe to recipe alphabetically by their title, A-Å,
+     */
     public static final Comparator<Recipe> ALPHABETICAL_COMPARATOR_ASC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
@@ -786,6 +998,9 @@ public class Recipe {
         }
     };
 
+    /**
+     * Comparator for comparing recipe to recipe alphabetically by their title, Å-A,
+     */
     public static final Comparator<Recipe> ALPHABETICAL_COMPARATOR_DESC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
@@ -796,6 +1011,9 @@ public class Recipe {
         }
     };
 
+    /**
+     * Comparator for comparing recipe to recipe by their views, low to high,
+     */
     public static final Comparator<Recipe> VIEWS_COMPARATOR_ASC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
@@ -803,6 +1021,9 @@ public class Recipe {
         }
     };
 
+    /**
+     * Comparator for comparing recipe to recipe by their views, high to low,
+     */
     public static final Comparator<Recipe> VIEWS_COMPARATOR_DESC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
@@ -810,6 +1031,9 @@ public class Recipe {
         }
     };
 
+    /**
+     * Comparator for comparing recipe to recipe by their ratings, low to high,
+     */
     public static final Comparator<Recipe> RATING_COMPARATOR_ASC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
@@ -819,6 +1043,9 @@ public class Recipe {
             );        }
     };
 
+    /**
+     * Comparator for comparing recipe to recipe by their ratings, high to low,
+     */
     public static final Comparator<Recipe> RATING_COMPARATOR_DESC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
@@ -829,6 +1056,9 @@ public class Recipe {
         }
     };
 
+    /**
+     * Comparator for comparing recipe to recipe by their dates, old to new,
+     */
     public static final Comparator<Recipe> DATE_COMPARATOR_ASC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
@@ -837,6 +1067,9 @@ public class Recipe {
         }
     };
 
+    /**
+     * Comparator for comparing recipe to recipe by their dates, new to old,
+     */
     public static final Comparator<Recipe> DATE_COMPARATOR_DESC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
@@ -845,6 +1078,9 @@ public class Recipe {
         }
     };
 
+    /**
+     * Comparator for comparing recipe to recipe by their time, low to high,
+     */
     public static final Comparator<Recipe> TIME_COMPARATOR_ASC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {
@@ -852,6 +1088,9 @@ public class Recipe {
         }
     };
 
+    /**
+     * Comparator for comparing recipe to recipe by their time, high to low,
+     */
     public static final Comparator<Recipe> TIME_COMPARATOR_DESC = new Comparator<Recipe>() {
         @Override
         public int compare(Recipe a, Recipe b) {

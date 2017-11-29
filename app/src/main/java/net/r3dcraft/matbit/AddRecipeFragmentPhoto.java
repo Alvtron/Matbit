@@ -76,7 +76,7 @@ public class AddRecipeFragmentPhoto extends Fragment {
         });
 
         ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
-        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().isEmpty()) {
             btn_delete.setVisibility(View.GONE);
         }
         btn_delete.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +107,7 @@ public class AddRecipeFragmentPhoto extends Fragment {
 
         // -----------------------------------------------------------------------------------------
 
+        // Initialize views
         img_recipe_photo = view.findViewById(R.id.activity_add_recipe_image_img);
         img_image_select = view.findViewById(R.id.activity_add_recipe_image_select);
         img_recipe_photo.setOnClickListener(new View.OnClickListener() {
@@ -154,6 +155,9 @@ public class AddRecipeFragmentPhoto extends Fragment {
         }
     }
 
+    /**
+     * Create alert dialog and prompt user with the choice to choose photo from gallery or camera.
+     */
     private void selectImage() {
         final CharSequence[] items = {
                 getString(R.string.string_take_picture),
@@ -184,6 +188,9 @@ public class AddRecipeFragmentPhoto extends Fragment {
         builder.show();
     }
 
+    /**
+     * Create new phone gallery intent and start it.
+     */
     private void galleryIntent()
     {
         Intent intent = new Intent();
@@ -193,6 +200,9 @@ public class AddRecipeFragmentPhoto extends Fragment {
         frag.startActivityForResult(Intent.createChooser(intent, getString(R.string.string_choose_picture)), SELECT_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
+    /**
+     * Create new camera intent and start it.
+     */
     private void cameraIntent()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -223,6 +233,10 @@ public class AddRecipeFragmentPhoto extends Fragment {
         }
     }
 
+    /**
+     * Adjust provided photo. Resize and compress it.
+     * @param source_image provided photo
+     */
     public void adjustBitmap(Bitmap source_image) {
         int MAX_WIDTH = 1920, MAX_HEIGHT = 1080;
         int width = source_image.getWidth();

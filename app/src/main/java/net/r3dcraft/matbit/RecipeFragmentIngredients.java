@@ -20,6 +20,11 @@ import java.util.List;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
+ *
+ * This is one of the fragments in RecipeActivity that is created in the view pager. This displays
+ * the recipe ingredients in a list view with a custom ingredient adapter. The user can change the
+ * portion size and the UI will update accordingly. If user clicks on one of the ingredients, they
+ * will be stroked.
  */
 
 public class RecipeFragmentIngredients extends Fragment {
@@ -39,10 +44,14 @@ public class RecipeFragmentIngredients extends Fragment {
         View rootViewInfo = inflater.inflate(R.layout.fragment_recipe_ingredients, container, false);
         ingredients = new ArrayList<>();
         context = getActivity();
+        // get bundle with recipe ID/KEY
         recipeID = getArguments().getString(getResources().getString(R.string.key_recipe_id));
+        // Text view that displays the portion size
         txt_portions = rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_portions);
+        // Setup seek bar that adjusts the portion sizes
         seekBar = rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_seekBar);
         seekBar.setMax(11);
+        // Setup list view
         listview = rootViewInfo.findViewById(R.id.fragment_recipe_ingredients_listview);
 
         return rootViewInfo;
@@ -56,13 +65,15 @@ public class RecipeFragmentIngredients extends Fragment {
         MatbitDatabase.recipe(recipeID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                // Create recipe
                 recipe = new Recipe(dataSnapshot);
-                for (Ingredient ingredient : recipe.getData().getIngredients().values()) {
-                    ingredients.add(ingredient);
-                }
+                // Collect all ingredients from recipe
+                ingredients.addAll(recipe.getData().getIngredients().values());
+                // Set portion size and adjust seek bar accordingly
                 portions = recipe.getData().getPortions();
                 txt_portions.setText(Integer.toString(portions) + " porsjoner");
                 seekBar.setProgress(portions - 1);
+                // Add ingredients to adapter and set adapter with list view
                 ingredientRecipeAdapter = new IngredientRecipeAdapter(context, ingredients);
                 listview.setAdapter(ingredientRecipeAdapter);
             }
@@ -72,6 +83,8 @@ public class RecipeFragmentIngredients extends Fragment {
             }
         });
 
+        // When user uses the seek bar, adjust the ingredient portion size accordingly and update the
+        // ingredient amount.
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {

@@ -71,7 +71,7 @@ public class AddRecipeFragmentInfo extends Fragment {
         });
 
         ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
-        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().isEmpty()) {
             btn_delete.setVisibility(View.GONE);
         }
         btn_delete.setOnClickListener(new View.OnClickListener() {

@@ -1,6 +1,9 @@
 package net.r3dcraft.matbit;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,7 +27,7 @@ import java.util.List;
  * with a specified comparator. Adding and removing Recipe-objects goes automatic with this class.
  */
 
-public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
+public class UserRecipeAdapter extends RecyclerView.Adapter<UserRecipeAdapter.RecipeViewHolder> {
     private static final String TAG = "RecipeAdapter";
 
     /**
@@ -72,6 +75,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     private Context context;
     private Comparator<Recipe> comparator;
+    private boolean userIsAuthor = false;
 
     /**
      *
@@ -81,9 +85,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
      * @param context - the context of the Activity that constructs this adapter
      * @param comparator - a custom comparator that compares Recipes-objects
      */
-    public RecipeAdapter(Context context, Comparator<Recipe> comparator) {
+    public UserRecipeAdapter(Context context, Comparator<Recipe> comparator, boolean userIsAuthor) {
         this.context = context;
         this.comparator = comparator;
+        this.userIsAuthor = userIsAuthor;
     }
 
     /**
@@ -176,7 +181,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public RecipeViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
-                inflate(R.layout.search_item, viewGroup, false);
+                inflate(R.layout.recipe_item, viewGroup, false);
 
         return new RecipeViewHolder(itemView, context);
     }
@@ -186,35 +191,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
      */
     public static class RecipeViewHolder extends RecyclerView.ViewHolder {
         protected Recipe recipe;
-        private ImageView vRecipePhoto;
-        private ImageView vUserPhoto;
+        private ImageView vThumbnail;
         private TextView vRecipeInfo;
         private TextView vRecipeTitle;
 
         public RecipeViewHolder(final View view, final Context context) {
             super(view);
-            vRecipePhoto = view.findViewById(R.id.search_item_recipe_photo);
-            vUserPhoto = view.findViewById(R.id.search_item_user_photo);
-            vRecipeTitle = view.findViewById(R.id.search_item_recipe_title);
-            vRecipeInfo = view.findViewById(R.id.search_item_recipe_info);
-
-            vRecipePhoto.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    MatbitDatabase.goToRecipe(context, recipe);
-                }
-            });
-
-            vUserPhoto.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    MatbitDatabase.goToUser(context, recipe.getData().getUser());
-                }
-            });
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    MatbitDatabase.goToRecipe(context, recipe);
-                }
-            });
+            vThumbnail = view.findViewById(R.id.recipe_item_thumbnail);
+            vRecipeTitle = view.findViewById(R.id.recipe_item_title);
+            vRecipeInfo = view.findViewById(R.id.recipe_item_info);
         }
     }
 
@@ -237,8 +222,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             public void onDataChange(DataSnapshot dataSnapshot) {
                 recipeViewHolder.vRecipeInfo.setText(String.format(
                         context.getResources().getString(R.string.format_recipe_information),
-                        dataSnapshot.child("nickname").getValue(String.class),
-                        RECIPE.getThumbsUp(), RECIPE.getTimeToText(), RECIPE.getData().getCategory())
+                        RECIPE.getData().getDatetime_created(),
+                        RECIPE.getThumbsUp(),
+                        RECIPE.getTimeToText(),
+                        RECIPE.getData().getCategory())
                 );
             }
 
@@ -248,7 +235,44 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             }
         });
 
-        MatbitDatabase.recipePictureToImageView(RECIPE.getId(), context, recipeViewHolder.vRecipePhoto);
-        MatbitDatabase.userPictureToImageView(RECIPE.getData().getUser(), context, recipeViewHolder.vUserPhoto);
+        // Load recipe photo into thumbnail
+        MatbitDatabase.recipePictureToImageView(RECIPE.getId(), context, recipeViewHolder.vThumbnail);
+
+        // Set onclick listener for when the user clicks on the recipe item layout
+        recipeViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MatbitDatabase.goToRecipe(context, RECIPE);
+            }
+        });
+
+        // If user is author, add long click listener for deleting recipe
+        if (userIsAuthor) {
+            recipeViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // Show dialog box for next step
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle(R.string.string_delete_recipe)
+                            .setCancelable(false)
+                            .setMessage(R.string.string_are_you_sure_you_want_to_delete_this_recipe)
+                            .setIcon(R.drawable.icon_delete_black_24dp)
+                            .setPositiveButton(R.string.string_delete, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    MatbitDatabase.deleteRecipe(RECIPE.getId());
+                                    context.startActivity(new Intent(context, MainActivity.class));
+                                }
+
+                            })
+                            .setNegativeButton(R.string.string_cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    builder.show();
+                    return true;
+                }
+            });
+        }
     }
 }

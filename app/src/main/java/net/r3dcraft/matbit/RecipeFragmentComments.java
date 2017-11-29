@@ -21,17 +21,20 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
+ *
+ * This is one of the fragments in RecipeActivity that is created in the view pager. This displays
+ * the recipe comments in a recycler list.
  */
-
 public class RecipeFragmentComments extends Fragment {
     private static final String TAG = "RecipeFragmentComments";
     private Context context;
     private String recipeID;
     private Recipe recipe;
-    private CommentAdapter commentAdaptert;
+    private CommentAdapter commentAdapter;
     private EditText editText_comment;
     private RecyclerView recyclerView;
 
@@ -45,27 +48,30 @@ public class RecipeFragmentComments extends Fragment {
         Button btn_comment = rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_button);
         TextInputLayout textInputLayout = rootViewInfo.findViewById(R.id.fragment_recipe_comments_write_comment_txt_layout);
 
+        // If user is signed in, display write-comment layout so that the user can write comments
         if (MatbitDatabase.hasUser()) {
             comment_message.setVisibility(View.GONE);
             btn_comment.setVisibility(View.VISIBLE);
             textInputLayout.setVisibility(View.VISIBLE);
         }
 
+        // Set up recycler view
         recyclerView = rootViewInfo.findViewById(R.id.fragment_recipe_comments_recycler_view);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        commentAdaptert = new CommentAdapter(context, recipeID, Comment.DATE_COMPARATOR_DESC);
-        recyclerView.setAdapter(commentAdaptert);
+        // Create & set comment adapter
+        commentAdapter = new CommentAdapter(context, recipeID, Comment.DATE_COMPARATOR_DESC);
+        recyclerView.setAdapter(commentAdapter);
 
-        // Add new comment
+        // On click --> Add new comment to the database and to this recycler list
         btn_comment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String comment_string = editText_comment.getText().toString();
                 if (comment_string.trim().length() < 1) {
-                    editText_comment.setError("Kommentar kan ikke være tom!");
+                    editText_comment.setError(getString(R.string.error_comment_cant_be_empty));
                 } else {
-                    recipe.addComment(comment_string);
+                    Recipe.addComment(recipe.getId(), recipe.getData().getUser_nickname(), comment_string);
                     editText_comment.setText("");
                     editText_comment.clearFocus();
                     // Hide keyboard
@@ -90,17 +96,17 @@ public class RecipeFragmentComments extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        // Get recipe information
+        // Get recipe information and fill comment recycle list at activity start.
         MatbitDatabase.recipe(recipeID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                commentAdapter.clear();
                 recipe = new Recipe(dataSnapshot);
-
-                List<Comment> comments = new ArrayList<Comment>();
-                comments.addAll(recipe.getData().getComments().values());
-
-                commentAdaptert.add(comments);
-
+                for (Map.Entry<String, Comment> ratingSet : recipe.getData().getComments().entrySet()) {
+                    Comment comment = ratingSet.getValue();
+                    comment.setKey(ratingSet.getKey());
+                    commentAdapter.add(comment);
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

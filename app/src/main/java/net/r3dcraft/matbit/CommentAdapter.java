@@ -2,6 +2,7 @@ package net.r3dcraft.matbit;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.RecyclerView;
@@ -27,7 +28,6 @@ import java.util.List;
  * This Comment adapter extends the RecyclerView and keeps track of comments as well as sorting them
  * with a specified comparator. Adding and removing Comment-objects is goes automatic with this class.
  */
-
 class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
     private final static String TAG = "CommentAdapter";
 
@@ -156,6 +156,14 @@ class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHold
     }
 
     /**
+     * Delete all comments in the sortedList.
+     */
+    public void clear() {
+        sortedCommentList.clear();
+        notifyDataSetChanged();
+    }
+
+    /**
      *
      * @return the number of Comment objects stored in this adapter.
      */
@@ -185,7 +193,6 @@ class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHold
      * A CommentViewHolder class that holds and sets a comment layout.
      */
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
-        public String USER_UID; // User ID (not yet implemented)
         private ImageView img_user; // Photo of the Author
         private TextView txt_text; // The comment
         private TextView txt_info; // Info for displaying post-date
@@ -210,75 +217,70 @@ class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHold
     @Override
     public void onBindViewHolder(final CommentAdapter.CommentViewHolder commentViewHolder, int i) {
         final Comment COMMENT = sortedCommentList.get(i); // Get Comment
-        final String USER_UID = COMMENT.getUser(); // Get Comment Author
 
-        // Get Author
-        MatbitDatabase.getUser(USER_UID).addListenerForSingleValueEvent(new ValueEventListener()  {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Authors "nickname"
-                final String USERNAME = dataSnapshot.child("nickname").getValue(String.class);
+        // Load and display Author photo
+        MatbitDatabase.userPictureToImageView(COMMENT.getUser(), context, commentViewHolder.img_user);
 
-                // Load and display Author photo
-                MatbitDatabase.userPictureToImageView(COMMENT.getUser(), context, commentViewHolder.img_user);
+        // Set comment text. Use HTML tags to add colors to the nickname
+        commentViewHolder.txt_text.setText(Html.fromHtml("<b><font color='#c62828'>"
+                + COMMENT.getUserNickname() + "</font></b> "
+                + COMMENT.getComment()));
 
-                // Set comment text. Use HTML tags to add colors to the nickname
-                commentViewHolder.txt_text.setText(Html.fromHtml("<b><font color='#c62828'>"
-                        + USERNAME + "</font></b> "
-                        + COMMENT.getComment()));
+        // Set comment info (post date)
+        commentViewHolder.txt_info.setText(COMMENT.getDatetimeCreated());
 
-                // Set comment info (post date)
-                commentViewHolder.txt_info.setText(COMMENT.getDatetimeCreated());
+        // Set edit comment icon visibility
+        if (MatbitDatabase.hasUser() && MatbitDatabase.getCurrentUserUID().equals(COMMENT.getUser()))
+            commentViewHolder.img_edit.setVisibility(View.VISIBLE);
+        else
+            commentViewHolder.img_edit.setVisibility(View.INVISIBLE);
 
-                if (MatbitDatabase.hasUser())
-                    if (MatbitDatabase.getCurrentUserUID().equals(USER_UID))
-                        commentViewHolder.img_edit.setVisibility(View.VISIBLE);
-
-                // If user clicks on author profile picture, user is taken to author's profile.
-                commentViewHolder.img_user.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        MatbitDatabase.goToUser(context, USER_UID);
-                    }
-                });
-
-                // [UNFINISHED] If user clicks on edit symbol, user is prompted with a dialog where
-                // the user can change the comment.
-                commentViewHolder.img_edit.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        // Show dialog box for next step
-                        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
-                        builder.setTitle(R.string.string_change_comment);
-
-                        // Set up dialog layout
-                        View view = LayoutInflater.from(context).inflate(R.layout.alert_dialog_layout_edit_comment, null);
-                        final AppCompatEditText input = view.findViewById(R.id.alert_dialog_layout_edit_comment_edittext);
-                        input.setText(COMMENT.getComment());
-                        builder.setView(view);
-
-                        // Set up the buttons
-                        builder.setPositiveButton(R.string.string_save, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(context, "Denne er ikke ferdig - Thomas", Toast.LENGTH_SHORT).show();
-                                //txt_text.setText(input.getText().toString());
-                                //Recipe.changeComment(recipeUID, COMMENT_UID, input.getText().toString());
-                            }
-                        });
-                        builder.setNegativeButton(R.string.string_cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                        // Show dialog
-                        builder.show();
-                    }
-                });
+        // If user clicks on author profile picture, user is taken to author's profile.
+        commentViewHolder.img_user.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                MatbitDatabase.goToUser(context, COMMENT.getUser());
             }
+        });
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "Get user:onCancelled", databaseError.toException());
+        // If user clicks on edit symbol, user is prompted with a dialog where
+        // the user can change the comment.
+        commentViewHolder.img_edit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Show dialog box for next step
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+                builder.setTitle(R.string.string_change_comment);
+
+                // Set up dialog layout
+                View view = LayoutInflater.from(context).inflate(R.layout.alert_dialog_layout_edit_comment, null);
+                final AppCompatEditText input = view.findViewById(R.id.alert_dialog_layout_edit_comment_edittext);
+                input.setText(COMMENT.getComment());
+                builder.setView(view);
+                builder.setIcon(R.drawable.icon_edit_black_24dp);
+                // Set up the buttons
+                builder.setPositiveButton(R.string.string_save, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Recipe.changeComment(recipeID, COMMENT.getKey(), input.getText().toString());
+                    }
+                });
+                builder.setNegativeButton(R.string.string_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.setNeutralButton(R.string.string_delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        boolean deletion_successful = Recipe.deleteComment(recipeID, COMMENT);
+                        if (!deletion_successful)
+                            Toast.makeText(context, R.string.error_something_went_wrong_comment_not_deleted, Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(context, R.string.string_comment_is_deleted, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                // Show dialog
+                builder.show();
             }
         });
     }

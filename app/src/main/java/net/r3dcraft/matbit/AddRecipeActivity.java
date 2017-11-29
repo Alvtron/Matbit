@@ -52,7 +52,7 @@ public class AddRecipeActivity extends AppCompatActivity {
 
         // Get current user data
         if (MatbitDatabase.hasUser())
-            MatbitDatabase.getCurrentUser().addListenerForSingleValueEvent(new ValueEventListener() {
+            MatbitDatabase.getUser().addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // Create user and store it in a user-object

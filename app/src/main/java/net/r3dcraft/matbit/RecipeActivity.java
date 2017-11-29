@@ -14,10 +14,16 @@ import android.widget.Toast;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017.
+ *
+ * The RecipeActivity displays most of the information about a specific recipe. It includes a view
+ * pager that holds four fragments: info, ingredients, steps and comments. These are navigated by
+ * swiping to right or using the tab layout in the top.
+ *
+ * If the current signed in user is the author of a recipe, an edit icon will be set visible in the
+ * top-right corner.
  */
 
 public class RecipeActivity extends AppCompatActivity {
-
     private static String TAG = "RecipeActivity";
     private static Context context;
     private Toolbar toolbar;
@@ -37,20 +43,21 @@ public class RecipeActivity extends AppCompatActivity {
         bundle = getIntent().getExtras();
         recipeID = bundle.getString(getResources().getString(R.string.key_recipe_id));
         authorID = bundle.getString(getResources().getString(R.string.key_user_id));
-        if (recipeID == null || recipeID.trim().equals("")) {
+        if (recipeID == null || recipeID.isEmpty()) {
             Toast.makeText(context, R.string.string_this_recipe_is_unreadable, Toast.LENGTH_SHORT).show();
             finish();
         }
 
         // Set up toolbar
-        toolbar = findViewById(R.id.activity_recipe_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        recipeTabAdapter = new RecipeTabAdapter(getSupportFragmentManager(), bundle);
+        setUpToolBar();
 
         // Set up the ViewPager with the sections adapter.
+        setUpTabViewLayout();
+    }
+
+    private void setUpTabViewLayout() {
+        recipeTabAdapter = new RecipeTabAdapter(getSupportFragmentManager(), bundle);
+
         viewPager = findViewById(R.id.activity_main_container);
         viewPager.setAdapter(recipeTabAdapter);
 
@@ -60,6 +67,13 @@ public class RecipeActivity extends AppCompatActivity {
         tabLayout.getTabAt(1).setIcon(R.drawable.icon_ingredients_white_24dp);
         tabLayout.getTabAt(2).setIcon(R.drawable.icon_list_white_24dp);
         tabLayout.getTabAt(3).setIcon(R.drawable.icon_comment_white_24dp);
+    }
+
+    private void setUpToolBar() {
+        toolbar = findViewById(R.id.activity_recipe_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     @Override

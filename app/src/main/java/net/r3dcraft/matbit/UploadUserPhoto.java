@@ -17,6 +17,9 @@ import java.net.URL;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 22.10.2017.
+ *
+ * This UploadUserPhoto class extends AsyncTask and upload user photo(s) from Google to Firebase
+ * Storage. I use this class to upload new user photos to Firebase Storage.
  */
 
 class UploadUserPhoto extends AsyncTask<Uri, Void, Void> {
@@ -29,6 +32,12 @@ class UploadUserPhoto extends AsyncTask<Uri, Void, Void> {
         // do something
     }
 
+    /**
+     * Task to do in background. Provide a photo Uri to download, then upload to Google Firebase with
+     * signed in user's ID/KEY.
+     * @param uris Uri(s) of user photo
+     * @return void
+     */
     @Override
     protected Void doInBackground(Uri... uris) {
         StorageReference reference = MatbitDatabase.getUserPhoto(MatbitDatabase.getCurrentUserUID());
@@ -63,7 +72,6 @@ class UploadUserPhoto extends AsyncTask<Uri, Void, Void> {
         }
         return null;
     }
-
 
     @Override
     protected void onPostExecute(Void v) {

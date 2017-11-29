@@ -26,7 +26,7 @@ public class MatbitApplication extends Application {
         super.onCreate();
         instance = this;
         // Set Google Firebase Persistence Mode
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(false);
     }
 
     /**

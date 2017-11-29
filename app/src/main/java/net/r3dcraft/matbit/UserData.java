@@ -32,12 +32,12 @@ public class UserData {
     private Map<String, String> favorites;
 
     public UserData() {
-        nickname = new String();
-        gender = new String();
-        birthday = new String();
-        signUpDate = new String();
-        lastLoginDate = new String();
-        bio = new String();
+        nickname = "";
+        gender = "";
+        birthday = "";
+        signUpDate = "";
+        lastLoginDate = "";
+        bio = "";
         exp = -1;
         num_followers = -1;
         num_recipes = -1;

@@ -74,7 +74,7 @@ public class AddRecipeFragmentPortions extends Fragment {
         });
 
         ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
-        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().isEmpty()) {
             btn_delete.setVisibility(View.GONE);
         }
         btn_delete.setOnClickListener(new View.OnClickListener() {
@@ -114,14 +114,14 @@ public class AddRecipeFragmentPortions extends Fragment {
                 try {
                     int portions = Integer.parseInt(editPortions.getText().toString());
                     if (portions <= 0)
-                        editPortions.setError("Oisann! Dette er for lavt!");
+                        editPortions.setError(getString(R.string.error_this_is_too_low));
                     else if (portions > 12)
-                        editPortions.setError("Oisann! Dette er for høyt");
+                        editPortions.setError(getString(R.string.error_this_is_too_high));
                     else
                         pagerAdapter.getRecipe().getData().setPortions(portions);
                 }
                 catch (NumberFormatException e) {
-                    editPortions.setError("Oisann! Dette er ikke et gyldig nummer!");
+                    editPortions.setError(getString(R.string.error_this_is_not_a_valid_number));
                 }
             }
 

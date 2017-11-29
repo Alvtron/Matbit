@@ -77,7 +77,7 @@ public class AddRecipeFragmentTitle extends Fragment {
         });
 
         ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
-        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().isEmpty()) {
             btn_delete.setVisibility(View.GONE);
         }
         btn_delete.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +109,8 @@ public class AddRecipeFragmentTitle extends Fragment {
         // -----------------------------------------------------------------------------------------
 
         editTitle = view.findViewById(R.id.activity_add_recipe_title);
-        editTitle.setText(pagerAdapter.getRecipe().getData().getTitle());
+        if (pagerAdapter.getRecipe().hasTitle())
+            editTitle.setText(pagerAdapter.getRecipe().getData().getTitle());
         editTitle.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {

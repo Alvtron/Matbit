@@ -7,6 +7,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 24.10.2017.
+ *
+ * The RecipeTabAdapter class extends FragmentPagerAdapter and initializes and loads all the
+ * fragments in the RecipeActivity in order, with a tab layout. It also sets the correct titles to
+ * each fragment.
  */
 
 public class RecipeTabAdapter extends FragmentPagerAdapter {
@@ -20,6 +24,11 @@ public class RecipeTabAdapter extends FragmentPagerAdapter {
     private RecipeFragmentSteps fragmentRecipeSteps;
     private RecipeFragmentComments fragmentRecipeComments;
 
+    /**
+     * RecipeTabAdapter Constructor
+     * @param fm
+     * @param bundle Bundle from RecipeActivity with recipe ID/KEY
+     */
     public RecipeTabAdapter(FragmentManager fm,  Bundle bundle) {
         super(fm);
         this.fragmentRecipeInfo = new RecipeFragmentInfo();
@@ -32,6 +41,11 @@ public class RecipeTabAdapter extends FragmentPagerAdapter {
         this.fragmentRecipeComments.setArguments(bundle);
     }
 
+    /**
+     * Get fragment at position.
+     * @param position position of requested fragment
+     * @return requested fragment
+     */
     @Override
     public Fragment getItem(int position) {
         switch (position) {
@@ -49,11 +63,20 @@ public class RecipeTabAdapter extends FragmentPagerAdapter {
         return null;
     }
 
+    /**
+     * Get the amount of fragments is this adapter
+     * @return amount of fragments
+     */
     @Override
     public int getCount() {
         return 4;
     }
 
+    /**
+     * Get the title of a specific fragment.
+     * @param position position of fragment
+     * @return title of fragment
+     */
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {
@@ -69,53 +92,5 @@ public class RecipeTabAdapter extends FragmentPagerAdapter {
                 break;
         }
         return null;
-    }
-
-    public RecipeFragmentInfo getFragmentRecipeInfo() {
-        return fragmentRecipeInfo;
-    }
-
-    public void setFragmentRecipeInfo(RecipeFragmentInfo fragmentRecipeInfo) {
-        this.fragmentRecipeInfo = fragmentRecipeInfo;
-    }
-
-    public RecipeFragmentIngredients getFragmentRecipeIngredients() {
-        return fragmentRecipeIngredients;
-    }
-
-    public void setFragmentRecipeIngredients(RecipeFragmentIngredients fragmentRecipeIngredients) {
-        this.fragmentRecipeIngredients = fragmentRecipeIngredients;
-    }
-
-    public RecipeFragmentSteps getFragmentRecipeSteps() {
-        return fragmentRecipeSteps;
-    }
-
-    public void setFragmentRecipeSteps(RecipeFragmentSteps fragmentRecipeSteps) {
-        this.fragmentRecipeSteps = fragmentRecipeSteps;
-    }
-
-    public RecipeFragmentComments getFragmentRecipeComments() {
-        return fragmentRecipeComments;
-    }
-
-    public void setFragmentRecipeComments(RecipeFragmentComments fragmentRecipeComments) {
-        this.fragmentRecipeComments = fragmentRecipeComments;
-    }
-
-    public void setInfoBundle(Bundle bundle) {
-        fragmentRecipeInfo.setArguments(bundle);
-    }
-
-    public void setIngredientsBundle(Bundle bundle) {
-        fragmentRecipeIngredients.setArguments(bundle);
-    }
-
-    public void setStepsBundle(Bundle bundle) {
-        fragmentRecipeSteps.setArguments(bundle);
-    }
-
-    public void setCommentBundle(Bundle bundle) {
-        fragmentRecipeComments.setArguments(bundle);
     }
 }

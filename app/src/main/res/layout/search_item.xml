@@ -23,8 +23,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/search_item_user_photo"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/thumbnail"
+            android:layout_height="@dimen/thumbnail"
             android:scaleType="centerCrop"
             card_view:layout_constraintLeft_toLeftOf="parent"
             android:src="@color/cardview_shadow_start_color"
@@ -36,7 +36,6 @@
             android:id="@+id/search_item_recipe_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Recipe title"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:minLines="1"
@@ -51,7 +50,6 @@
             android:id="@+id/search_item_recipe_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="username info • 79% liked  • 1:30"
             android:textColor="@android:color/darker_gray"
             android:textSize="14sp"
             android:minLines="1"

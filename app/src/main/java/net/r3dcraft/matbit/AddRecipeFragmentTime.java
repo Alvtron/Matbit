@@ -1,6 +1,7 @@
 package net.r3dcraft.matbit;
 
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +34,6 @@ public class AddRecipeFragmentTime extends Fragment {
     private Context context;
     private ViewPager viewPager;
     private AddRecipePagerAdapter pagerAdapter;
-    private int hours, minutes;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,7 +75,7 @@ public class AddRecipeFragmentTime extends Fragment {
         });
 
         ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
-        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().isEmpty()) {
             btn_delete.setVisibility(View.GONE);
         }
         btn_delete.setOnClickListener(new View.OnClickListener() {
@@ -105,48 +106,29 @@ public class AddRecipeFragmentTime extends Fragment {
 
         // -----------------------------------------------------------------------------------------
 
-        List<Integer> timeValues = new ArrayList<Integer>();
-        for (int i = 0; i <= 60; i++) {
-            timeValues.add(i);
-        }
+        // Set timer text
+        final TextView txt_time = view.findViewById(R.id.activity_add_recipe_time);
+        // If there already is a timer set, display that time. Else display 0:0.
+        if (pagerAdapter.getRecipe().hasTime())
+            txt_time.setText(String.format(getString(R.string.format_hours_minutes), pagerAdapter.getRecipe().getData().getTime() / 60, pagerAdapter.getRecipe().getData().getTime() % 60));
+        else
+            txt_time.setText(String.format(getString(R.string.format_hours_minutes), 0, 0));
 
-        hours = pagerAdapter.getRecipe().getData().getTime() / 60;
-        minutes = pagerAdapter.getRecipe().getData().getTime() % 60;
-
-        // Hour spinner
-        Spinner spinnerTimeHour = view.findViewById(R.id.activity_add_recipe_time_hours);
-        ArrayAdapter<Integer> hourAdapter = new ArrayAdapter<Integer>(context, android.R.layout.simple_spinner_item, timeValues);
-        hourAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTimeHour.setAdapter(hourAdapter);
-        spinnerTimeHour.setSelection(hourAdapter.getPosition(hours));
-
-        spinnerTimeHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                hours = (int)parent.getItemAtPosition(position);
-                pagerAdapter.getRecipe().getData().setTime(hours * 60 + minutes);
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        // Minute spinner
-        Spinner spinnerTimeMinutes = view.findViewById(R.id.activity_add_recipe_time_minutes);
-        ArrayAdapter<Integer> minutesAdapter = new ArrayAdapter<Integer>(context, android.R.layout.simple_spinner_item, timeValues);
-        minutesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTimeMinutes.setAdapter(minutesAdapter);
-        spinnerTimeMinutes.setSelection(minutesAdapter.getPosition(minutes));
-
-        spinnerTimeMinutes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                minutes = (int)parent.getItemAtPosition(position);
-                pagerAdapter.getRecipe().getData().setTime(hours * 60 + minutes);
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-
+        // When user click time, a timer picker dialog is shown.
+        txt_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        txt_time.setText(String.format(getString(R.string.format_hours_minutes), selectedHour, selectedMinute));
+                        pagerAdapter.getRecipe().getData().setTime(selectedHour * 60 + selectedMinute);
+                    }
+                }, 0, 0, true);
+                timePickerDialog.setTitle(getString(R.string.string_choose_time));
+                timePickerDialog.show();
             }
         });
-
         return view;
     }
 }

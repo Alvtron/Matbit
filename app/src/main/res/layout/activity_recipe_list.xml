@@ -24,6 +24,7 @@
         app:layout_constraintTop_toBottomOf="@+id/activity_search_toolbar"
         app:layout_constraintLeft_toLeftOf="parent"
         android:elevation="2dp"
+        android:gravity="center"
         android:spinnerMode="dialog"/>
 
     <android.support.v7.widget.AppCompatSpinner style="@android:style/Widget.Spinner"
@@ -34,6 +35,7 @@
         android:layout_marginTop="16dp"
         android:spinnerMode="dialog"
         android:elevation="2dp"
+        android:gravity="center"
         android:background="@drawable/shape_spinner_item_rounded"
         app:layout_constraintTop_toBottomOf="@+id/activity_search_toolbar"
         app:layout_constraintLeft_toRightOf="@+id/activity_search_filter_spinner" />
@@ -50,12 +52,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/activity_search_recyclerview"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_height="0dp"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </android.support.constraint.ConstraintLayout>

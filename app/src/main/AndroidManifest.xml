@@ -45,6 +45,10 @@
             android:label="@string/title_activity_edit_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".UserRecipeListActivity"
+            android:label="@string/title_user_recipes"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".RecipeActivity"
             android:label="@string/title_activity_recipe"
             android:theme="@style/AppTheme.NoActionBar" />

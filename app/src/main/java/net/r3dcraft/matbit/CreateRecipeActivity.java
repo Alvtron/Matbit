@@ -61,7 +61,7 @@ public class CreateRecipeActivity extends AppCompatActivity {
             Toast.makeText(context, R.string.string_this_recipe_is_unreadable, Toast.LENGTH_SHORT).show();
             finish();
         }
-        if (recipeID.trim().equals("")) {
+        if (recipeID.isEmpty()) {
             Toast.makeText(context, R.string.string_this_recipe_is_unreadable, Toast.LENGTH_SHORT).show();
             finish();
         }

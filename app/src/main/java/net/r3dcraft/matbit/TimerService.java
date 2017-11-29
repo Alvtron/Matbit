@@ -9,12 +9,16 @@ import android.os.SystemClock;
 /**
  * Created by Thomas Angeland, student at Ostfold University College, on 04.11.2017.
  * Sourced from: https://stackoverflow.com/questions/19741477/timer-in-background
+ *
+ * The TimerService class extends service and takes the time in as a background operation. I use this
+ * in the create recipe fragment to time how long the user 'creates' the recipe. This data is used
+ * to calculate a new average cook time for a recipe (if user agree to it).
  */
 
 public class TimerService extends Service {
 
     private Intent intent;
-    public static final String BROADCAST_ACTION = "com.javacodegeeks.android.androidtimerexample.MainActivity";
+    public static final String BROADCAST_ACTION = "net.r3dcraft.matbit.TimerService";
 
     private Handler handler = new Handler();
     private long initial_time;
@@ -30,6 +34,9 @@ public class TimerService extends Service {
 
     }
 
+    /**
+     * Send updates to UI.
+     */
     private Runnable sendUpdatesToUI = new Runnable() {
         public void run() {
             DisplayLoggingInfo();
@@ -37,10 +44,11 @@ public class TimerService extends Service {
         }
     };
 
+    /**
+     * Display logging info.
+     */
     private void DisplayLoggingInfo() {
-
         timeInMilliseconds = SystemClock.uptimeMillis() - initial_time;
-
         int timer = (int) timeInMilliseconds / 1000;
         intent.putExtra("time", timer);
         sendBroadcast(intent);
@@ -53,8 +61,6 @@ public class TimerService extends Service {
         handler.removeCallbacks(sendUpdatesToUI);
 
     }
-
-
 
     @Override
     public IBinder onBind(Intent intent) {

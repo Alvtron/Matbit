@@ -16,35 +16,17 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- User Input: Recipe time -->
-    <android.support.v7.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center">
-
-        <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/activity_add_recipe_time_hours"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
         <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/activity_add_recipe_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/symbol_semicolon"/>
-
-        <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/activity_add_recipe_time_minutes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
-
-    </android.support.v7.widget.LinearLayoutCompat>
-
+            android:textSize="48sp"
+            android:textColor="@color/colorAccent"
+            android:padding="@dimen/activity_vertical_margin"
+            app:layout_constraintBottom_toTopOf="@id/activity_add_recipe_bottom_navigator_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activity_add_recipe_header_time"/>
     <!-- Bottom navigation -->
     <include
         layout="@layout/fragment_add_recipe_bottom_navigator"

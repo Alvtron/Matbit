@@ -6,13 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -33,10 +30,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Created by Thomas Angeland, student at Ostfold University College, on 21.10.2017.
+ *
+ * The UserEditActivity Class is made to edit users database information. It was made quickly to
+ * let the user upload a new profile photo and pick a nickname which is mandatory.
+ */
+
+
 public class UserEditActivity extends AppCompatActivity {
     private final static String TAG = "UserEditActivity";
     private Context context;
-    private Toolbar toolbar;
     private EditText edit_text_nickname;
     private EditText edit_text_bio;
     private EditText edit_text_gender;
@@ -60,17 +64,20 @@ public class UserEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_edit);
         context = this;
 
-        toolbar = findViewById(R.id.activity_edit_user_profile_toolbar);
+        // setup toolbar
+        Toolbar toolbar = findViewById(R.id.activity_edit_user_profile_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        // Set up views
         img_user_photo = findViewById(R.id.activity_edit_user_profile_photo);
         edit_text_nickname = findViewById(R.id.activity_edit_user_nickname_edit_text);
         edit_text_bio = findViewById(R.id.activity_edit_user_bio_edit_text);
         edit_text_gender = findViewById(R.id.activity_edit_user_gender_edit_text);
         btn_save = findViewById(R.id.activity_edit_user_btn_action);
 
+        // set onclick listener on profile photo
         img_user_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,8 +85,9 @@ public class UserEditActivity extends AppCompatActivity {
             }
         });
 
+        // If user is logged in, load user database information into edit text views and profile photo.
         if (MatbitDatabase.hasUser()) {
-            MatbitDatabase.getCurrentUser().addListenerForSingleValueEvent(new ValueEventListener() {
+            MatbitDatabase.getUser().addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     user = new User(dataSnapshot);
@@ -91,25 +99,32 @@ public class UserEditActivity extends AppCompatActivity {
                     btn_save.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (edit_text_nickname.getText().toString().equals("")) {
+                            // If user entered empty nickname, display error and return
+                            if (edit_text_nickname.getText().toString().isEmpty()) {
                                 edit_text_nickname.setError(getResources().getString(R.string.error_its_empty_here));
                                 return;
                             }
+                            // If user entered a different nickname than the one stored in the
+                            // database, upload it
                             else if (!user.getData().getNickname().equals(edit_text_nickname.getText().toString())) {
                                 user.getData().setNickname(edit_text_nickname.getText().toString());
                                 user.uploadNickname();
                                 for (Map.Entry<String, String> recipe : user.getData().getRecipes().entrySet())
                                     MatbitDatabase.recipeUserNickname(recipe.getKey()).setValue(user.getData().getNickname());
                             }
+                            // If user entered a different bio than the one stored in the database,
+                            // upload it
                             if (!user.getData().getBio().equals(edit_text_bio.getText().toString())) {
                                 user.getData().setBio(edit_text_bio.getText().toString());
                                 user.uploadBio();
                             }
+                            // If user entered a different gender than the one stored in the
+                            // database, upload it
                             if (!user.getData().getGender().equals(edit_text_gender.getText().toString())) {
                                 user.getData().setGender(edit_text_gender.getText().toString());
                                 user.uploadGender();
                             }
-
+                            // Upload user photo if the photo is new.
                             if (new_user_photo) {
                                 UploadTask uploadTask = MatbitDatabase.getUserPhoto(user.getId()).putBytes(user_photo_in_bytes);
                                 uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -180,6 +195,9 @@ public class UserEditActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Create alert dialog and prompt user with the choice to choose photo from gallery or camera.
+     */
     private void selectImage() {
         final CharSequence[] items = {
                 getString(R.string.string_take_picture),
@@ -210,6 +228,9 @@ public class UserEditActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Create new phone gallery intent and start it.
+     */
     private void galleryIntent()
     {
         Intent intent = new Intent();
@@ -218,6 +239,9 @@ public class UserEditActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, getString(R.string.string_choose_picture)), SELECT_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
+    /**
+     * Create new camera intent and start it.
+     */
     private void cameraIntent()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -247,6 +271,10 @@ public class UserEditActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Adjust provided photo. Resize and compress it.
+     * @param source_image provided photo
+     */
     public void adjustBitmap(Bitmap source_image) {
         int MAX_WIDTH = 1080, MAX_HEIGHT = 1080;
         int width = source_image.getWidth();

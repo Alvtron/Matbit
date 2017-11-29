@@ -16,15 +16,19 @@ import java.util.Comparator;
 
 public class Comment {
     private String user;
+    private String userNickname;
     private String comment;
     private String datetimeCreated;
     private String datetimeUpdated;
+
+    @Exclude String key;
 
     /**
      * Default Comment constructor
      */
     public Comment() {
         user = "";
+        userNickname = "";
         comment = "";
         datetimeCreated = "";
         this.datetimeUpdated = "";
@@ -33,12 +37,14 @@ public class Comment {
     /**
      * Comment Constructor
      * @param user - Author of comment
+     * @param userNickname - Authors nickname of comment
      * @param comment - Comment text
      * @param datetimeCreated - String of date/time created, formatted by DateUtility
      * @param datetimeUpdated - String of date/time updated, formatted by DateUtility
      */
-    public Comment(String user, String comment, String datetimeCreated, String datetimeUpdated) {
+    public Comment(String user, String userNickname, String comment, String datetimeCreated, String datetimeUpdated) {
         this.user = user;
+        this.userNickname = userNickname;
         this.comment = comment;
         this.datetimeCreated = datetimeCreated;
         this.datetimeUpdated = datetimeUpdated;
@@ -50,6 +56,14 @@ public class Comment {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getUserNickname() {
+        return userNickname;
+    }
+
+    public void setUserNickname(String userNickname) {
+        this.userNickname = userNickname;
     }
 
     public String getComment() {
@@ -74,6 +88,16 @@ public class Comment {
 
     public void setDatetimeUpdated(String datetimeUpdated) {
         this.datetimeUpdated = datetimeUpdated;
+    }
+
+    @Exclude
+    public String getKey() {
+        return key;
+    }
+
+    @Exclude
+    public void setKey(String key) {
+        this.key = key;
     }
 
     /**

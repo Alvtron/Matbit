@@ -30,15 +30,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -48,18 +44,23 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 /**
+ *
+ * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017.
+ *
  * Firebase Authentication using a Google ID Token.
+ *
+ * Created by following Google's Google Sign-In-tutorial:
+ * https://firebase.google.com/docs/auth/android/google-signin
  */
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "SignInActivity";
     private Context context;
-    private static final int RC_SIGN_IN = 9001;
+    private static final int RC_SIGN_IN = 6464;
 
     private TextView mStatusTextView;
     private ProgressBar progressBar;
 
-    private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -71,11 +72,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         context = this;
 
-        // Views
+        // Initialize views
         mStatusTextView = findViewById(R.id.activity_signin_txt_status);
         progressBar = findViewById(R.id.activity_signin_progressbar);
 
-        // Button listeners
+        // Add button listeners
         findViewById(R.id.activity_signin_btn_sign_in).setOnClickListener(this);
         findViewById(R.id.activity_signin_btn_sign_out).setOnClickListener(this);
         findViewById(R.id.activity_signin_btn_continue).setOnClickListener(this);
@@ -85,19 +86,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 .requestIdToken(getString(R.string.web_client_id))
                 .requestEmail()
                 .build();
-
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        // initialize auth
-        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
+        // Update UI on start to tell user whether he/she is logged in or not
+        updateUI();
     }
 
     @Override
@@ -108,13 +104,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                // Google Sign In was successful, authenticate with Firebase
+                // Google sign in was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
+                // Google sign in failed, update UI
                 Log.w(TAG, "Google sign in failed", e);
-                updateUI(null);
+                updateUI();
             }
         }
     }
@@ -123,28 +119,34 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
+        MatbitDatabase.getAuth().signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(context, R.string.string_google_sign_in_failed_try_again_later, Toast.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
+                        updateUI();
                     }
                 });
     }
 
-    private void updateUI(FirebaseUser user){
+    /**
+     * Update UI according to whether user is logged in or not.
+     */
+    private void updateUI(){
+        // Refresh auth, user, database and storage references.
+        MatbitDatabase.refresh();
+        // Set progressbar invisible
         progressBar.setVisibility(View.INVISIBLE);
-        if (user != null) {
+
+        // If user is logged in, update UI with new welcome message and buttons
+        if (MatbitDatabase.hasUser()) {
             mStatusTextView.setText(Html.fromHtml(getString(R.string.html_welcome_back_message) + MatbitDatabase.getCurrentUserDisplayName() + "</b>"));
             findViewById(R.id.activity_signin_btn_sign_out).setVisibility(View.VISIBLE);
             findViewById(R.id.activity_signin_btn_continue).setVisibility(View.VISIBLE);
@@ -157,30 +159,49 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    /**
+     * Sign in user and update UI. Set progress bar visible to tell user something is happening.
+     * Disable and hide buttons so user don't accidentally navigates away.
+     */
     private void signIn() {
-        progressBar.setVisibility(View.VISIBLE);
-        findViewById(R.id.activity_signin_btn_sign_out).setVisibility(View.GONE);
-        findViewById(R.id.activity_signin_btn_continue).setVisibility(View.GONE);
-        findViewById(R.id.activity_signin_btn_sign_in).setVisibility(View.GONE);
-
+        // Set progress bar visible and buttons invisible
+        promptLoading();
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    /**
+     * Sign out user and update UI.
+     */
     private void signOut() {
+        // Set progress bar visible and buttons invisible
+        promptLoading();
         // Firebase sign out
-        mAuth.signOut();
-
+        MatbitDatabase.getAuth().signOut();
         // Google sign out
         mGoogleSignInClient.signOut().addOnCompleteListener(this,
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        finishAffinity();
+                        updateUI();
                     }
                 });
     }
 
+    /**
+     * Set progress bar visible and buttons invisible
+     */
+    private void promptLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+        findViewById(R.id.activity_signin_btn_sign_out).setVisibility(View.GONE);
+        findViewById(R.id.activity_signin_btn_continue).setVisibility(View.GONE);
+        findViewById(R.id.activity_signin_btn_sign_in).setVisibility(View.GONE);
+    }
+
+    /**
+     * Attach actions to each button
+     * @param v view
+     */
     @Override
     public void onClick(View v) {
         int i = v.getId();
@@ -189,7 +210,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         } else if (i == R.id.activity_signin_btn_sign_out) {
             signOut();
         } else if (i == R.id.activity_signin_btn_continue) {
-            if (MatbitDatabase.getCurrentUser() != null) {
+            if (MatbitDatabase.getUser() != null) {
                 MatbitDatabase.handleNewUserIfNew(context);
             }
             startActivity(new Intent(this, MainActivity.class));

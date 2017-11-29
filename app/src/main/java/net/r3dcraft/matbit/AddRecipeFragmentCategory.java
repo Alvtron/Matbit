@@ -69,7 +69,7 @@ public class AddRecipeFragmentCategory extends Fragment {
         });
 
         ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
-        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().isEmpty()) {
             btn_delete.setVisibility(View.GONE);
         }
         btn_delete.setOnClickListener(new View.OnClickListener() {
@@ -100,21 +100,25 @@ public class AddRecipeFragmentCategory extends Fragment {
 
         // -----------------------------------------------------------------------------------------
 
+        // Create category spinner with custom layout, fill it with resource string array
         Spinner spinnerCategory = view.findViewById(R.id.activity_add_recipe_category);
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(context, R.array.categories, android.R.layout.simple_spinner_item);
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(context, R.array.categories, R.layout.category_spinner_item);
+        categoryAdapter.setDropDownViewResource(R.layout.category_dropdown_item);
         spinnerCategory.setAdapter(categoryAdapter);
+
+        // Set selected category. If none is defined, select the first one
+        spinnerCategory.setSelection(0);
         if (pagerAdapter.getRecipe().hasCategory()) {
             int spinnerPosition = categoryAdapter.getPosition(pagerAdapter.getRecipe().getData().getCategory());
             spinnerCategory.setSelection(spinnerPosition);
         }
+
+        // Save category to recipe when user selects a category
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 pagerAdapter.getRecipe().getData().setCategory(parent.getItemAtPosition(position).toString());
             }
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         return view;

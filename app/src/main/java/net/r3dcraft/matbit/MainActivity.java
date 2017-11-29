@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,6 +42,7 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static String TAG = "MainActivity";
     private Context context;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private NewsFeedAdapter newsFeedAdapter;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -52,11 +54,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         context = this;
 
+        // Refresh auth, user, database and storage references.
+        MatbitDatabase.refresh();
+
         // Initialize toolbar
         toolbar = findViewById(R.id.activity_main_content_toolbar);
         setSupportActionBar(toolbar);
 
         // Setup RecyclerView
+        swipeRefreshLayout = findViewById(R.id.activity_main_swipeRefreshLayout);
         RecyclerView mRecyclerView = findViewById(R.id.activity_main_content_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -75,6 +81,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Create NewsFeed objects and add them to RecyclerList
         loadNewsFeedItems();
+
+        // On swipe to refresh listener: Load recipes from database.
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadNewsFeedItems();
+            }
+        });
     }
 
     /**
@@ -206,11 +220,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     newsFeedAdapter.add(most_popular_recipe);
                 if (newest_recipe != null)
                     newsFeedAdapter.add(newest_recipe);
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "loadRecipes: onCancelled", databaseError.toException());
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -224,9 +240,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onPrepareOptionsMenu(Menu menu) {
 
         MenuItem profile = navigationView.getMenu().findItem(R.id.nav_profile);
+        MenuItem my_recipes = navigationView.getMenu().findItem(R.id.nav_my_recipes);
 
         if(MatbitDatabase.hasUser()) {
             profile.setVisible(true);
+            my_recipes.setVisible(true);
         }
 
         return super.onPrepareOptionsMenu(menu);
@@ -256,6 +274,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // User clicked user profile. Go to current users profile.
         if (id == R.id.nav_profile) {
             MatbitDatabase.goToUser(context, MatbitDatabase.getCurrentUserUID());
+        } else if (id == R.id.nav_my_recipes) {
+            Intent intent = new Intent(context,  UserRecipeListActivity.class);
+            intent.putExtra(getString(R.string.key_user_id), MatbitDatabase.getCurrentUserUID());
+            startActivity(intent);
         }
 
         drawer.closeDrawer(GravityCompat.START);

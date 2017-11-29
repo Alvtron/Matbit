@@ -23,11 +23,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 /**
- * Created by Thomas Angeland, student at Ostfold University College, on 09.10.2017.
+ * Created by Thomas Angeland, student at Ostfold University College, on 29.11.2017.
  *
- * The SearchActivity displays all recipes in the database. It includes a recycler view that lists
- * all the recipes. The recycler is set with a RecipeAdapter which sorts the recipes in a SortList
- * with a specified comparator.
+ * The UserRecipeListActivity displays all recipes created by the specified user. It includes a
+ * recycler view that lists all the recipes. The recycler is set with a UserRecipeAdapter which sorts
+ * the recipes in a SortList with a specified comparator.
  *
  * The user can search recipes by using the search icon in the top right corner, as well as filtering
  * all the recipes on specific recipe data or categories.
@@ -35,15 +35,16 @@ import java.util.ArrayList;
  * The recycle view is nested in a swipe refresh layout and when swiped down, the list is updated
  * with the database.
  */
-
-public class SearchActivity extends AppCompatActivity {
-    private final String TAG = "SearchActivity";
+public class UserRecipeListActivity extends AppCompatActivity {
+    private final String TAG = "UserRecipeListActivity";
     Context context;
     Toolbar toolbar;
     private ArrayList<Recipe> recipes = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
-    private RecipeAdapter recipeAdapter;
+    private UserRecipeAdapter recipeAdapter;
+    private String userID;
+    private boolean userIsAuthor = false;
     private String current_filter = "";
     private String current_category = "";
     private String searchString = "";
@@ -59,6 +60,22 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recipe_list);
         context = this;
 
+        // Get bundle extras
+        Bundle bundle = getIntent().getExtras();
+        userID = bundle.getString(getString(R.string.key_user_id));
+
+        // Check if current user is author
+        userIsAuthor = userID.equals(MatbitDatabase.getCurrentUserUID());
+
+        // Set activity title
+        if (userIsAuthor)
+            setTitle(R.string.title_my_recipes);
+        else {
+            String userNickname = bundle.getString("nickname");
+            String title = String.format(getString(R.string.format_user_recipes), userNickname);
+            setTitle(title);
+        }
+
         // Set up toolbar
         toolbar = findViewById(R.id.activity_search_toolbar);
         setSupportActionBar(toolbar);
@@ -71,7 +88,7 @@ public class SearchActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        recipeAdapter = new RecipeAdapter(this, Recipe.DATE_COMPARATOR_DESC);
+        recipeAdapter = new UserRecipeAdapter(this, Recipe.DATE_COMPARATOR_DESC, userIsAuthor);
         recyclerView.setAdapter(recipeAdapter);
 
         // setup filter spinner
@@ -97,27 +114,27 @@ public class SearchActivity extends AppCompatActivity {
 
                 switch (current_filter) {
                     case "Nyeste":
-                        recipeAdapter = new RecipeAdapter(context, Recipe.DATE_COMPARATOR_DESC);
+                        recipeAdapter = new UserRecipeAdapter(context, Recipe.DATE_COMPARATOR_DESC, userIsAuthor);
                         recyclerView.setAdapter(recipeAdapter);
                         updateRecipeAdapter();
                         break;
                     case "Mest sett":
-                        recipeAdapter = new RecipeAdapter(context, Recipe.VIEWS_COMPARATOR_DESC);
+                        recipeAdapter = new UserRecipeAdapter(context, Recipe.VIEWS_COMPARATOR_DESC, userIsAuthor);
                         recyclerView.setAdapter(recipeAdapter);
                         updateRecipeAdapter();
                         break;
                     case "Mest likt":
-                        recipeAdapter = new RecipeAdapter(context, Recipe.RATING_COMPARATOR_DESC);
+                        recipeAdapter = new UserRecipeAdapter(context, Recipe.RATING_COMPARATOR_DESC, userIsAuthor);
                         recyclerView.setAdapter(recipeAdapter);
                         updateRecipeAdapter();
                         break;
                     case "Tid":
-                        recipeAdapter = new RecipeAdapter(context, Recipe.TIME_COMPARATOR_ASC);
+                        recipeAdapter = new UserRecipeAdapter(context, Recipe.TIME_COMPARATOR_ASC, userIsAuthor);
                         recyclerView.setAdapter(recipeAdapter);
                         updateRecipeAdapter();
                         break;
                     case "Alfabetisk":
-                        recipeAdapter = new RecipeAdapter(context, Recipe.ALPHABETICAL_COMPARATOR_ASC);
+                        recipeAdapter = new UserRecipeAdapter(context, Recipe.ALPHABETICAL_COMPARATOR_ASC, userIsAuthor);
                         recyclerView.setAdapter(recipeAdapter);
                         updateRecipeAdapter();
                         break;
@@ -158,21 +175,31 @@ public class SearchActivity extends AppCompatActivity {
         loadRecipes();
     }
 
-
     /**
      * Load recipes from database and store them to a list. Enable filter and category spinner.
      */
     private void loadRecipes() {
         recipes.clear();
         recipeAdapter.clear();
-        MatbitDatabase.RECIPES().addListenerForSingleValueEvent(new ValueEventListener() {
+        MatbitDatabase.getUserRecipes(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot recipesSnapshot : dataSnapshot.getChildren()) {
-                    Recipe recipe = new Recipe(recipesSnapshot, true);
-                    recipes.add(recipe);
+                    MatbitDatabase.recipe(recipesSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Log.d(TAG, "kek");
+                            Recipe recipe = new Recipe(dataSnapshot, true);
+                            recipes.add(recipe);
+                            updateRecipeAdapter();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.w(TAG, "loadRecipe:onCancelled", databaseError.toException());
+                        }
+                    });
                 }
-                updateRecipeAdapter();
                 spinner_filter.setEnabled(true);
                 spinner_category.setEnabled(true);
                 swipeRefreshLayout.setRefreshing(false);
@@ -180,7 +207,7 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                Log.w(TAG, "loadUserRecipe:onCancelled", databaseError.toException());
             }
         });
     }

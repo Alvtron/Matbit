@@ -81,7 +81,7 @@ public class AddRecipeFragmentSteps extends Fragment {
         });
 
         ImageView btn_delete = header.findViewById(R.id.fragment_add_recipe_btn_delete);
-        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().equals("")) {
+        if (pagerAdapter.getRecipe().getId() == null || pagerAdapter.getRecipe().getId().isEmpty()) {
             btn_delete.setVisibility(View.GONE);
         }
         btn_delete.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +114,7 @@ public class AddRecipeFragmentSteps extends Fragment {
 
         editStep = view.findViewById(R.id.activity_add_recipe_step);
 
-        stepAdapter = new StepAdapter(context, new ArrayList<Step>());
+        stepAdapter = new StepAdapter(context, new ArrayList<Step>(), true);
 
         for (Step step : pagerAdapter.getRecipe().getData().getSteps().values())
             stepAdapter.addStep(step);
@@ -138,9 +138,9 @@ public class AddRecipeFragmentSteps extends Fragment {
             public void onClick(View v) {
                 String text = editStep.getText().toString();
                 if (text.trim().length() < 1)
-                    editStep.setError("Oisann! Her var det tomt!");
+                    editStep.setError(getString(R.string.error_its_empty_here));
                 else if (text.length() > 500 )
-                    editStep.setError("Oisann! Steget kan ikke overstige 500 ord!");
+                    editStep.setError(getString(R.string.error_step_cant_be_longer_than_500_words));
                 else {
                     Step step = new Step(text);
                     stepAdapter.addStep(step);
