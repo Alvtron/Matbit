@@ -320,6 +320,9 @@ public class NewsFeedBuilder {
      * @return A NewsFeed Object with "New Followers"
      */
     public NewsFeed newFollowers(){
+        if (!user.hasData()) return null;
+        if (!user.hasFollowers()) return null;
+
         ArrayList<String> newFollowers = new ArrayList<String>();
         DateTime newest_date = null;
 

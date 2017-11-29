@@ -142,6 +142,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private void updateUI(){
         // Refresh auth, user, database and storage references.
         MatbitDatabase.refresh();
+        // Upload to database if new
+        MatbitDatabase.handleNewUserIfNew(context);
         // Set progressbar invisible
         progressBar.setVisibility(View.INVISIBLE);
 
@@ -210,9 +212,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         } else if (i == R.id.activity_signin_btn_sign_out) {
             signOut();
         } else if (i == R.id.activity_signin_btn_continue) {
-            if (MatbitDatabase.getUser() != null) {
-                MatbitDatabase.handleNewUserIfNew(context);
-            }
             startActivity(new Intent(this, MainActivity.class));
         }
     }

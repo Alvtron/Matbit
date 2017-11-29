@@ -739,15 +739,15 @@ public final class MatbitDatabase {
         final Uri PHOTO_URL = getCurrentUserPhotoURL();
 
         // Return if UID or photo url is invalid
-        if (USER_UID.isEmpty() || PHOTO_URL != null) return;
+        if (USER_UID.isEmpty() || PHOTO_URL == null) return;
 
         // Load users from database
-        USER_DATA.addListenerForSingleValueEvent(new ValueEventListener()  {
+        user(USER_UID).addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(USER_UID)) {
+                if (dataSnapshot.exists()) {
                     Log.d(TAG, "handleNewUserIfNew: User " + USER_UID + " already exists");
-                    DataSnapshot nickname_snapshot = dataSnapshot.child(USER_UID).child("nickname");
+                    DataSnapshot nickname_snapshot = dataSnapshot.child("nickname");
                         if (!nickname_snapshot.exists()) {
                             CONTEXT.startActivity(new Intent(CONTEXT, UserEditActivity.class));
                         }
@@ -758,6 +758,7 @@ public final class MatbitDatabase {
                     Log.d(TAG, "handleNewUserIfNew: Uploading new empty user to database at: " + USER_UID);
                     new UploadUserPhoto().execute(PHOTO_URL);
                     uploadNewUser(UserExamples.NEW_USER_TEMPLATE());
+                    CONTEXT.startActivity(new Intent(CONTEXT, UserEditActivity.class));
                 }
             }
             @Override
