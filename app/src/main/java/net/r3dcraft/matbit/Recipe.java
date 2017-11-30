@@ -3,6 +3,8 @@ package net.r3dcraft.matbit;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -305,25 +307,34 @@ public class Recipe {
     /**
      * Add comment to specified recipe and update the database accordingly.
      * @param RECIPE_UID Recipe ID/KEY
-     * @param USER_NICKNAME user nickname
      * @param COMMENT_TEXT Comment string
      * @return successfully added comment
      */
-    public static boolean addComment(final String RECIPE_UID, final String USER_NICKNAME, final String COMMENT_TEXT) {
+    public static boolean addComment(final String RECIPE_UID, final String COMMENT_TEXT) {
         if (RECIPE_UID == null || RECIPE_UID.isEmpty()) {
             Log.e(TAG, "addComment: Can't add comment. Recipe key is empty");
-            return false;
-        }
-        if (USER_NICKNAME == null || USER_NICKNAME.isEmpty()) {
-            Log.e(TAG, "addComment: Can't add comment. Comment author nickname is empty");
             return false;
         }
         if (COMMENT_TEXT == null || COMMENT_TEXT.isEmpty()) {
             Log.e(TAG, "addComment: Can't add comment. Comment text is empty");
             return false;
         }
-        Comment comment = new Comment(MatbitDatabase.getCurrentUserUID(), USER_NICKNAME, COMMENT_TEXT, DateUtility.nowString(), DateUtility.nowString());
-        MatbitDatabase.recipeComments(RECIPE_UID).push().setValue(comment);
+
+        MatbitDatabase.getUser().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final String USER_NICKNAME = dataSnapshot.child("nickname").getValue(String.class);
+                if (USER_NICKNAME == null) return;
+
+                Comment comment = new Comment(MatbitDatabase.getCurrentUserUID(), USER_NICKNAME, COMMENT_TEXT, DateUtility.nowString(), DateUtility.nowString());
+                MatbitDatabase.recipeComments(RECIPE_UID).push().setValue(comment);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         return true;
     }
 

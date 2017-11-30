@@ -71,7 +71,7 @@ public class RecipeFragmentComments extends Fragment {
                 if (comment_string.trim().length() < 1) {
                     editText_comment.setError(getString(R.string.error_comment_cant_be_empty));
                 } else {
-                    Recipe.addComment(recipe.getId(), recipe.getData().getUser_nickname(), comment_string);
+                    Recipe.addComment(recipe.getId(), comment_string);
                     editText_comment.setText("");
                     editText_comment.clearFocus();
                     // Hide keyboard
