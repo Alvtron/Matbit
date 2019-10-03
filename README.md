@@ -2,4 +2,6 @@
 
 # Matbit
 
-Android App created by Thomas Angeland, student at Østfold University College, Norway. Connected to Google Firebase.
+This is an Android app created by Thomas Angeland. This was a project assignment for the course ITF21013 Android-programmering at Østfold University College, Norway.
+
+This app is connected to Google Firebase.
