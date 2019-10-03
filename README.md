@@ -1,5 +1,4 @@
 ![GitHub Logo](matbit_logo.png)
-Format: ![Alt Text](url)
 
 # Matbit
 
