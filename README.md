@@ -1,4 +1,4 @@
-![GitHub Logo](matbit_logo.png)
+![Matbit Logo](matbit_logo.png)
 
 # Matbit
 
